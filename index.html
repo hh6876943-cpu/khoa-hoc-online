@@ -179,15 +179,6 @@
       <!-- ICON SIDEBAR -->
       <div class="icon-sidebar">
         <div class="icon-group">
-      const firebaseConfig = {
-  apiKey: "AIzaSyCa7oUM0VMMmm-VljGADiah8Wy6jwQMIxc",
-  authDomain: "khoa-hoc-online-80d2a.firebaseapp.com",
-  projectId: "khoa-hoc-online-80d2a",
-  storageBucket: "khoa-hoc-online-80d2a.firebasestorage.app",
-  messagingSenderId: "797410132848",
-  appId: "1:797410132848:web:46d100c82525e42c84c5b5",
-  measurementId: "G-EJEGE4NR9C"
-};
           <div class="nav-icon active" onclick="switchMainTab('learn')" title="Học tập">🏠</div>
           <div class="nav-icon" id="adminAnalyticsIcon" onclick="switchMainTab('analytics')" style="display:none;" title="Thống kê Admin">📊</div>
         </div>
@@ -293,14 +284,15 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // ⚠️ THAY CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ⚠️
+    // MÃ CẤU HÌNH FIREBASE CHÍNH THỨC CỦA BẠN
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyCa7oUM0VMMmm-VljGADiah8Wy6jwQMIxc",
+      authDomain: "khoa-hoc-online-80d2a.firebaseapp.com",
+      projectId: "khoa-hoc-online-80d2a",
+      storageBucket: "khoa-hoc-online-80d2a.firebasestorage.app",
+      messagingSenderId: "797410132848",
+      appId: "1:797410132848:web:46d100c82525e42c84c5b5",
+      measurementId: "G-EJEGE4NR9C"
     };
 
     // Khởi tạo Firebase & Firestore Database
@@ -314,33 +306,37 @@
 
     // TỰ ĐỘNG KHỞI TẠO DỮ LIỆU MẪU LẦN ĐẦU TRÊN FIREBASE NẾU DB TRỐNG
     async function initDefaultFirebaseData() {
-      const usersSnap = await db.collection('users').get();
-      if (usersSnap.empty) {
-        await db.collection('users').doc('admin_acc').set({ name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false });
-        await db.collection('users').doc('user_acc').set({ name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false });
-      }
+      try {
+        const usersSnap = await db.collection('users').get();
+        if (usersSnap.empty) {
+          await db.collection('users').doc('admin_acc').set({ name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false });
+          await db.collection('users').doc('user_acc').set({ name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false });
+        }
 
-      const coursesSnap = await db.collection('courses').get();
-      if (coursesSnap.empty) {
-        await db.collection('courses').doc('course_101').set({
-          courseId: 101,
-          courseTitle: '🎓 KHÓA 1: Lập Trình Web Căn Bản (Firebase)',
-          parts: [
-            { partId: 1001, type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu học tập', sheetUrl: 'https://docs.google.com' },
-            { 
-              partId: 1002, type: 'lessons', partTitle: 'Phần 2: HTML & CSS Căn Bản',
-              lessons: [
-                { title: 'Bài 1: Giới thiệu cấu trúc HTML', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', docUrl: 'https://drive.google.com' },
-                { title: 'Bài 2: Hướng dẫn CSS layout', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', docUrl: 'https://drive.google.com' }
-              ]
-            }
-          ]
-        });
+        const coursesSnap = await db.collection('courses').get();
+        if (coursesSnap.empty) {
+          await db.collection('courses').doc('course_101').set({
+            courseId: 101,
+            courseTitle: '🎓 KHÓA 1: Lập Trình Web Căn Bản (Firebase)',
+            parts: [
+              { partId: 1001, type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu học tập', sheetUrl: 'https://docs.google.com' },
+              { 
+                partId: 1002, type: 'lessons', partTitle: 'Phần 2: HTML & CSS Căn Bản',
+                lessons: [
+                  { title: 'Bài 1: Giới thiệu cấu trúc HTML', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', docUrl: 'https://drive.google.com' },
+                  { title: 'Bài 2: Hướng dẫn CSS layout', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', docUrl: 'https://drive.google.com' }
+                ]
+              }
+            ]
+          });
+        }
+      } catch (e) {
+        console.error("Lỗi khởi tạo Firebase: ", e);
       }
     }
     initDefaultFirebaseData();
 
-    // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE (SỬA Ở ĐÂU LẬP TỨC ĐỔI Ở ĐÓ)
+    // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE
     db.collection('users').onSnapshot(snapshot => {
       userAccounts = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
       renderAdminUsers();
