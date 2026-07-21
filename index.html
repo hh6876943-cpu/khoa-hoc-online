@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- FIREBASE SDK (Phiên bản tương thích web đơn giản) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     :root {
       --bg-dark: #12141d;
@@ -215,7 +219,7 @@
             </div>
             <div class="stat-card">
               <span style="color: var(--text-muted); font-size: 0.85rem;">SỐ NGƯỜI DÙNG TỔNG CỘNG</span>
-              <div class="stat-big-num" id="totalUserCount">2 Người</div>
+              <div class="stat-big-num" id="totalUserCount">0 Người</div>
               <span style="color: var(--accent-green); font-size: 0.85rem;">● Đang hoạt động</span>
             </div>
           </div>
@@ -269,7 +273,7 @@
           </div>
 
           <!-- DANH SÁCH KHÓA HỌC -->
-          <div id="coursesContainer"></div>
+          <div id="coursesContainer">Đang tải dữ liệu khóa học...</div>
         </section>
 
         <!-- TAB TÀI LIỆU -->
@@ -286,10 +290,24 @@
   </div>
 
   <script>
-    let currentUser = null;
-    let currentActiveLessonObj = null;
+    // -------------------------------------------------------------
+    // CẤU HÌNH KẾT NỐI FIREBASE DATABASE CỦA BẠN
+    // -------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdC9u4XFa0UgM09dtn-OCPFf8EIFPXZUQ",
+      authDomain: "khoa-hoc-online-f936d.firebaseapp.com",
+      databaseURL: "https://khoa-hoc-online-f936d-default-rtdb.firebaseio.com",
+      projectId: "khoa-hoc-online-f936d",
+      storageBucket: "khoa-hoc-online-f936d.firebasestorage.app",
+      messagingSenderId: "115353900067",
+      appId: "1:115353900067:web:7e2ece09223a40e3108d96",
+      measurementId: "G-PBXZ33WCW3"
+    };
 
-    // DỮ LIỆU MẶC ĐỊNH
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // DỮ LIỆU KHỞI TẠO MẶC ĐỊNH (NẾU DATABASE TRÊN CLOUD RỖNG)
     const defaultUserAccounts = [
       { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false },
       { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false }
@@ -312,25 +330,52 @@
       }
     ];
 
-    // NẠP DỮ LIỆU TỪ LOCALSTORAGE (HOẶC DÙNG MẶC ĐỊNH LẦN ĐẦU)
-    let userAccounts = JSON.parse(localStorage.getItem('edu_users')) || defaultUserAccounts;
-    let allCoursesData = JSON.parse(localStorage.getItem('edu_courses')) || defaultCoursesData;
+    let userAccounts = [];
+    let allCoursesData = [];
+    let currentUser = null;
+    let currentActiveLessonObj = null;
 
-    // HÀM LƯU DỮ LIỆU TỰ ĐỘNG
+    // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE CLOUD
+    db.ref('users').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        userAccounts = data;
+      } else {
+        userAccounts = defaultUserAccounts;
+        db.ref('users').set(defaultUserAccounts);
+      }
+      if (currentUser && currentUser.role === 'admin') {
+        renderAdminUsers();
+      }
+    });
+
+    db.ref('courses').on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        allCoursesData = data;
+      } else {
+        allCoursesData = defaultCoursesData;
+        db.ref('courses').set(defaultCoursesData);
+      }
+      if (currentUser) {
+        renderCoursesUI();
+      }
+    });
+
+    // LƯU DỮ LIỆU LÊN FIREBASE
     function saveUsersToStorage() {
-      localStorage.setItem('edu_users', JSON.stringify(userAccounts));
+      db.ref('users').set(userAccounts);
     }
 
     function saveCoursesToStorage() {
-      localStorage.setItem('edu_courses', JSON.stringify(allCoursesData));
+      db.ref('courses').set(allCoursesData);
     }
 
-    // NÚT KHÔI PHỤC MẶC ĐỊNH
+    // RESET MẶC ĐỊNH
     function resetUsersToDefault() {
       if(confirm('Bạn có chắc muốn khôi phục danh sách User về mặc định ban đầu?')) {
         userAccounts = JSON.parse(JSON.stringify(defaultUserAccounts));
         saveUsersToStorage();
-        renderAdminUsers();
         alert('Đã reset danh sách người dùng!');
       }
     }
@@ -339,12 +384,11 @@
       if(confirm('Bạn có chắc muốn khôi phục danh sách Khóa học về mặc định ban đầu?')) {
         allCoursesData = JSON.parse(JSON.stringify(defaultCoursesData));
         saveCoursesToStorage();
-        renderCoursesUI();
         alert('Đã reset danh sách khóa học!');
       }
     }
 
-    // ĐĂNG NHẬP & KIỂM TRA GIỚI HẠN 2 MÁY
+    // ĐĂNG NHẬP & BẢO MẬT
     function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
@@ -357,16 +401,15 @@
         alert('Tài khoản hoặc mật khẩu không chính xác!'); return;
       }
 
-      // KIỂM TRA TÀI KHOẢN CÓ ĐANG BỊ KHÓA HAY KHÔNG
       if (user.isLocked) {
         alert('⛔ TÀI KHOẢN ĐÃ BỊ KHÓA do vi phạm đăng nhập quá 2 máy! Vui lòng liên hệ Admin để mở lại.');
         return;
       }
 
-      // KIỂM TRA THIẾT BỊ ĐĂNG NHẬP
+      if (!user.devices) user.devices = [];
+
       if (!user.devices.includes(currentDevice)) {
         if (user.devices.length >= 2) {
-          // BỊ KHÓA KHI ĐĂNG NHẬP MÁY THỨ 3
           user.isLocked = true;
           saveUsersToStorage();
           alert(`🚨 CẢNH BÁO BẢO MẬT: Tài khoản "${user.username}" đã đăng nhập trên 2 máy [${user.devices.join(', ')}]. Việc cố gắng đăng nhập máy thứ 3 (${currentDevice}) đã khiến TÀI KHOẢN BỊ KHÓA TỰ ĐỘNG!`);
@@ -417,18 +460,19 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
-    // ADMIN QUẢN LÝ VÀ MỞ KHÓA MÁY CHO USER
+    // QUẢN LÝ USER DÀNH CHO ADMIN
     function renderAdminUsers() {
       const tbody = document.getElementById('adminUsersTable');
       tbody.innerHTML = '';
       document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
 
       userAccounts.forEach(acc => {
+        const devs = acc.devices || [];
         tbody.innerHTML += `
           <tr>
             <td><b>${acc.name}</b></td>
             <td><code>${acc.username}</code></td>
-            <td>${acc.devices.length}/2 máy (${acc.devices.join(', ')})</td>
+            <td>${devs.length}/2 máy (${devs.join(', ')})</td>
             <td>
               ${acc.isLocked 
                 ? '<span class="status-badge badge-locked">🔒 ĐÃ BỊ KHÓA</span>' 
@@ -447,10 +491,9 @@
       const acc = userAccounts.find(a => a.id === userId);
       if(acc) {
         acc.isLocked = false;
-        acc.devices = []; // Reset lại danh sách máy
+        acc.devices = [];
         saveUsersToStorage();
         alert(`Đã mở khóa và reset danh sách máy đăng nhập cho tài khoản ${acc.username}!`);
-        renderAdminUsers();
       }
     }
 
@@ -461,7 +504,6 @@
       
       userAccounts.push({ id: Date.now(), name, username, password, role: 'user', devices: [], isLocked: false });
       saveUsersToStorage();
-      renderAdminUsers();
     }
 
     function adminDeleteUser(id) {
@@ -469,19 +511,24 @@
         const idx = userAccounts.findIndex(a => a.id === id);
         if(idx !== -1) userAccounts.splice(idx, 1);
         saveUsersToStorage();
-        renderAdminUsers();
       }
     }
 
-    // --- HIỂN THỊ CẤU TRÚC KHÓA HỌC & FULL QUYỀN THÊM/XÓA CỦA ADMIN ---
+    // GIAO DIỆN KHÓA HỌC
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
       container.innerHTML = '';
 
+      if (!allCoursesData || allCoursesData.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted)">Chưa có khóa học nào.</p>';
+        return;
+      }
+
       allCoursesData.forEach((course, cIdx) => {
         let partsHTML = '';
+        const parts = course.parts || [];
 
-        course.parts.forEach((part, pIdx) => {
+        parts.forEach((part, pIdx) => {
           if (part.type === 'sheet') {
             partsHTML += `
               <div class="part-header-box">
@@ -493,7 +540,8 @@
               </div>
             `;
           } else {
-            let lessonsHTML = part.lessons.map((les, lIdx) => `
+            const lessons = part.lessons || [];
+            let lessonsHTML = lessons.map((les, lIdx) => `
               <div class="lesson-item">
                 <span style="cursor:pointer;" onclick="playLesson('${les.title}', '${les.videoUrl}', '${les.docUrl}')">▶ ${les.title}</span>
                 <div>
@@ -544,55 +592,53 @@
       });
     }
 
-    // --- CÁC HÀM TƯƠNG TÁC DÀNH CHO ADMIN (ĐÃ THÊM AUTO-SAVE) ---
+    // THAO TÁC CỦA ADMIN (LƯU TRỰC TIẾP LÊN CLOUD FIREBASE)
     function adminAddCourse() {
       const title = prompt('Nhập Tên Khóa Học Mới:', `🎓 KHÓA ${allCoursesData.length + 1}: Chương trình mới`);
       if(!title) return;
 
+      if(!allCoursesData) allCoursesData = [];
       allCoursesData.push({
         courseId: Date.now(),
         courseTitle: title,
         parts: [{ partId: Date.now(), type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu & Lịch học', sheetUrl: 'https://docs.google.com' }]
       });
       saveCoursesToStorage();
-      renderCoursesUI();
     }
 
     function adminDeleteCourse(cIdx) {
       if(confirm(`XÁC NHẬN: Bạn có chắc chắn muốn XÓA KHÓA HỌC "${allCoursesData[cIdx].courseTitle}"?`)) {
         allCoursesData.splice(cIdx, 1);
         saveCoursesToStorage();
-        renderCoursesUI();
       }
     }
 
     function adminAddPart(cIdx) {
       const course = allCoursesData[cIdx];
+      if (!course.parts) course.parts = [];
       const partTitle = prompt('Nhập tên Phần mới:', `Phần ${course.parts.length + 1}: Chuyên đề mới`);
       if(!partTitle) return;
 
       course.parts.push({ partId: Date.now(), type: 'lessons', partTitle: partTitle, lessons: [] });
       saveCoursesToStorage();
-      renderCoursesUI();
     }
 
     function adminDeletePart(cIdx, pIdx) {
       if(confirm('Bạn có chắc muốn XÓA PHẦN NÀY?')) {
         allCoursesData[cIdx].parts.splice(pIdx, 1);
         saveCoursesToStorage();
-        renderCoursesUI();
       }
     }
 
     function adminAddLesson(cIdx, pIdx) {
       const part = allCoursesData[cIdx].parts[pIdx];
+      if(!part.lessons) part.lessons = [];
       const title = prompt('Nhập Tên Bài Học Mới:'); if(!title) return;
       const videoUrl = prompt('Nhập Link Video MP4:', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
       const docUrl = prompt('Nhập Link Google Drive / Tài liệu:', 'https://drive.google.com');
 
       part.lessons.push({ title, videoUrl: videoUrl || '', docUrl: docUrl || '' });
       saveCoursesToStorage();
-      renderCoursesUI();
     }
 
     function adminEditVideoUrl(cIdx, pIdx, lIdx) {
@@ -601,7 +647,6 @@
       if(newUrl) {
         lesson.videoUrl = newUrl;
         saveCoursesToStorage();
-        renderCoursesUI();
       }
     }
 
@@ -609,7 +654,6 @@
       if(confirm('Bạn có chắc muốn XÓA BÀI HỌC này?')) {
         allCoursesData[cIdx].parts[pIdx].lessons.splice(lIdx, 1);
         saveCoursesToStorage();
-        renderCoursesUI();
       }
     }
 
