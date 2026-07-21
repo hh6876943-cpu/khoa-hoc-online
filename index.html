@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KHÓA HỌC TRỰC TUYẾN</title>
+  <title>KHÓA HỌC TRỰC TUYẾN - FIREBASE FIRESTORE</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +118,6 @@
     }
     .lesson-item:hover { background: var(--bg-hover); }
 
-    /* NÚT TÙY CHỈNH ADMIN */
     .admin-btn-sm {
       background: var(--bg-sidebar-left); color: #fff; border: none; padding: 4px 10px; border-radius: 6px;
       font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-left: 6px;
@@ -161,7 +160,7 @@
           <input type="password" id="password" placeholder="Mật khẩu" required>
         </div>
         <div class="form-group">
-          <label>Mã Thiết Bị / Máy đang dùng (Mô phỏng máy 1, máy 2, máy 3...)</label>
+          <label>Mã Thiết Bị / Máy đang dùng</label>
           <select id="deviceSelect">
             <option value="Device_PC_1">Máy 1 (PC Nhà)</option>
             <option value="Device_Laptop_2">Máy 2 (Laptop)</option>
@@ -177,9 +176,18 @@
   <div id="appScreen">
     <div class="app-container">
       
-      <!-- ICON SIDEBAR BÊN TRÁI -->
+      <!-- ICON SIDEBAR -->
       <div class="icon-sidebar">
         <div class="icon-group">
+        const firebaseConfig = {
+  apiKey: "AIzaSyCa7oUM0VMMmm-VljGADiah8Wy6jwQMIxc",
+  authDomain: "khoa-hoc-online-80d2a.firebaseapp.com",
+  projectId: "khoa-hoc-online-80d2a",
+  storageBucket: "khoa-hoc-online-80d2a.firebasestorage.app",
+  messagingSenderId: "797410132848",
+  appId: "1:797410132848:web:46d100c82525e42c84c5b5",
+  measurementId: "G-EJEGE4NR9C"
+};
           <div class="nav-icon active" onclick="switchMainTab('learn')" title="Học tập">🏠</div>
           <div class="nav-icon" id="adminAnalyticsIcon" onclick="switchMainTab('analytics')" style="display:none;" title="Thống kê Admin">📊</div>
         </div>
@@ -205,7 +213,7 @@
           <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
         </div>
 
-        <!-- DASHBOARD ADMIN: QUẢN LÝ USER & BẢO MẬT 2 MÁY -->
+        <!-- DASHBOARD ADMIN -->
         <section id="adminAnalyticsSection" style="display: none;">
           <div class="stats-grid">
             <div class="stat-card">
@@ -215,18 +223,15 @@
             </div>
             <div class="stat-card">
               <span style="color: var(--text-muted); font-size: 0.85rem;">SỐ NGƯỜI DÙNG TỔNG CỘNG</span>
-              <div class="stat-big-num" id="totalUserCount">2 Người</div>
-              <span style="color: var(--accent-green); font-size: 0.85rem;">● Đang hoạt động</span>
+              <div class="stat-big-num" id="totalUserCount">0 Người</div>
+              <span style="color: var(--accent-green); font-size: 0.85rem;">● Đang kết nối Firebase</span>
             </div>
           </div>
 
           <div class="stat-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <h3>Quản Lý Người Dùng & Giới Hạn Đăng Nhập (Tối Đa 2 Máy)</h3>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateUser()">+ Tạo Tài Khoản Mới</button>
-                <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetUsersToDefault()">🔄 Reset User Mặc Định</button>
-              </div>
+              <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateUser()">+ Tạo Tài Khoản Mới</button>
             </div>
             <table class="data-table">
               <thead>
@@ -243,14 +248,13 @@
           </div>
         </section>
 
-        <!-- TAB KHÓA HỌC CỦA TÔI -->
+        <!-- TAB KHÓA HỌC -->
         <section id="coursesTab">
           <div id="adminCourseControls" class="admin-action-bar" style="display: none;">
-            <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminAddCourse()">➕ Thêm Khóa Học Mới</button>
-            <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Học Mặc Định</button>
+            <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminAddCourse()">➕ Thêm Khóa Học Mới (Firebase)</button>
           </div>
 
-          <!-- FRAME PHÁT VIDEO -->
+          <!-- FRAME VIDEO -->
           <div id="videoPlayerBox" class="video-player-container" style="display: none;">
             <h3 id="currentLessonTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Tên bài học</h3>
             <div class="video-wrapper">
@@ -268,8 +272,7 @@
             </div>
           </div>
 
-          <!-- DANH SÁCH KHÓA HỌC -->
-          <div id="coursesContainer"></div>
+          <div id="coursesContainer">Đang tải dữ liệu từ Đám mây Firebase...</div>
         </section>
 
         <!-- TAB TÀI LIỆU -->
@@ -285,67 +288,71 @@
     </div>
   </div>
 
+  <!-- FIREBASE SDKs (v9 Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <script>
+    // ⚠️ THAY CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY ⚠️
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Khởi tạo Firebase & Firestore Database
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     let currentUser = null;
     let currentActiveLessonObj = null;
+    let userAccounts = [];
+    let allCoursesData = [];
 
-    // DỮ LIỆU MẶC ĐỊNH
-    const defaultUserAccounts = [
-      { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false },
-      { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false }
-    ];
-
-    const defaultCoursesData = [
-      {
-        courseId: 101,
-        courseTitle: '🎓 KHÓA 1: Lập Trình Web Căn Bản',
-        parts: [
-          { partId: 1001, type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu học tập', sheetUrl: 'https://docs.google.com' },
-          { 
-            partId: 1002, type: 'lessons', partTitle: 'Phần 2: HTML & CSS Căn Bản',
-            lessons: [
-              { title: 'Bài 1: Giới thiệu cấu trúc HTML', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', docUrl: 'https://drive.google.com' },
-              { title: 'Bài 2: Hướng dẫn CSS layout', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', docUrl: 'https://drive.google.com' }
-            ]
-          }
-        ]
+    // TỰ ĐỘNG KHỞI TẠO DỮ LIỆU MẪU LẦN ĐẦU TRÊN FIREBASE NẾU DB TRỐNG
+    async function initDefaultFirebaseData() {
+      const usersSnap = await db.collection('users').get();
+      if (usersSnap.empty) {
+        await db.collection('users').doc('admin_acc').set({ name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false });
+        await db.collection('users').doc('user_acc').set({ name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false });
       }
-    ];
 
-    // NẠP DỮ LIỆU TỪ LOCALSTORAGE (HOẶC DÙNG MẶC ĐỊNH LẦN ĐẦU)
-    let userAccounts = JSON.parse(localStorage.getItem('edu_users')) || defaultUserAccounts;
-    let allCoursesData = JSON.parse(localStorage.getItem('edu_courses')) || defaultCoursesData;
-
-    // HÀM LƯU DỮ LIỆU TỰ ĐỘNG
-    function saveUsersToStorage() {
-      localStorage.setItem('edu_users', JSON.stringify(userAccounts));
-    }
-
-    function saveCoursesToStorage() {
-      localStorage.setItem('edu_courses', JSON.stringify(allCoursesData));
-    }
-
-    // NÚT KHÔI PHỤC MẶC ĐỊNH
-    function resetUsersToDefault() {
-      if(confirm('Bạn có chắc muốn khôi phục danh sách User về mặc định ban đầu?')) {
-        userAccounts = JSON.parse(JSON.stringify(defaultUserAccounts));
-        saveUsersToStorage();
-        renderAdminUsers();
-        alert('Đã reset danh sách người dùng!');
+      const coursesSnap = await db.collection('courses').get();
+      if (coursesSnap.empty) {
+        await db.collection('courses').doc('course_101').set({
+          courseId: 101,
+          courseTitle: '🎓 KHÓA 1: Lập Trình Web Căn Bản (Firebase)',
+          parts: [
+            { partId: 1001, type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu học tập', sheetUrl: 'https://docs.google.com' },
+            { 
+              partId: 1002, type: 'lessons', partTitle: 'Phần 2: HTML & CSS Căn Bản',
+              lessons: [
+                { title: 'Bài 1: Giới thiệu cấu trúc HTML', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', docUrl: 'https://drive.google.com' },
+                { title: 'Bài 2: Hướng dẫn CSS layout', videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', docUrl: 'https://drive.google.com' }
+              ]
+            }
+          ]
+        });
       }
     }
+    initDefaultFirebaseData();
 
-    function resetCoursesToDefault() {
-      if(confirm('Bạn có chắc muốn khôi phục danh sách Khóa học về mặc định ban đầu?')) {
-        allCoursesData = JSON.parse(JSON.stringify(defaultCoursesData));
-        saveCoursesToStorage();
-        renderCoursesUI();
-        alert('Đã reset danh sách khóa học!');
-      }
-    }
+    // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE (SỬA Ở ĐÂU LẬP TỨC ĐỔI Ở ĐÓ)
+    db.collection('users').onSnapshot(snapshot => {
+      userAccounts = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+      renderAdminUsers();
+    });
 
-    // ĐĂNG NHẬP & KIỂM TRA GIỚI HẠN 2 MÁY
-    function handleLogin(e) {
+    db.collection('courses').onSnapshot(snapshot => {
+      allCoursesData = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+      renderCoursesUI();
+    });
+
+    // ĐĂNG NHẬP
+    async function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
       const p = document.getElementById('password').value.trim();
@@ -357,23 +364,20 @@
         alert('Tài khoản hoặc mật khẩu không chính xác!'); return;
       }
 
-      // KIỂM TRA TÀI KHOẢN CÓ ĐANG BỊ KHÓA HAY KHÔNG
       if (user.isLocked) {
-        alert('⛔ TÀI KHOẢN ĐÃ BỊ KHÓA do vi phạm đăng nhập quá 2 máy! Vui lòng liên hệ Admin để mở lại.');
+        alert('⛔ TÀI KHOẢN ĐÃ BỊ KHÓA do vi phạm đăng nhập quá 2 máy! Vui lòng liên hệ Admin.');
         return;
       }
 
-      // KIỂM TRA THIẾT BỊ ĐĂNG NHẬP
-      if (!user.devices.includes(currentDevice)) {
-        if (user.devices.length >= 2) {
-          // BỊ KHÓA KHI ĐĂNG NHẬP MÁY THỨ 3
-          user.isLocked = true;
-          saveUsersToStorage();
-          alert(`🚨 CẢNH BÁO BẢO MẬT: Tài khoản "${user.username}" đã đăng nhập trên 2 máy [${user.devices.join(', ')}]. Việc cố gắng đăng nhập máy thứ 3 (${currentDevice}) đã khiến TÀI KHOẢN BỊ KHÓA TỰ ĐỘNG!`);
+      let updatedDevices = user.devices || [];
+      if (!updatedDevices.includes(currentDevice)) {
+        if (updatedDevices.length >= 2) {
+          await db.collection('users').doc(user.docId).update({ isLocked: true });
+          alert(`🚨 CẢNH BÁO: Tài khoản "${user.username}" đã đăng nhập trên 2 máy [${updatedDevices.join(', ')}]. Đăng nhập máy thứ 3 đã khiến TÀI KHOẢN BỊ KHÓA TỰ ĐỘNG!`);
           return;
         } else {
-          user.devices.push(currentDevice);
-          saveUsersToStorage();
+          updatedDevices.push(currentDevice);
+          await db.collection('users').doc(user.docId).update({ devices: updatedDevices });
         }
       }
 
@@ -385,12 +389,10 @@
       if(currentUser.role === 'admin') {
         document.getElementById('adminAnalyticsIcon').style.display = 'flex';
         document.getElementById('adminCourseControls').style.display = 'flex';
-        renderAdminUsers();
       } else {
         document.getElementById('adminAnalyticsIcon').style.display = 'none';
         document.getElementById('adminCourseControls').style.display = 'none';
       }
-
       renderCoursesUI();
     }
 
@@ -417,90 +419,83 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
-    // ADMIN QUẢN LÝ VÀ MỞ KHÓA MÁY CHO USER
+    // ADMIN QUẢN LÝ USER
     function renderAdminUsers() {
       const tbody = document.getElementById('adminUsersTable');
+      if(!tbody) return;
       tbody.innerHTML = '';
       document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
 
       userAccounts.forEach(acc => {
+        const devs = acc.devices || [];
         tbody.innerHTML += `
           <tr>
             <td><b>${acc.name}</b></td>
             <td><code>${acc.username}</code></td>
-            <td>${acc.devices.length}/2 máy (${acc.devices.join(', ')})</td>
+            <td>${devs.length}/2 máy (${devs.join(', ')})</td>
             <td>
               ${acc.isLocked 
                 ? '<span class="status-badge badge-locked">🔒 ĐÃ BỊ KHÓA</span>' 
                 : '<span class="status-badge badge-active">🟢 Hoạt động</span>'}
             </td>
             <td>
-              ${acc.isLocked ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminUnlockUser(${acc.id})">🔓 Mở Khóa & Reset Máy</button>` : ''}
-              ${acc.username !== 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteUser(${acc.id})">Xóa Account</button>` : ''}
+              ${acc.isLocked ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminUnlockUser('${acc.docId}')">🔓 Mở Khóa & Reset Máy</button>` : ''}
+              ${acc.username !== 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteUser('${acc.docId}')">Xóa Account</button>` : ''}
             </td>
           </tr>
         `;
       });
     }
 
-    function adminUnlockUser(userId) {
-      const acc = userAccounts.find(a => a.id === userId);
-      if(acc) {
-        acc.isLocked = false;
-        acc.devices = []; // Reset lại danh sách máy
-        saveUsersToStorage();
-        alert(`Đã mở khóa và reset danh sách máy đăng nhập cho tài khoản ${acc.username}!`);
-        renderAdminUsers();
-      }
+    async function adminUnlockUser(docId) {
+      await db.collection('users').doc(docId).update({ isLocked: false, devices: [] });
+      alert('Đã mở khóa tài khoản thành công trên Firebase!');
     }
 
-    function adminCreateUser() {
+    async function adminCreateUser() {
       const name = prompt('Nhập Tên người dùng mới:'); if(!name) return;
       const username = prompt('Nhập tên Tài khoản:'); if(!username) return;
       const password = prompt('Nhập Mật khẩu:'); if(!password) return;
-      
-      userAccounts.push({ id: Date.now(), name, username, password, role: 'user', devices: [], isLocked: false });
-      saveUsersToStorage();
-      renderAdminUsers();
+
+      await db.collection('users').add({ name, username, password, role: 'user', devices: [], isLocked: false });
+      alert('Đã tạo người dùng mới thành công!');
     }
 
-    function adminDeleteUser(id) {
-      if(confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) {
-        const idx = userAccounts.findIndex(a => a.id === id);
-        if(idx !== -1) userAccounts.splice(idx, 1);
-        saveUsersToStorage();
-        renderAdminUsers();
+    async function adminDeleteUser(docId) {
+      if(confirm('Xóa tài khoản này khỏi Firebase?')) {
+        await db.collection('users').doc(docId).delete();
       }
     }
 
-    // --- HIỂN THỊ CẤU TRÚC KHÓA HỌC & FULL QUYỀN THÊM/XÓA CỦA ADMIN ---
+    // HIỂN THỊ KHÓA HỌC
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
+      if(!container) return;
       container.innerHTML = '';
 
-      allCoursesData.forEach((course, cIdx) => {
+      allCoursesData.forEach((course) => {
         let partsHTML = '';
 
-        course.parts.forEach((part, pIdx) => {
+        (course.parts || []).forEach((part, pIdx) => {
           if (part.type === 'sheet') {
             partsHTML += `
               <div class="part-header-box">
                 <span onclick="window.open('${part.sheetUrl}', '_blank')">🗓️ ${part.partTitle}</span>
                 <div>
                   <span style="font-size:0.8rem; color:var(--primary-bright); cursor:pointer;" onclick="window.open('${part.sheetUrl}', '_blank')">Mở Link ↗</span>
-                  ${currentUser.role === 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeletePart(${cIdx}, ${pIdx})">🗑️ Xóa Phần</button>` : ''}
+                  ${currentUser && currentUser.role === 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeletePart('${course.docId}', ${pIdx})">🗑️ Xóa Phần</button>` : ''}
                 </div>
               </div>
             `;
           } else {
-            let lessonsHTML = part.lessons.map((les, lIdx) => `
+            let lessonsHTML = (part.lessons || []).map((les, lIdx) => `
               <div class="lesson-item">
                 <span style="cursor:pointer;" onclick="playLesson('${les.title}', '${les.videoUrl}', '${les.docUrl}')">▶ ${les.title}</span>
                 <div>
                   <button class="btn-ctrl" style="padding: 3px 8px; font-size: 0.75rem;" onclick="playLesson('${les.title}', '${les.videoUrl}', '${les.docUrl}')">Xem Video</button>
-                  ${currentUser.role === 'admin' ? `
-                    <button class="admin-btn-sm admin-btn-warning" onclick="adminEditVideoUrl(${cIdx}, ${pIdx}, ${lIdx})">🎬 Sửa Video</button>
-                    <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteLesson(${cIdx}, ${pIdx}, ${lIdx})">🗑️ Xóa Bài</button>
+                  ${currentUser && currentUser.role === 'admin' ? `
+                    <button class="admin-btn-sm admin-btn-warning" onclick="adminEditVideoUrl('${course.docId}', ${pIdx}, ${lIdx})">🎬 Sửa Video</button>
+                    <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteLesson('${course.docId}', ${pIdx}, ${lIdx})">🗑️ Xóa Bài</button>
                   ` : ''}
                 </div>
               </div>
@@ -510,9 +505,9 @@
               <div class="part-header-box" onclick="toggleElement('lessons-${course.courseId}-${part.partId}')">
                 <span>📘 ${part.partTitle}</span>
                 <div>
-                  ${currentUser.role === 'admin' ? `
-                    <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson(${cIdx}, ${pIdx})">+ Thêm Bài Học</button>
-                    <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart(${cIdx}, ${pIdx})">🗑️ Xóa Phần</button>
+                  ${currentUser && currentUser.role === 'admin' ? `
+                    <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson('${course.docId}', ${pIdx})">+ Thêm Bài Học</button>
+                    <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart('${course.docId}', ${pIdx})">🗑️ Xóa Phần</button>
                   ` : ''}
                   <span style="margin-left:8px;">▼</span>
                 </div>
@@ -529,9 +524,9 @@
             <div class="course-header" onclick="toggleElement('parts-${course.courseId}')">
               <span>${course.courseTitle}</span>
               <div>
-                ${currentUser.role === 'admin' ? `
-                  <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart(${cIdx})">+ Thêm Phần</button>
-                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteCourse(${cIdx})">🗑️ Xóa Khóa Học</button>
+                ${currentUser && currentUser.role === 'admin' ? `
+                  <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart('${course.docId}')">+ Thêm Phần</button>
+                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteCourse('${course.docId}')">🗑️ Xóa Khóa Học</button>
                 ` : ''}
                 <span style="margin-left: 10px;">📂 Open ▼</span>
               </div>
@@ -544,72 +539,63 @@
       });
     }
 
-    // --- CÁC HÀM TƯƠNG TÁC DÀNH CHO ADMIN (ĐÃ THÊM AUTO-SAVE) ---
-    function adminAddCourse() {
-      const title = prompt('Nhập Tên Khóa Học Mới:', `🎓 KHÓA ${allCoursesData.length + 1}: Chương trình mới`);
-      if(!title) return;
-
-      allCoursesData.push({
+    // THAO TÁC KHÓA HỌC TRÊN FIREBASE
+    async function adminAddCourse() {
+      const title = prompt('Nhập Tên Khóa Học Mới:'); if(!title) return;
+      await db.collection('courses').add({
         courseId: Date.now(),
         courseTitle: title,
         parts: [{ partId: Date.now(), type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu & Lịch học', sheetUrl: 'https://docs.google.com' }]
       });
-      saveCoursesToStorage();
-      renderCoursesUI();
     }
 
-    function adminDeleteCourse(cIdx) {
-      if(confirm(`XÁC NHẬN: Bạn có chắc chắn muốn XÓA KHÓA HỌC "${allCoursesData[cIdx].courseTitle}"?`)) {
-        allCoursesData.splice(cIdx, 1);
-        saveCoursesToStorage();
-        renderCoursesUI();
+    async function adminDeleteCourse(docId) {
+      if(confirm('Bạn có chắc muốn XÓA KHÓA HỌC này khỏi Firebase?')) {
+        await db.collection('courses').doc(docId).delete();
       }
     }
 
-    function adminAddPart(cIdx) {
-      const course = allCoursesData[cIdx];
-      const partTitle = prompt('Nhập tên Phần mới:', `Phần ${course.parts.length + 1}: Chuyên đề mới`);
-      if(!partTitle) return;
-
-      course.parts.push({ partId: Date.now(), type: 'lessons', partTitle: partTitle, lessons: [] });
-      saveCoursesToStorage();
-      renderCoursesUI();
+    async function adminAddPart(docId) {
+      const course = allCoursesData.find(c => c.docId === docId);
+      const partTitle = prompt('Nhập tên Phần mới:'); if(!partTitle) return;
+      
+      const newParts = [...(course.parts || []), { partId: Date.now(), type: 'lessons', partTitle, lessons: [] }];
+      await db.collection('courses').doc(docId).update({ parts: newParts });
     }
 
-    function adminDeletePart(cIdx, pIdx) {
-      if(confirm('Bạn có chắc muốn XÓA PHẦN NÀY?')) {
-        allCoursesData[cIdx].parts.splice(pIdx, 1);
-        saveCoursesToStorage();
-        renderCoursesUI();
+    async function adminDeletePart(docId, pIdx) {
+      if(confirm('Xóa Phần này?')) {
+        const course = allCoursesData.find(c => c.docId === docId);
+        course.parts.splice(pIdx, 1);
+        await db.collection('courses').doc(docId).update({ parts: course.parts });
       }
     }
 
-    function adminAddLesson(cIdx, pIdx) {
-      const part = allCoursesData[cIdx].parts[pIdx];
-      const title = prompt('Nhập Tên Bài Học Mới:'); if(!title) return;
-      const videoUrl = prompt('Nhập Link Video MP4:', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-      const docUrl = prompt('Nhập Link Google Drive / Tài liệu:', 'https://drive.google.com');
+    async function adminAddLesson(docId, pIdx) {
+      const title = prompt('Tên Bài Học:'); if(!title) return;
+      const videoUrl = prompt('Link Video MP4:', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+      const docUrl = prompt('Link Tài Liệu Drive:', 'https://drive.google.com');
 
-      part.lessons.push({ title, videoUrl: videoUrl || '', docUrl: docUrl || '' });
-      saveCoursesToStorage();
-      renderCoursesUI();
+      const course = allCoursesData.find(c => c.docId === docId);
+      course.parts[pIdx].lessons.push({ title, videoUrl: videoUrl || '', docUrl: docUrl || '' });
+      await db.collection('courses').doc(docId).update({ parts: course.parts });
     }
 
-    function adminEditVideoUrl(cIdx, pIdx, lIdx) {
-      const lesson = allCoursesData[cIdx].parts[pIdx].lessons[lIdx];
-      const newUrl = prompt(`Sửa Link Video cho "${lesson.title}":`, lesson.videoUrl);
+    async function adminEditVideoUrl(docId, pIdx, lIdx) {
+      const course = allCoursesData.find(c => c.docId === docId);
+      const lesson = course.parts[pIdx].lessons[lIdx];
+      const newUrl = prompt(`Link Video mới cho "${lesson.title}":`, lesson.videoUrl);
       if(newUrl) {
         lesson.videoUrl = newUrl;
-        saveCoursesToStorage();
-        renderCoursesUI();
+        await db.collection('courses').doc(docId).update({ parts: course.parts });
       }
     }
 
-    function adminDeleteLesson(cIdx, pIdx, lIdx) {
-      if(confirm('Bạn có chắc muốn XÓA BÀI HỌC này?')) {
-        allCoursesData[cIdx].parts[pIdx].lessons.splice(lIdx, 1);
-        saveCoursesToStorage();
-        renderCoursesUI();
+    async function adminDeleteLesson(docId, pIdx, lIdx) {
+      if(confirm('Xóa Bài Học này?')) {
+        const course = allCoursesData.find(c => c.docId === docId);
+        course.parts[pIdx].lessons.splice(lIdx, 1);
+        await db.collection('courses').doc(docId).update({ parts: course.parts });
       }
     }
 
