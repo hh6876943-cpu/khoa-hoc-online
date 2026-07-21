@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- FIREBASE SDK (Phiên bản tương thích web đơn giản) -->
+  <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -54,6 +54,11 @@
       width: 100%; padding: 12px; background: var(--bg-sidebar-left); color: #fff; border: none;
       border-radius: 10px; font-weight: 600; cursor: pointer; font-family: var(--font-family); transition: 0.2s;
     }
+    .btn-emergency {
+      width: 100%; padding: 10px; background: transparent; color: var(--warning); border: 1px dashed var(--warning);
+      border-radius: 10px; font-weight: 600; cursor: pointer; font-family: var(--font-family); margin-top: 12px; transition: 0.2s;
+    }
+    .btn-emergency:hover { background: rgba(243, 156, 18, 0.1); }
 
     /* BẢNG ĐIỀU KHIỂN CHÍNH */
     #appScreen { display: none; height: 100vh; }
@@ -127,7 +132,7 @@
       background: var(--bg-sidebar-left); color: #fff; border: none; padding: 4px 10px; border-radius: 6px;
       font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-left: 6px;
     }
-    .admin-btn-warning { background: var(--warning); }
+    .admin-btn-warning { background: var(--warning); color: #000; }
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; }
 
@@ -182,12 +187,13 @@
         <div class="form-group">
           <label>Mã Thiết Bị / Máy đang dùng</label>
           <select id="deviceSelect">
-            <option value="Device_PC_1">Máy 1 (điện thoại)</option>
+            <option value="Device_PC_1">Máy 1 (PC / Điện thoại)</option>
             <option value="Device_Laptop_2">Máy 2 (Laptop)</option>
-            <option value="Device_Phone_3">Máy 3 (KHÔNG ĐƯỢC DÙNG 3 MÁY)</option>
+            <option value="Device_Phone_3">Máy 3 (Thiết bị thử nghiệm)</option>
           </select>
         </div>
         <button type="submit" class="btn-submit">Đăng Nhập</button>
+        <button type="button" class="btn-emergency" onclick="emergencyUnlockAdmin()">🔓 Mở khóa Admin Cấp Tốc</button>
       </form>
     </div>
   </div>
@@ -326,7 +332,7 @@
 
   <script>
     // -------------------------------------------------------------
-    // CẤU HÌNH KẾT NỐI FIREBASE DATABASE CỦA BẠN
+    // CẤU HÌNH KẾT NỐI FIREBASE DATABASE
     // -------------------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyCdC9u4XFa0UgM09dtn-OCPFf8EIFPXZUQ",
@@ -344,7 +350,7 @@
 
     // DỮ LIỆU KHỞI TẠO MẶC ĐỊNH
     const defaultUserAccounts = [
-      { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'hung28072009', role: 'admin', devices: ['Device_PC_1'], isLocked: false, watchTimeSeconds: 0 },
+      { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'hung28072009', role: 'admin', devices: [], isLocked: false, watchTimeSeconds: 0 },
       { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false, watchTimeSeconds: 0 }
     ];
 
@@ -369,9 +375,7 @@
     let allCoursesData = [];
     let globalDriveUrl = 'https://drive.google.com';
     let currentUser = null;
-    let currentActiveLessonObj = null;
-
-    // THEO DÕI THỜI GI N XEM VIDEO
+    let currentActiveDocUrl = '';
     let videoWatchTimer = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE CLOUD
@@ -384,10 +388,8 @@
         db.ref('users').set(defaultUserAccounts);
       }
       if (currentUser) {
-        // Cập nhật thông tin tài khoản hiện tại nếu admin thao tác
         const updatedSelf = userAccounts.find(u => u.username === currentUser.username);
         if (updatedSelf) currentUser = updatedSelf;
-        
         if (currentUser.role === 'admin') {
           renderAdminUsers();
         }
@@ -417,18 +419,12 @@
     });
 
     db.ref('chatMessages').on('value', (snapshot) => {
-      const msgs = snapshot.val();
-      renderChatMessages(msgs);
+      renderChatMessages(snapshot.val());
     });
 
     // LƯU DỮ LIỆU LÊN FIREBASE
-    function saveUsersToStorage() {
-      db.ref('users').set(userAccounts);
-    }
-
-    function saveCoursesToStorage() {
-      db.ref('courses').set(allCoursesData);
-    }
+    function saveUsersToStorage() { db.ref('users').set(userAccounts); }
+    function saveCoursesToStorage() { db.ref('courses').set(allCoursesData); }
 
     // RESET MẶC ĐỊNH
     function resetUsersToDefault() {
@@ -447,6 +443,21 @@
       }
     }
 
+    // NÚT KHÔI PHỤC CẤP TỐC DÀNH CHO ADMIN BỊ KHÓA
+    function emergencyUnlockAdmin() {
+      const p = prompt('Nhập mật khẩu Admin để mở khóa khẩn cấp:');
+      if (!p) return;
+      const adminAcc = userAccounts.find(a => a.username === 'admin');
+      if (adminAcc && adminAcc.password === p) {
+        adminAcc.isLocked = false;
+        adminAcc.devices = [];
+        saveUsersToStorage();
+        alert('✅ Đã gỡ khóa thành công cho Admin! Bây giờ bạn có thể đăng nhập bình thường.');
+      } else {
+        alert('❌ Mật khẩu Admin không chính xác!');
+      }
+    }
+
     // ĐĂNG NHẬP & BẢO MẬT
     function handleLogin(e) {
       e.preventDefault();
@@ -460,22 +471,28 @@
         alert('Tài khoản hoặc mật khẩu không chính xác!'); return;
       }
 
-      if (user.isLocked) {
-        alert('⛔ TÀI KHOẢN ĐÃ BỊ KHÓA do vi phạm đăng nhập quá 2 máy! Vui lòng liên hệ Admin để mở lại.');
-        return;
-      }
-
-      if (!user.devices) user.devices = [];
-
-      if (!user.devices.includes(currentDevice)) {
-        if (user.devices.length >= 2) {
-          user.isLocked = true;
-          saveUsersToStorage();
-          alert(`🚨 CẢNH BÁO BẢO MẬT: Tài khoản "${user.username}" đã đăng nhập trên 2 máy [${user.devices.join(', ')}]. Việc cố gắng đăng nhập máy thứ 3 (${currentDevice}) đã khiến TÀI KHOẢN BỊ KHÓA TỰ ĐỘNG!`);
+      // NẾU LÀ ADMIN -> MIỄN TRỪ QUY TẮC GIỚI HẠN THIẾT BỊ VÀ TỰ KHÓA
+      if (user.role === 'admin') {
+        user.isLocked = false;
+      } else {
+        // Áp dụng quy tắc khóa 2 máy cho Học viên (user)
+        if (user.isLocked) {
+          alert('⛔ TÀI KHOẢN ĐÃ BỊ KHÓA do vi phạm đăng nhập quá 2 máy! Vui lòng liên hệ Admin để mở lại.');
           return;
-        } else {
-          user.devices.push(currentDevice);
-          saveUsersToStorage();
+        }
+
+        if (!user.devices) user.devices = [];
+
+        if (!user.devices.includes(currentDevice)) {
+          if (user.devices.length >= 2) {
+            user.isLocked = true;
+            saveUsersToStorage();
+            alert(`🚨 CẢNH BÁO BẢO MẬT: Tài khoản "${user.username}" đã đăng nhập trên 2 máy [${user.devices.join(', ')}]. Đăng nhập máy thứ 3 (${currentDevice}) đã khiến TÀI KHOẢN BỊ KHÓA TỰ ĐỘNG!`);
+            return;
+          } else {
+            user.devices.push(currentDevice);
+            saveUsersToStorage();
+          }
         }
       }
 
@@ -525,7 +542,6 @@
       if(subTab === 'documents') document.getElementById('btnTabDocs').classList.add('active');
     }
 
-    // QUẢN LÝ USER & BÁO CÁO THỜI LƯỢNG HỌC DÀNH CHO ADMIN
     function formatTimeSeconds(seconds) {
       if(!seconds || seconds <= 0) return '0 phút';
       const hrs = Math.floor(seconds / 3600);
@@ -538,6 +554,7 @@
       return res;
     }
 
+    // DASHBOARD ADMIN
     function renderAdminUsers() {
       const tbody = document.getElementById('adminUsersTable');
       tbody.innerHTML = '';
@@ -555,7 +572,7 @@
             <td><b>${acc.name}</b></td>
             <td><code>${acc.username}</code></td>
             <td><b style="color:var(--primary-bright)">${formatTimeSeconds(watchSecs)}</b></td>
-            <td>${devs.length}/2 máy (${devs.join(', ')})</td>
+            <td>${acc.role === 'admin' ? 'Không giới hạn' : `${devs.length}/2 máy (${devs.join(', ')})`}</td>
             <td>
               ${acc.isLocked 
                 ? '<span class="status-badge badge-locked">🔒 ĐÃ BỊ KHÓA</span>' 
@@ -600,7 +617,7 @@
       }
     }
 
-    // THEO DÕI THỜI LƯỢNG XEM VIDEO REALTIME
+    // THEO DÕI THỜI LƯỢNG XEM VIDEO
     function setupVideoTracking() {
       const v = document.getElementById('mainVideo');
       v.addEventListener('play', () => {
@@ -618,15 +635,8 @@
         }
       });
 
-      v.addEventListener('pause', () => {
-        clearInterval(videoWatchTimer);
-        videoWatchTimer = null;
-      });
-
-      v.addEventListener('ended', () => {
-        clearInterval(videoWatchTimer);
-        videoWatchTimer = null;
-      });
+      v.addEventListener('pause', () => { clearInterval(videoWatchTimer); videoWatchTimer = null; });
+      v.addEventListener('ended', () => { clearInterval(videoWatchTimer); videoWatchTimer = null; });
     }
 
     // GIAO DIỆN KHÓA HỌC
@@ -694,9 +704,9 @@
               <div>
                 ${currentUser.role === 'admin' ? `
                   <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart(${cIdx})">+ Thêm Phần</button>
-                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteCourse(${cIdx})">🗑️ Xóa Khóa Học</button>
+                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteCourse(${cIdx})">🗑️ Xóa Khóa</button>
                 ` : ''}
-                <span style="margin-left: 10px;">📂 Open ▼</span>
+                <span style="margin-left:8px;">▼</span>
               </div>
             </div>
             <div class="parts-container" id="parts-${course.courseId}">
@@ -707,122 +717,108 @@
       });
     }
 
-    // THAO TÁC CỦA ADMIN (LƯU TRỰC TIẾP LÊN CLOUD FIREBASE)
-    function adminAddCourse() {
-      const title = prompt('Nhập Tên Khóa Học Mới:', `🎓 KHÓA ${allCoursesData.length + 1}: Chương trình mới`);
-      if(!title) return;
-
-      if(!allCoursesData) allCoursesData = [];
-      allCoursesData.push({
-        courseId: Date.now(),
-        courseTitle: title,
-        parts: [{ partId: Date.now(), type: 'sheet', partTitle: 'Phần 1: Thời khóa biểu & Lịch học', sheetUrl: 'https://docs.google.com' }]
-      });
-      saveCoursesToStorage();
-    }
-
-    function adminDeleteCourse(cIdx) {
-      if(confirm(`XÁC NHẬN: Bạn có chắc chắn muốn XÓA KHÓA HỌC "${allCoursesData[cIdx].courseTitle}"?`)) {
-        allCoursesData.splice(cIdx, 1);
-        saveCoursesToStorage();
-      }
-    }
-
-    function adminAddPart(cIdx) {
-      const course = allCoursesData[cIdx];
-      if (!course.parts) course.parts = [];
-      const partTitle = prompt('Nhập tên Phần mới:', `Phần ${course.parts.length + 1}: Chuyên đề mới`);
-      if(!partTitle) return;
-
-      course.parts.push({ partId: Date.now(), type: 'lessons', partTitle: partTitle, lessons: [] });
-      saveCoursesToStorage();
-    }
-
-    function adminDeletePart(cIdx, pIdx) {
-      if(confirm('Bạn có chắc muốn XÓA PHẦN NÀY?')) {
-        allCoursesData[cIdx].parts.splice(pIdx, 1);
-        saveCoursesToStorage();
-      }
-    }
-
-    function adminAddLesson(cIdx, pIdx) {
-      const part = allCoursesData[cIdx].parts[pIdx];
-      if(!part.lessons) part.lessons = [];
-      const title = prompt('Nhập Tên Bài Học Mới:'); if(!title) return;
-      const videoUrl = prompt('Nhập Link Video MP4:', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-      const docUrl = prompt('Nhập Link Google Drive / Tài liệu:', 'https://drive.google.com');
-
-      part.lessons.push({ title, videoUrl: videoUrl || '', docUrl: docUrl || '' });
-      saveCoursesToStorage();
-    }
-
-    function adminEditVideoUrl(cIdx, pIdx, lIdx) {
-      const lesson = allCoursesData[cIdx].parts[pIdx].lessons[lIdx];
-      const newUrl = prompt(`Sửa Link Video cho "${lesson.title}":`, lesson.videoUrl);
-      if(newUrl) {
-        lesson.videoUrl = newUrl;
-        saveCoursesToStorage();
-      }
-    }
-
-    function adminDeleteLesson(cIdx, pIdx, lIdx) {
-      if(confirm('Bạn có chắc muốn XÓA BÀI HỌC này?')) {
-        allCoursesData[cIdx].parts[pIdx].lessons.splice(lIdx, 1);
-        saveCoursesToStorage();
-      }
-    }
-
     function toggleElement(id) {
       const el = document.getElementById(id);
       if(el) el.classList.toggle('open');
     }
 
     function playLesson(title, videoUrl, docUrl) {
-      currentActiveLessonObj = { title, videoUrl, docUrl };
       document.getElementById('videoPlayerBox').style.display = 'block';
       document.getElementById('currentLessonTitle').innerText = title;
-      
       const v = document.getElementById('mainVideo');
-      v.src = videoUrl;
+      document.getElementById('videoSource').src = videoUrl;
+      v.load();
       v.play();
-
-      document.getElementById('videoPlayerBox').scrollIntoView({ behavior: 'smooth' });
+      currentActiveDocUrl = docUrl || 'https://drive.google.com';
+      document.getElementById('docNameDisplay').innerText = title + ' - Tài Liệu Đính Kèm';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function openLessonDoc() {
-      if(currentActiveLessonObj && currentActiveLessonObj.docUrl) {
-        window.open(currentActiveLessonObj.docUrl, '_blank');
+      if(currentActiveDocUrl) window.open(currentActiveDocUrl, '_blank');
+      else alert('Chưa có link tài liệu cho bài học này!');
+    }
+
+    // THAO TÁC SỬA KHÓA HỌC DÀNH CHO ADMIN
+    function adminAddCourse() {
+      const title = prompt('Nhập Tên Khóa Học Mới:'); if(!title) return;
+      allCoursesData.push({ courseId: Date.now(), courseTitle: title, parts: [] });
+      saveCoursesToStorage();
+    }
+
+    function adminDeleteCourse(cIdx) {
+      if(confirm('Bạn có chắc muốn xóa khóa học này?')) {
+        allCoursesData.splice(cIdx, 1);
+        saveCoursesToStorage();
       }
     }
 
-    // QUẢN LÝ DRIVE VÀ CHÁT NHÓM
-    function openGlobalDrive() {
-      window.open(globalDriveUrl, '_blank');
+    function adminAddPart(cIdx) {
+      const type = prompt('Nhập loại phần: "sheet" (Thời khóa biểu) hoặc "lessons" (Chứa bài học video):', 'lessons');
+      if(!type) return;
+      const title = prompt('Nhập Tiêu Đề Phần:'); if(!title) return;
+
+      if(type === 'sheet') {
+        const url = prompt('Nhập Link Google Sheet/Drive:'); if(!url) return;
+        allCoursesData[cIdx].parts.push({ partId: Date.now(), type: 'sheet', partTitle: title, sheetUrl: url });
+      } else {
+        allCoursesData[cIdx].parts.push({ partId: Date.now(), type: 'lessons', partTitle: title, lessons: [] });
+      }
+      saveCoursesToStorage();
     }
 
-    function adminEditGlobalDrive() {
-      const newUrl = prompt('Nhập URL Google Drive mới cho kho tài liệu:', globalDriveUrl);
+    function adminDeletePart(cIdx, pIdx) {
+      if(confirm('Xóa phần này?')) {
+        allCoursesData[cIdx].parts.splice(pIdx, 1);
+        saveCoursesToStorage();
+      }
+    }
+
+    function adminAddLesson(cIdx, pIdx) {
+      const title = prompt('Nhập Tên Bài Học:'); if(!title) return;
+      const videoUrl = prompt('Nhập Link Video MP4:'); if(!videoUrl) return;
+      const docUrl = prompt('Nhập Link Tài Liệu Đính Kèm (nếu có):', 'https://drive.google.com');
+
+      allCoursesData[cIdx].parts[pIdx].lessons.push({ title, videoUrl, docUrl });
+      saveCoursesToStorage();
+    }
+
+    function adminEditVideoUrl(cIdx, pIdx, lIdx) {
+      const newUrl = prompt('Nhập Link Video MP4 mới:', allCoursesData[cIdx].parts[pIdx].lessons[lIdx].videoUrl);
       if(newUrl) {
-        globalDriveUrl = newUrl;
-        db.ref('globalDriveUrl').set(globalDriveUrl);
-        alert('Đã cập nhật link Google Drive thành công!');
+        allCoursesData[cIdx].parts[pIdx].lessons[lIdx].videoUrl = newUrl;
+        saveCoursesToStorage();
       }
+    }
+
+    function adminDeleteLesson(cIdx, pIdx, lIdx) {
+      if(confirm('Xóa bài học này?')) {
+        allCoursesData[cIdx].parts[pIdx].lessons.splice(lIdx, 1);
+        saveCoursesToStorage();
+      }
+    }
+
+    // KHU VỰC TÀI LIỆU DRIVE & GROUP CHAT
+    function openGlobalDrive() { window.open(globalDriveUrl, '_blank'); }
+    function adminEditGlobalDrive() {
+      const url = prompt('Nhập Link Kho Tài Liệu Drive Mới:', globalDriveUrl);
+      if(url) db.ref('globalDriveUrl').set(url);
     }
 
     function handleSendChatMessage(e) {
       e.preventDefault();
       const input = document.getElementById('chatInputText');
       const text = input.value.trim();
-      if(!text || !currentUser) return;
+      if(!text) return;
 
-      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      db.ref('chatMessages').push({
-        senderName: currentUser.name,
-        senderUsername: currentUser.username,
+      const msgObj = {
+        sender: currentUser.name,
+        role: currentUser.role,
         text: text,
-        timestamp: timeStr
-      });
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
 
+      db.ref('chatMessages').push(msgObj);
       input.value = '';
     }
 
@@ -830,21 +826,20 @@
       const box = document.getElementById('chatMessagesBox');
       box.innerHTML = '';
       if(!msgsObj) {
-        box.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Chưa có tin nhắn nào. Hãy mở đầu cuộc trò chuyện!</div>';
+        box.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Chưa có tin nhắn nào. Hãy mở lời nhé!</div>';
         return;
       }
 
-      Object.values(msgsObj).forEach(m => {
-        const isSelf = currentUser && m.senderUsername === currentUser.username;
+      Object.values(msgsObj).forEach(msg => {
+        const isSelf = currentUser && currentUser.name === msg.sender;
         box.innerHTML += `
           <div class="chat-msg ${isSelf ? 'self' : ''}">
-            <div class="sender">${m.senderName}</div>
-            <div>${m.text}</div>
-            <div class="time">${m.timestamp || ''}</div>
+            <div class="sender">${msg.sender} ${msg.role === 'admin' ? '⭐' : ''}</div>
+            <div>${msg.text}</div>
+            <div class="time">${msg.time}</div>
           </div>
         `;
       });
-
       box.scrollTop = box.scrollHeight;
     }
   </script>
