@@ -167,6 +167,29 @@
     .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .badge-active { background: rgba(0, 184, 148, 0.2); color: var(--accent-green); }
     .badge-locked { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
+
+    /* KHUNG CHAT TRAO ĐỔI BÀI TẬP */
+    .chat-container {
+      background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; height: 500px; margin-top: 20px;
+    }
+    .chat-messages {
+      flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #141722; border-radius: 16px 16px 0 0;
+    }
+    .chat-message-item {
+      background: var(--bg-card); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); max-width: 80%;
+    }
+    .chat-message-item.mine {
+      background: rgba(108, 92, 231, 0.2); border-color: var(--primary); align-self: flex-end;
+    }
+    .chat-message-header {
+      font-size: 0.75rem; color: var(--primary-bright); margin-bottom: 4px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px;
+    }
+    .chat-input-area {
+      padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border); display: flex; gap: 10px; border-radius: 0 0 16px 16px;
+    }
+    .chat-input-area input {
+      flex-grow: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-dark); color: #fff; outline: none; font-family: var(--font-family);
+    }
   </style>
 </head>
 <body>
@@ -174,7 +197,7 @@
   <!-- MÀN HÌNH ĐĂNG NHẬP -->
   <div id="loginScreen">
     <div class="login-card">
-      <h2>🎓 STUDY Login</h2>
+      <h2>🎓 VACT Login</h2>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản</label>
@@ -214,7 +237,7 @@
       <div class="sub-sidebar">
         <div class="sub-sidebar-title">Danh Mục Chính</div>
         <button class="sub-nav-btn active" id="btnTabCourses" onclick="switchTab('courses')">📖 Khóa Học Của Tôi</button>
-        <button class="sub-nav-btn" id="btnTabDocs" onclick="switchTab('documents')">📁 Tài Liệu Học Tập</button>
+        <button class="sub-nav-btn" id="btnTabDocs" onclick="switchTab('documents')">📁 Tài Liệu & Thảo Luận</button>
         
         <div class="sub-sidebar-title" style="margin-top: 20px;">Tài Khoản</div>
         <div style="font-size: 0.85rem; color: var(--text-muted); padding: 0 12px;">
@@ -254,7 +277,7 @@
               <thead>
                 <tr>
                   <th>Mã Kích Hoạt</th>
-                  <th>Thuộc Khóa Lớn</th>
+                  <th>Thuộc Khóa Học Lớn</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -322,12 +345,27 @@
           <div id="coursesContainer" class="big-course-wrapper">Đang tải dữ liệu khóa học...</div>
         </section>
 
-        <!-- TAB TÀI LIỆU -->
+        <!-- TAB TÀI LIỆU & CHAT TRAO ĐỔI BÀI TẬP -->
         <section id="documentsTab" style="display: none;">
-          <div class="stat-card">
+          <div class="stat-card" style="margin-bottom: 20px;">
             <h4>📂 Kho Tài Liệu Drive Tổng Hợp</h4>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">Tổng hợp đề thi & tài liệu nâng cao</p>
             <button class="btn-ctrl" style="margin-top:16px;" onclick="window.open('https://drive.google.com')">Truy cập Drive ↗</button>
+          </div>
+
+          <div class="stat-card">
+            <h4>💬 Kênh Chat Trao Đổi Bài Tập & Giải Đáp Thắc Mắc</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">Thảo luận trực tiếp cùng mọi người trên hệ thống</p>
+            
+            <div class="chat-container">
+              <div class="chat-messages" id="chatMessagesBox">
+                <div style="color: var(--text-muted); text-align: center; margin-top: 20px;">Đang tải tin nhắn...</div>
+              </div>
+              <div class="chat-input-area">
+                <input type="text" id="chatMessageInput" placeholder="Nhập nội dung trao đổi bài tập..." onkeypress="handleChatKeyPress(event)">
+                <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="sendChatMessage()">Gửi Tin Nhắn</button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -421,6 +459,12 @@
       if (currentUser && currentUser.role === 'admin') { renderAdminCodes(); }
     });
 
+    // LẮNG NGHE TIN NHẮN CHAT REALTIME
+    db.ref('chatMessages').on('value', (snapshot) => {
+      const data = snapshot.val();
+      renderChatMessages(data);
+    });
+
     function saveUsersToStorage() { db.ref('users').set(userAccounts); }
     function saveBigCoursesToStorage() { db.ref('bigCoursesData').set(bigCoursesData); }
     function saveCodesToStorage() { db.ref('activationCodes').set(activationCodes); }
@@ -508,6 +552,54 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
+    // CÁC HÀM XỬ LÝ CHAT TRAO ĐỔI BÀI TẬP
+    function sendChatMessage() {
+      const input = document.getElementById('chatMessageInput');
+      const text = input.value.trim();
+      if(!text) return;
+
+      const messageObj = {
+        name: currentUser.name,
+        role: currentUser.role,
+        text: text,
+        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN')
+      };
+
+      db.ref('chatMessages').push(messageObj);
+      input.value = '';
+    }
+
+    function handleChatKeyPress(e) {
+      if(e.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    function renderChatMessages(data) {
+      const box = document.getElementById('chatMessagesBox');
+      if(!box) return;
+      box.innerHTML = '';
+
+      if(!data) {
+        box.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 20px;">Chưa có trao đổi nào. Hãy là người đầu tiên đặt câu hỏi!</div>';
+        return;
+      }
+
+      Object.values(data).forEach(msg => {
+        const isMine = currentUser && msg.name === currentUser.name;
+        box.innerHTML += `
+          <div class="chat-message-item ${isMine ? 'mine' : ''}">
+            <div class="chat-message-header">
+              <span><b>${msg.name}</b> ${msg.role === 'admin' ? '<span style="color:var(--warning)">(Admin)</span>' : ''}</span>
+              <span style="color: var(--text-muted); font-size: 0.7rem;">${msg.time}</span>
+            </div>
+            <div style="font-size: 0.9rem; word-break: break-word;">${msg.text}</div>
+          </div>
+        `;
+      });
+      box.scrollTop = box.scrollHeight;
+    }
+
     // KÍCH HOẠT KHÓA LỚN
     function activateCourseCode() {
       const codeInput = document.getElementById('activationCodeInput').value.trim();
@@ -532,9 +624,10 @@
       renderCoursesUI();
     }
 
-    // QUẢN LÝ MÃ KÍCH HOẠT CHO ADMIN (CHỌN KHÓA HỌC LỚN VÀ MÁY TỰ TẠO ID NGẪU NHIÊN)
+    // QUẢN LÝ MÃ KÍCH HOẠT CHO ADMIN
     function renderAdminCodes() {
       const tbody = document.getElementById('adminCodesTable');
+      if(!tbody) return;
       tbody.innerHTML = '';
       activationCodes.forEach((item, idx) => {
         const foundBC = bigCoursesData.find(bc => bc.bigCourseId === item.bigCourseId);
@@ -568,7 +661,6 @@
       }
 
       const selectedBigCourse = bigCoursesData[idx];
-      // Tự động tạo mã kích hoạt ngẫu nhiên
       const randomCode = 'VACT-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Math.floor(1000 + Math.random() * 9000);
 
       activationCodes.push({ code: randomCode, bigCourseId: selectedBigCourse.bigCourseId });
@@ -585,9 +677,10 @@
       }
     }
 
-    // QUẢN LÝ USER CHO ADMIN TỐI CAO (KHÔNG GIỚI HẠN THIẾT BỊ)
+    // QUẢN LÝ USER CHO ADMIN TỐI CAO
     function renderAdminUsers() {
       const tbody = document.getElementById('adminUsersTable');
+      if(!tbody) return;
       tbody.innerHTML = '';
       document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
 
@@ -639,9 +732,10 @@
       }
     }
 
-    // GIAO DIỆN HIỂN THỊ: KHÓA LỚN -> KHÓA 1,2,3... -> PHẦN -> BÀI HỌC
+    // GIAO DIỆN HIỂN THỊ KHÓA HỌC
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
+      if(!container) return;
       container.innerHTML = '';
 
       if (!bigCoursesData || bigCoursesData.length === 0) {
@@ -753,9 +847,7 @@
       });
     }
 
-    // --- CÁC HÀM THAO TÁC QUYỀN TỐI CAO CỦA ADMIN (THÊM / SỬA / XÓA TỪ LỚN ĐẾN NHỎ) ---
-
-    // 1. Quản lý Khóa Lớn
+    // --- CÁC HÀM THAO TÁC QUYỀN TỐI CAO CỦA ADMIN ---
     function adminAddBigCourse() {
       const title = prompt('Nhập tên Khóa Học Lớn mới (Ví dụ: 🔥 KHÓA LUYỆN THI ĐỢT 2):'); if(!title) return;
       const bigCourseId = 'BIG_' + Date.now();
@@ -783,7 +875,6 @@
       }
     }
 
-    // 2. Quản lý Khóa Nhỏ (Khóa 1, 2, 3...)
     function adminAddSubCourse(bcIdx) {
       const title = prompt('Nhập Tên Khóa Nhỏ (Ví dụ: 📖 Khóa 3: Hóa Học Tư Duy):'); if(!title) return;
       if(!bigCoursesData[bcIdx].subCourses) bigCoursesData[bcIdx].subCourses = [];
@@ -811,7 +902,6 @@
       }
     }
 
-    // 3. Quản lý Phần nhỏ
     function adminAddPart(bcIdx, scIdx) {
       const sc = bigCoursesData[bcIdx].subCourses[scIdx];
       if (!sc.parts) sc.parts = [];
@@ -846,7 +936,6 @@
       }
     }
 
-    // 4. Quản lý Bài Học & Link Video / Tài liệu
     function adminAddLesson(bcIdx, scIdx, pIdx) {
       const part = bigCoursesData[bcIdx].subCourses[scIdx].parts[pIdx];
       if(!part.lessons) part.lessons = [];
