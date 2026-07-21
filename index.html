@@ -147,6 +147,21 @@
     .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
     .badge-active { background: rgba(0, 184, 148, 0.2); color: var(--accent-green); }
     .badge-locked { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
+
+    /* KHU VỰC GROUP CHAT */
+    .chat-box {
+      background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border);
+      padding: 20px; margin-top: 24px; display: flex; flex-direction: column; height: 420px;
+    }
+    .chat-header { font-weight: 700; font-size: 1.1rem; margin-bottom: 12px; color: var(--primary-bright); display: flex; align-items: center; gap: 8px; }
+    .chat-messages { flex-grow: 1; overflow-y: auto; padding: 12px; background: #0c0e17; border-radius: 10px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-msg { background: var(--bg-card); padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 0.88rem; width: fit-content; }
+    .chat-msg.self { align-self: flex-end; background: var(--bg-sidebar-left); color: #fff; }
+    .chat-msg .sender { font-size: 0.72rem; color: var(--primary-bright); font-weight: bold; margin-bottom: 2px; }
+    .chat-msg.self .sender { color: #dcdde1; }
+    .chat-msg .time { font-size: 0.65rem; color: var(--text-muted); text-align: right; margin-top: 4px; }
+    .chat-input-row { display: flex; gap: 10px; }
+    .chat-input-row input { flex-grow: 1; padding: 10px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; color: #fff; outline: none; }
   </style>
 </head>
 <body>
@@ -154,7 +169,7 @@
   <!-- MÀN HÌNH ĐĂNG NHẬP -->
   <div id="loginScreen">
     <div class="login-card">
-      <h2>🎓 EduPortal Login</h2>
+      <h2>🎓 STUDY Login</h2>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản</label>
@@ -165,11 +180,11 @@
           <input type="password" id="password" placeholder="Mật khẩu" required>
         </div>
         <div class="form-group">
-          <label>Mã Thiết Bị / Máy đang dùng (Mô phỏng máy 1, máy 2, máy 3...)</label>
+          <label>Mã Thiết Bị / Máy đang dùng</label>
           <select id="deviceSelect">
-            <option value="Device_PC_1">Máy 1 (PC Nhà)</option>
+            <option value="Device_PC_1">Máy 1 (điện thoại)</option>
             <option value="Device_Laptop_2">Máy 2 (Laptop)</option>
-            <option value="Device_Phone_3">Máy 3 (Điện thoại - Đăng nhập máy này sẽ bị KHÓA!)</option>
+            <option value="Device_Phone_3">Máy 3 (KHÔNG ĐƯỢC DÙNG 3 MÁY)</option>
           </select>
         </div>
         <button type="submit" class="btn-submit">Đăng Nhập</button>
@@ -209,13 +224,13 @@
           <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
         </div>
 
-        <!-- DASHBOARD ADMIN: QUẢN LÝ USER & BẢO MẬT 2 MÁY -->
+        <!-- DASHBOARD ADMIN: QUẢN LÝ USER & BẢO MẬT 2 MÁY & XEM THỜI GIẢN HỌC -->
         <section id="adminAnalyticsSection" style="display: none;">
           <div class="stats-grid">
             <div class="stat-card">
               <span style="color: var(--text-muted); font-size: 0.85rem;">TỔNG THỜI GIAN HỌC TẬP HỆ THỐNG</span>
-              <div class="stat-big-num">4,725.05 Giờ</div>
-              <div class="badge-percent">23% ↑ tuần này</div>
+              <div class="stat-big-num" id="totalSystemWatchTime">0.00 Giờ</div>
+              <div class="badge-percent">Realtime Update</div>
             </div>
             <div class="stat-card">
               <span style="color: var(--text-muted); font-size: 0.85rem;">SỐ NGƯỜI DÙNG TỔNG CỘNG</span>
@@ -226,7 +241,7 @@
 
           <div class="stat-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <h3>Quản Lý Người Dùng & Giới Hạn Đăng Nhập (Tối Đa 2 Máy)</h3>
+              <h3>Quản Lý Người Dùng, Thiết Bị & Thời Lượng Xem Video</h3>
               <div style="display: flex; gap: 8px;">
                 <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateUser()">+ Tạo Tài Khoản Mới</button>
                 <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetUsersToDefault()">🔄 Reset User Mặc Định</button>
@@ -237,6 +252,7 @@
                 <tr>
                   <th>Tên học viên</th>
                   <th>Tài khoản</th>
+                  <th>Thời gian xem Video</th>
                   <th>Số máy đã dùng</th>
                   <th>Trạng thái</th>
                   <th>Thao tác Admin</th>
@@ -276,12 +292,31 @@
           <div id="coursesContainer">Đang tải dữ liệu khóa học...</div>
         </section>
 
-        <!-- TAB TÀI LIỆU -->
+        <!-- TAB TÀI LIỆU HỌC TẬP & GROUP CHAT -->
         <section id="documentsTab" style="display: none;">
           <div class="stat-card">
-            <h4>📂 Kho Tài Liệu Drive Tổng Hợp</h4>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">Tổng hợp đề thi & tài liệu nâng cao</p>
-            <button class="btn-ctrl" style="margin-top:16px;" onclick="window.open('https://drive.google.com')">Truy cập Drive ↗</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h4>📂 Kho Tài Liệu Drive Tổng Hợp</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">Tổng hợp đề thi & tài liệu nâng cao</p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="openGlobalDrive()">Truy cập Drive ↗</button>
+                <button id="btnAdminEditDrive" class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600; display: none;" onclick="adminEditGlobalDrive()">✏️ Sửa Link Drive (Admin)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHÒNG CHAT CỦA CÁC THÀNH VIÊN -->
+          <div class="chat-box">
+            <div class="chat-header">💬 Phòng Chat & Trao Đổi Lớp Học</div>
+            <div class="chat-messages" id="chatMessagesBox">
+              <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Đang tải tin nhắn...</div>
+            </div>
+            <form class="chat-input-row" onsubmit="handleSendChatMessage(event)">
+              <input type="text" id="chatInputText" placeholder="Nhập tin nhắn trao đổi với lớp học..." required>
+              <button type="submit" class="btn-ctrl" style="background: var(--bg-sidebar-left);">Gửi</button>
+            </form>
           </div>
         </section>
 
@@ -307,10 +342,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DỮ LIỆU KHỞI TẠO MẶC ĐỊNH (NẾU DATABASE TRÊN CLOUD RỖNG)
+    // DỮ LIỆU KHỞI TẠO MẶC ĐỊNH
     const defaultUserAccounts = [
-      { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false },
-      { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false }
+      { id: 1, name: 'Admin Quản Trị', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false, watchTimeSeconds: 0 },
+      { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false, watchTimeSeconds: 0 }
     ];
 
     const defaultCoursesData = [
@@ -332,8 +367,12 @@
 
     let userAccounts = [];
     let allCoursesData = [];
+    let globalDriveUrl = 'https://drive.google.com';
     let currentUser = null;
     let currentActiveLessonObj = null;
+
+    // THEO DÕI THỜI GI N XEM VIDEO
+    let videoWatchTimer = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE CLOUD
     db.ref('users').on('value', (snapshot) => {
@@ -344,8 +383,14 @@
         userAccounts = defaultUserAccounts;
         db.ref('users').set(defaultUserAccounts);
       }
-      if (currentUser && currentUser.role === 'admin') {
-        renderAdminUsers();
+      if (currentUser) {
+        // Cập nhật thông tin tài khoản hiện tại nếu admin thao tác
+        const updatedSelf = userAccounts.find(u => u.username === currentUser.username);
+        if (updatedSelf) currentUser = updatedSelf;
+        
+        if (currentUser.role === 'admin') {
+          renderAdminUsers();
+        }
       }
     });
 
@@ -360,6 +405,20 @@
       if (currentUser) {
         renderCoursesUI();
       }
+    });
+
+    db.ref('globalDriveUrl').on('value', (snapshot) => {
+      const val = snapshot.val();
+      if (val) {
+        globalDriveUrl = val;
+      } else {
+        db.ref('globalDriveUrl').set(globalDriveUrl);
+      }
+    });
+
+    db.ref('chatMessages').on('value', (snapshot) => {
+      const msgs = snapshot.val();
+      renderChatMessages(msgs);
     });
 
     // LƯU DỮ LIỆU LÊN FIREBASE
@@ -428,12 +487,15 @@
       if(currentUser.role === 'admin') {
         document.getElementById('adminAnalyticsIcon').style.display = 'flex';
         document.getElementById('adminCourseControls').style.display = 'flex';
+        document.getElementById('btnAdminEditDrive').style.display = 'inline-block';
         renderAdminUsers();
       } else {
         document.getElementById('adminAnalyticsIcon').style.display = 'none';
         document.getElementById('adminCourseControls').style.display = 'none';
+        document.getElementById('btnAdminEditDrive').style.display = 'none';
       }
 
+      setupVideoTracking();
       renderCoursesUI();
     }
 
@@ -458,20 +520,41 @@
     function switchTab(subTab) {
       document.getElementById('documentsTab').style.display = subTab === 'documents' ? 'block' : 'none';
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
+      document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
+      if(subTab === 'courses') document.getElementById('btnTabCourses').classList.add('active');
+      if(subTab === 'documents') document.getElementById('btnTabDocs').classList.add('active');
     }
 
-    // QUẢN LÝ USER DÀNH CHO ADMIN
+    // QUẢN LÝ USER & BÁO CÁO THỜI LƯỢNG HỌC DÀNH CHO ADMIN
+    function formatTimeSeconds(seconds) {
+      if(!seconds || seconds <= 0) return '0 phút';
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      let res = '';
+      if(hrs > 0) res += `${hrs} giờ `;
+      if(mins > 0 || hrs > 0) res += `${mins} phút `;
+      res += `${secs} giây`;
+      return res;
+    }
+
     function renderAdminUsers() {
       const tbody = document.getElementById('adminUsersTable');
       tbody.innerHTML = '';
       document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
 
+      let totalSecsAll = 0;
+
       userAccounts.forEach(acc => {
         const devs = acc.devices || [];
+        const watchSecs = acc.watchTimeSeconds || 0;
+        totalSecsAll += watchSecs;
+
         tbody.innerHTML += `
           <tr>
             <td><b>${acc.name}</b></td>
             <td><code>${acc.username}</code></td>
+            <td><b style="color:var(--primary-bright)">${formatTimeSeconds(watchSecs)}</b></td>
             <td>${devs.length}/2 máy (${devs.join(', ')})</td>
             <td>
               ${acc.isLocked 
@@ -485,6 +568,9 @@
           </tr>
         `;
       });
+
+      const totalHours = (totalSecsAll / 3600).toFixed(2);
+      document.getElementById('totalSystemWatchTime').innerText = `${totalHours} Giờ`;
     }
 
     function adminUnlockUser(userId) {
@@ -502,7 +588,7 @@
       const username = prompt('Nhập tên Tài khoản:'); if(!username) return;
       const password = prompt('Nhập Mật khẩu:'); if(!password) return;
       
-      userAccounts.push({ id: Date.now(), name, username, password, role: 'user', devices: [], isLocked: false });
+      userAccounts.push({ id: Date.now(), name, username, password, role: 'user', devices: [], isLocked: false, watchTimeSeconds: 0 });
       saveUsersToStorage();
     }
 
@@ -512,6 +598,35 @@
         if(idx !== -1) userAccounts.splice(idx, 1);
         saveUsersToStorage();
       }
+    }
+
+    // THEO DÕI THỜI LƯỢNG XEM VIDEO REALTIME
+    function setupVideoTracking() {
+      const v = document.getElementById('mainVideo');
+      v.addEventListener('play', () => {
+        if(!videoWatchTimer) {
+          videoWatchTimer = setInterval(() => {
+            if(currentUser && !v.paused && !v.ended) {
+              const acc = userAccounts.find(a => a.id === currentUser.id);
+              if(acc) {
+                acc.watchTimeSeconds = (acc.watchTimeSeconds || 0) + 1;
+                currentUser.watchTimeSeconds = acc.watchTimeSeconds;
+                db.ref(`users`).set(userAccounts);
+              }
+            }
+          }, 1000);
+        }
+      });
+
+      v.addEventListener('pause', () => {
+        clearInterval(videoWatchTimer);
+        videoWatchTimer = null;
+      });
+
+      v.addEventListener('ended', () => {
+        clearInterval(videoWatchTimer);
+        videoWatchTimer = null;
+      });
     }
 
     // GIAO DIỆN KHÓA HỌC
@@ -678,6 +793,59 @@
       if(currentActiveLessonObj && currentActiveLessonObj.docUrl) {
         window.open(currentActiveLessonObj.docUrl, '_blank');
       }
+    }
+
+    // QUẢN LÝ DRIVE VÀ CHÁT NHÓM
+    function openGlobalDrive() {
+      window.open(globalDriveUrl, '_blank');
+    }
+
+    function adminEditGlobalDrive() {
+      const newUrl = prompt('Nhập URL Google Drive mới cho kho tài liệu:', globalDriveUrl);
+      if(newUrl) {
+        globalDriveUrl = newUrl;
+        db.ref('globalDriveUrl').set(globalDriveUrl);
+        alert('Đã cập nhật link Google Drive thành công!');
+      }
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInputText');
+      const text = input.value.trim();
+      if(!text || !currentUser) return;
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      db.ref('chatMessages').push({
+        senderName: currentUser.name,
+        senderUsername: currentUser.username,
+        text: text,
+        timestamp: timeStr
+      });
+
+      input.value = '';
+    }
+
+    function renderChatMessages(msgsObj) {
+      const box = document.getElementById('chatMessagesBox');
+      box.innerHTML = '';
+      if(!msgsObj) {
+        box.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">Chưa có tin nhắn nào. Hãy mở đầu cuộc trò chuyện!</div>';
+        return;
+      }
+
+      Object.values(msgsObj).forEach(m => {
+        const isSelf = currentUser && m.senderUsername === currentUser.username;
+        box.innerHTML += `
+          <div class="chat-msg ${isSelf ? 'self' : ''}">
+            <div class="sender">${m.senderName}</div>
+            <div>${m.text}</div>
+            <div class="time">${m.timestamp || ''}</div>
+          </div>
+        `;
+      });
+
+      box.scrollTop = box.scrollHeight;
     }
   </script>
 </body>
