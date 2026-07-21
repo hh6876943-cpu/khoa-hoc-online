@@ -179,8 +179,8 @@
       <!-- ICON SIDEBAR -->
       <div class="icon-sidebar">
         <div class="icon-group">
-          <div class="nav-icon active" onclick="switchMainTab('learn')" title="Học tập">🏠</div>
-          <div class="nav-icon" id="adminAnalyticsIcon" onclick="switchMainTab('analytics')" style="display:none;" title="Thống kê Admin">📊</div>
+          <div class="nav-icon active" onclick="switchMainTab(event, 'learn')" title="Học tập">🏠</div>
+          <div class="nav-icon" id="adminAnalyticsIcon" onclick="switchMainTab(event, 'analytics')" style="display:none;" title="Thống kê Admin">📊</div>
         </div>
         <div class="nav-icon" onclick="handleLogout()" title="Đăng xuất">⚙️</div>
       </div>
@@ -255,7 +255,7 @@
             <div class="doc-below-video">
               <div>
                 <b>📎 Tài Liệu Bài Học Này:</b>
-                <span id="docNameDisplay" style="color: var(--text-muted); margin-left: 8px;">Tài liệu hướng dẫn đính kèm</span>
+                <span id="docNameDisplay" style="color: var(--text-muted); margin-left: 8px;">Tài liệu đính kèm</span>
               </div>
               <div style="display: flex; gap: 8px;">
                 <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="openLessonDoc()">Mở Tài Liệu ↗</button>
@@ -394,7 +394,7 @@
 
     function handleLogout() { location.reload(); }
 
-    function switchMainTab(tab) {
+    function switchMainTab(event, tab) {
       document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
       document.getElementById('documentsTab').style.display = 'none';
       document.getElementById('coursesTab').style.display = 'none';
@@ -407,12 +407,23 @@
         document.getElementById('coursesTab').style.display = 'block';
         document.getElementById('pageTitle').innerText = 'Hệ Thống Học Tập';
       }
-      event.currentTarget.classList.add('active');
+      if(event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+      }
     }
 
     function switchTab(subTab) {
-      document.getElementById('documentsTab').style.display = subTab === 'documents' ? 'block' : 'none';
-      document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
+      document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      if(subTab === 'documents') {
+        document.getElementById('documentsTab').style.display = 'block';
+        document.getElementById('coursesTab').style.display = 'none';
+        document.getElementById('btnTabDocs').classList.add('active');
+      } else {
+        document.getElementById('documentsTab').style.display = 'none';
+        document.getElementById('coursesTab').style.display = 'block';
+        document.getElementById('btnTabCourses').classList.add('active');
+      }
     }
 
     // ADMIN QUẢN LÝ USER
@@ -604,6 +615,7 @@
       currentActiveLessonObj = { title, videoUrl, docUrl };
       document.getElementById('videoPlayerBox').style.display = 'block';
       document.getElementById('currentLessonTitle').innerText = title;
+      document.getElementById('docNameDisplay').innerText = `Tài liệu đi kèm bài: ${title}`;
       
       const v = document.getElementById('mainVideo');
       v.src = videoUrl;
