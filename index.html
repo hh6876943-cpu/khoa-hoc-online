@@ -1,3 +1,105 @@
+
+Trò chuyện với Gemini
+tại sao web chạy trên điện thoại chậm và video phát trên điện thoại không thể phóng to được, và có cách nào thu danh mục chính vào để không vướng k
+
+Chào bạn, mình hoàn toàn hiểu sự bất tiện của bạn khi trải nghiệm trang web trên điện thoại. Dựa vào mã nguồn bạn cung cấp, mình xin giải thích rõ nguyên nhân và hướng dẫn bạn cách sửa chi tiết cho từng vấn đề nhé.
+
+1. Tại sao web chạy trên điện thoại chậm và giao diện bị vướng?
+Nguyên nhân chính khiến web chạy chậm và hiển thị không tốt trên điện thoại là do thiếu mã CSS hỗ trợ giao diện di động (Responsive).
+
+Cụ thể, thanh menu chứa các biểu tượng (.icon-sidebar) được cố định độ rộng là 70px.  
+DOCX
+
+Thanh "Danh Mục Chính" (.sub-sidebar) được cố định độ rộng là 260px và bị cấm thu nhỏ (flex-shrink: 0;).  
+DOCX
+
+Tổng cộng hai thanh này chiếm tới 330px. Trên màn hình điện thoại thông thường (rộng khoảng 375px - 414px), phần nội dung chính (.main-content) gần như không còn chỗ trống để hiển thị. Điều này khiến trình duyệt điện thoại phải gồng gánh việc tính toán hiển thị, gây giật lag và làm giao diện bị bóp méo.  
+DOCX
+
+2. Tại sao video trên điện thoại không thể phóng to?
+Nguyên nhân đến từ hai yếu tố trong mã nguồn của bạn:
+
+Lớp phủ chặn tương tác: Bạn đang sử dụng một thẻ div có class là .iframe-blocker (kích thước 70x50px) nằm đè lên góc trên cùng bên phải của video iframe để chặn nút chuyển hướng của Google Drive. Lớp phủ này vô tình chặn luôn các thao tác của người dùng trên màn hình cảm ứng tại khu vực đó (bao gồm cả thao tác nhấn đúp để phóng to/thu nhỏ trên một số trình duyệt).  
+DOCX
++ 1
+
+Thiếu nút Fullscreen toàn màn hình: Thẻ <video> hiện tại có thuộc tính playsinline (ngăn video tự động mở toàn màn hình trên iOS) nhưng lại không có cơ chế riêng biệt để người dùng chủ động phóng to.  
+DOCX
+
+3. Cách khắc phục: Thu gọn "Danh Mục Chính" và tối ưu di động
+Để giải quyết cả 3 vấn đề (giúp web nhẹ hơn trên mobile, ẩn được danh mục chính, và có không gian xem video), bạn chỉ cần bổ sung một đoạn mã nhỏ vào file hiện tại.
+
+Bước 1: Thêm nút "Ẩn/Hiện Danh Mục" và "Phóng to Video" vào HTML
+Tìm đến đoạn có class page-header và sửa lại như sau (thêm nút Toggle):
+
+HTML
+<div class="page-header">
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <!-- Nút mới thêm để ẩn/hiện danh mục -->
+    <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="toggleSubSidebar()">☰ Danh Mục</button>
+    <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
+  </div>
+  <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
+</div>
+Bước 2: Thêm CSS để hỗ trợ điện thoại (Responsive)
+Bạn copy đoạn mã CSS sau và dán vào ngay trước thẻ đóng </style>:
+
+CSS
+/* --- CSS THÊM VÀO ĐỂ SỬA LỖI --- */
+/* Class dùng để ẩn Danh mục chính khi ấn nút */
+.sub-sidebar.hidden {
+  display: none !important;
+}
+
+/* Tối ưu giao diện cho màn hình điện thoại */
+@media (max-width: 768px) {
+  .sub-sidebar {
+    position: absolute;
+    left: 70px;
+    height: 100vh;
+    z-index: 100;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    display: none; /* Mặc định ẩn trên điện thoại cho đỡ vướng */
+  }
+  
+  /* Cho phép video hiển thị chiếm trọn màn hình hơn trên mobile */
+  .media-player-container {
+    padding: 10px;
+  }
+  
+  .page-title {
+    font-size: 1.2rem;
+  }
+}
+Bước 3: Thêm mã JavaScript để nút hoạt động
+Bạn cuộn xuống dưới cùng, tìm đến thẻ <script> và dán đoạn hàm này vào bất kỳ đâu bên trong (ví dụ dưới hàm switchTab):
+
+JavaScript
+// Hàm ẩn/hiện Danh mục chính
+function toggleSubSidebar() {
+  const sidebar = document.querySelector('.sub-sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('hidden');
+  }
+}
+Mẹo thêm cho việc xem Video:
+Do bạn đang chèn iframe của Google Drive, cách tốt nhất để xem rõ trên điện thoại là xoay ngang màn hình điện thoại. Việc chúng ta ẩn được cái "Danh Mục Chính" bằng các đoạn code trên sẽ giúp iframe video có không gian tự động giãn to ra toàn bộ màn hình ngang của điện thoại, từ đó bạn sẽ không cần phải dùng ngón tay để zoom nữa.
+
+hãy chỉnh sửa giúp tôi và gửi toàn bộ code cho tôi
+
+Dưới đây là toàn bộ mã nguồn của trang web sau khi đã được bổ sung thêm nút chuyển đổi hiển thị (Toggle button), các đoạn mã CSS để tối ưu giao diện trên thiết bị di động (Responsive) và hàm xử lý JavaScript.
+
+Tôi đã xuất file ra định dạng .txt để bạn có thể tải về, hoặc bạn có thể sao chép trực tiếp từ khối mã bên dưới:
+
+Biểu tượng TXT
+khoa_hoc_online_v2
+ TXT 
+Đang mở
+
+
+
+Gemini là AI và có thể mắc sai sót.
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -182,6 +284,40 @@
     .chat-input-area input {
       flex-grow: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-dark); color: #fff; outline: none; font-family: var(--font-family);
     }
+  
+    /* --- CSS THÊM VÀO ĐỂ TỐI ƯU GIAO DIỆN DI ĐỘNG --- */
+    .sub-sidebar.hidden {
+      display: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      .sub-sidebar {
+        position: absolute;
+        left: 70px;
+        height: 100vh;
+        z-index: 100;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+        display: none; 
+      }
+      .sub-sidebar.show-mobile {
+        display: flex !important;
+      }
+      .media-player-container {
+        padding: 10px;
+      }
+      .page-title {
+        font-size: 1.2rem;
+      }
+      .page-header {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 15px;
+      }
+      .activation-box {
+         flex-direction: column;
+         align-items: stretch;
+      }
+    }
   </style>
 </head>
 <body>
@@ -236,7 +372,10 @@
       <!-- MAIN CONTENT -->
       <div class="main-content">
         <div class="page-header">
-          <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="toggleSubSidebar()">☰ Danh Mục</button>
+            <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
+          </div>
           <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
         </div>
         <!-- DASHBOARD ADMIN -->
@@ -480,6 +619,16 @@
       renderCoursesUI();
     }
     function handleLogout() { location.reload(); }
+    
+    // Hàm ẩn/hiện Danh mục chính cho Responsive
+    function toggleSubSidebar() {
+      const sidebar = document.querySelector('.sub-sidebar');
+      if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('show-mobile');
+      } else {
+        sidebar.classList.toggle('hidden');
+      }
+    }
     function switchMainTab(tab) {
       document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
       document.getElementById('documentsTab').style.display = 'none';
@@ -625,8 +774,10 @@
     function adminCreateActivationCode() {
       if(!bigCoursesData || bigCoursesData.length === 0) { alert('Chưa có khóa học lớn nào!'); return; }
       
-      let listStr = "Chọn Khóa Học Lớn tương ứng:\n";
-      bigCoursesData.forEach((bc, index) => { listStr += `${index + 1}. ${bc.bigCourseTitle}\n`; });
+      let listStr = "Chọn Khóa Học Lớn tương ứng:
+";
+      bigCoursesData.forEach((bc, index) => { listStr += `${index + 1}. ${bc.bigCourseTitle}
+`; });
       
       const choice = prompt(listStr);
       if(!choice) return;
@@ -711,7 +862,9 @@
     function adminAddPart(bigIdx, subIdx) {
       const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Google Sheet hoặc Phần 2: Bài học):');
       if(!title) return;
-      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video / File)', '1');
+      const typeChoice = prompt('Loại phần này là gì?
+1. Google Sheet / Docs / Drive nhúng trực tiếp
+2. Danh sách bài học (Video / File)', '1');
       
       let partObj = { partId: Date.now(), partTitle: title };
       if(typeChoice === '1') {
@@ -890,3 +1043,5 @@
   </script>
 </body>
 </html>
+khoa_hoc_online_v2.txt
+Đang hiển thị khoa_hoc_online_v2.txt.
