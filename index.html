@@ -7,60 +7,6 @@ HTML
   </div>
   <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
 </div>
-CSS
-/* --- CSS THÊM VÀO ĐỂ SỬA LỖI --- */
-/* Class dùng để ẩn Danh mục chính khi ấn nút */
-.sub-sidebar.hidden {
-  display: none !important;
-}
-
-/* Tối ưu giao diện cho màn hình điện thoại */
-@media (max-width: 768px) {
-  .sub-sidebar {
-    position: absolute;
-    left: 70px;
-    height: 100vh;
-    z-index: 100;
-    box-shadow: 10px 0 20px rgba(0,0,0,0.5);
-    display: none; /* Mặc định ẩn trên điện thoại cho đỡ vướng */
-  }
-  
-  /* Cho phép video hiển thị chiếm trọn màn hình hơn trên mobile */
-  .media-player-container {
-    padding: 10px;
-  }
-  
-  .page-title {
-    font-size: 1.2rem;
-  }
-}
-
-JavaScript
-// Hàm ẩn/hiện Danh mục chính
-function toggleSubSidebar() {
-  const sidebar = document.querySelector('.sub-sidebar');
-  if (sidebar) {
-    sidebar.classList.toggle('hidden');
-  }
-}
-Mẹo thêm cho việc xem Video:
-Do bạn đang chèn iframe của Google Drive, cách tốt nhất để xem rõ trên điện thoại là xoay ngang màn hình điện thoại. Việc chúng ta ẩn được cái "Danh Mục Chính" bằng các đoạn code trên sẽ giúp iframe video có không gian tự động giãn to ra toàn bộ màn hình ngang của điện thoại, từ đó bạn sẽ không cần phải dùng ngón tay để zoom nữa.
-
-hãy chỉnh sửa giúp tôi và gửi toàn bộ code cho tôi
-
-Dưới đây là toàn bộ mã nguồn của trang web sau khi đã được bổ sung thêm nút chuyển đổi hiển thị (Toggle button), các đoạn mã CSS để tối ưu giao diện trên thiết bị di động (Responsive) và hàm xử lý JavaScript.
-
-Tôi đã xuất file ra định dạng .txt để bạn có thể tải về, hoặc bạn có thể sao chép trực tiếp từ khối mã bên dưới:
-
-Biểu tượng TXT
-khoa_hoc_online_v2
- TXT 
-Đang mở
-
-
-
-Gemini là AI và có thể mắc sai sót.
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
