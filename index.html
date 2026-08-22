@@ -178,15 +178,14 @@
     .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ TỐI ƯU DÀNH RIÊNG CHO YOUTUBE PLAYER (CHE TIÊU ĐỀ, SHARE, LOGO, CHẶN CHUYỂN HƯỚNG) */
+    /* CHE TIÊU ĐỀ & NÚT KÊNH TRÊN CÙNG KHI NGHỈ HOẶC PHÁT VIDEO */
     .yt-blocker-top {
-      position: absolute; top: 0; left: 0; width: 100%; height: 75px; z-index: 10; background: transparent; cursor: default;
+      position: absolute; top: 0; left: 0; width: 100%; height: 60px; z-index: 10; background: transparent; pointer-events: none;
     }
+
+    /* CHE LOGO YOUTUBE & LINK Ở GÓC DƯỚI PHẢI (CHỈ CHE LOGO, NÚT TOÀN MÀN HÌNH/CÔNG CỤ VẪN DÙNG BÌNH THƯỜNG) */
     .yt-blocker-bottom-right {
-      position: absolute; bottom: 35px; right: 0; width: 120px; height: 60px; z-index: 10; background: transparent; cursor: default;
-    }
-    .yt-blocker-bottom-left {
-      position: absolute; bottom: 35px; left: 0; width: 250px; height: 60px; z-index: 10; background: transparent; cursor: default;
+      position: absolute; bottom: 0; right: 45px; width: 110px; height: 45px; z-index: 10; background: transparent; pointer-events: auto; cursor: default;
     }
 
     .iframe-blocker {
@@ -369,7 +368,7 @@
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
             <h3 id="currentMediaTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Nội dung bài học</h3>
             
-            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME / YOUTUBE + LỚP PHỦ CHẶN -->
+            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME / YOUTUBE -->
             <div class="media-wrapper" id="mediaContainerWrapper"></div>
             
             <!-- KHUNG HIỂN THỊ TÀI LIỆU NHÚNG ĐÍNH KỀM NẾU CÓ -->
@@ -423,7 +422,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DỮ LIỆU MẶC ĐỊNH (Đã cập nhật mật khẩu Admin mới: hhh@123456)
+    // DỮ LIỆU MẶC ĐỊNH
     const defaultBigCoursesData = [
       {
         bigCourseId: 'VACT_BIG_999',
@@ -477,7 +476,6 @@
       const data = snapshot.val();
       if (data) { 
         userAccounts = data; 
-        // Đảm bảo mật khẩu admin cập nhật chính xác
         const adminAcc = userAccounts.find(a => a.username === 'admin');
         if (adminAcc && adminAcc.password !== 'hhh@123456') {
           adminAcc.password = 'hhh@123456';
@@ -634,7 +632,7 @@
       return embedUrl;
     }
 
-    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG (ẨN TOÀN BỘ LOGO/LINK CHUYỂN HƯỚNG YOUTUBE)
+    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP (GIỮ THANH CÔNG CỤ, CHE LOGO/TIÊU ĐỀ/LINK SANG YOUTUBE)
     function playMediaContent(title, mediaUrl, docUrl) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
@@ -658,26 +656,25 @@
       if (!mediaUrl) {
         wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có nội dung hiển thị</div>';
       } else if (ytId) {
-        // NHÚNG YOUTUBE BẢO MẬT CÙNG LỚP PHỦ CHE TIÊU ĐỀ/LOGO/NÚT MỞ SANG YOUTUBE
+        // CẤU HÌNH YOUTUBE BẢO MẬT GIỮ LẠI THANH CÔNG CỤ CƠ BẢN NHƯNG Che LOGO/LINK LIÊN KẾT
         wrapper.innerHTML = `
           <div id="ytPlayerDiv"></div>
-          <div class="yt-blocker-top" title="Hệ thống Học trực tuyến"></div>
+          <div class="yt-blocker-top"></div>
           <div class="yt-blocker-bottom-right" title="Hệ thống Học trực tuyến"></div>
-          <div class="yt-blocker-bottom-left" title="Hệ thống Học trực tuyến"></div>
         `;
 
         ytPlayerInstance = new YT.Player('ytPlayerDiv', {
           videoId: ytId,
           playerVars: {
             'autoplay': 1,
-            'controls': 1,
-            'modestbranding': 1,
-            'rel': 0,
-            'showinfo': 0,
-            'fs': 1,
+            'controls': 1,          // Giữ nguyên các nút Play/Pause/Thanh thời gian/Âm lượng
+            'modestbranding': 1,    // Bỏ logo YouTube lớn
+            'rel': 0,               // Không gợi ý video kênh khác
+            'showinfo': 0,          // Tắt thông tin tiêu đề
+            'fs': 1,                // Giữ nút Toàn màn hình
             'playsinline': 1,
             'enablejsapi': 1,
-            'origin': window.location.origin
+            'widget_referrer': window.location.origin
           }
         });
       } else if (mediaUrl.endsWith('.mp4') || mediaUrl.includes('commondatastorage.googleapis.com')) {
