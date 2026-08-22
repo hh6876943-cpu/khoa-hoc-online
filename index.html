@@ -123,12 +123,12 @@
     .data-table th, .data-table td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     .data-table th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
 
-    /* GRID KHÓA HỌC LỚN MỚI */
+    /* GIAO DIỆN GRID THẺ KHÓA HỌC LỚN (CARDS) */
     .big-courses-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 24px;
-      margin-top: 20px;
+      margin-bottom: 24px;
     }
     .big-course-card {
       background: var(--bg-panel);
@@ -141,63 +141,102 @@
       cursor: pointer;
     }
     .big-course-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(108, 92, 231, 0.2);
-      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(108, 92, 231, 0.25);
+      border-color: var(--primary-bright);
     }
-    .big-course-thumb {
+    .card-thumb-container {
+      position: relative;
       width: 100%;
       height: 170px;
-      object-fit: cover;
       background-color: var(--bg-card);
     }
-    .big-course-body {
-      padding: 18px;
+    .card-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-badge-target {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(108, 92, 231, 0.9);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .card-badge-type {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0, 184, 148, 0.9);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .card-body {
+      padding: 20px;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
+      justify-content: space-between;
     }
-    .big-course-title {
+    .card-title {
       font-size: 1.15rem;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       line-height: 1.4;
     }
-    .big-course-info {
+    .card-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
     }
-    .big-course-price {
+    .card-price {
       font-size: 1.1rem;
       font-weight: 700;
-      color: var(--accent-green);
-      margin-top: auto;
-      padding-top: 12px;
+      color: var(--primary-bright);
+    }
+    .card-admin-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
     }
 
-    .btn-back-nav {
-      background: var(--bg-hover);
-      color: var(--primary-bright);
+    /* BREADCRUMB BẬC CẤP KHÓA HỌC */
+    .breadcrumb-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      background: var(--bg-panel);
+      padding: 12px 20px;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      padding: 10px 18px;
-      border-radius: 10px;
+    }
+    .breadcrumb-item {
+      color: var(--primary-bright);
       cursor: pointer;
       font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
     }
-    .btn-back-nav:hover {
-      background: var(--primary);
-      color: #fff;
-    }
+    .breadcrumb-item:hover { text-decoration: underline; }
+    .breadcrumb-current { color: var(--text-muted); }
 
+    /* DANH SÁCH KHÓA HỌC NHỎ VÀ CẤU TRÚC PHẦN BÀI HỌC */
     .course-card-box {
       background: var(--bg-card); border-radius: 14px; padding: 18px; border: 1px solid var(--border); margin-bottom: 16px;
     }
@@ -220,232 +259,4 @@
     
     .lesson-item {
       padding: 10px 14px; background: var(--bg-card); border-radius: 8px; margin-bottom: 6px;
-      display: flex; justify-content: space-between; align-items: center; transition: 0.2s; font-size: 0.9rem; cursor: pointer;
-    }
-    .lesson-item:hover { background: var(--bg-hover); }
-
-    /* NÚT TÙY CHỈNH ADMIN */
-    .admin-btn-sm {
-      background: var(--bg-sidebar-left); color: #fff; border: none; padding: 4px 10px; border-radius: 6px;
-      font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-left: 6px;
-    }
-    .admin-btn-warning { background: var(--warning); }
-    .admin-btn-danger { background: var(--danger); }
-    .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-    /* FRAME HIỂN THỊ NỘI DUNG NHÚNG TRỰC TIẾP */
-    .media-player-container {
-      background: var(--bg-panel); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
-    }
-    .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
-    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    
-    /* LỚP PHỦ CHE TIÊU ĐỀ VÀ NÚT CHUYỂN HƯỚNG YOUTUBE */
-    .yt-blocker-top {
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 80px; 
-      z-index: 20; 
-      background: rgba(0, 0, 0, 0.01);
-      pointer-events: auto !important;
-    }
-
-    .yt-blocker-bottom-right {
-      position: absolute; 
-      bottom: 0; 
-      right: 0; 
-      width: 180px; 
-      height: 60px; 
-      z-index: 20; 
-      background: rgba(0, 0, 0, 0.01);
-      pointer-events: auto !important;
-    }
-
-    .yt-blocker-bottom-left {
-      position: absolute; 
-      bottom: 0; 
-      left: 0; 
-      width: 90px; 
-      height: 60px; 
-      z-index: 20; 
-      background: rgba(0, 0, 0, 0.01);
-      pointer-events: auto !important;
-    }
-
-    .iframe-blocker {
-      position: absolute; top: 0; right: 0; width: 100px; height: 60px; z-index: 10; background: transparent; pointer-events: none;
-    }
-
-    .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
-    .btn-ctrl:hover { background: var(--bg-sidebar-left); }
-
-    .doc-below-container {
-      margin-top: 16px; padding: 16px; background: var(--bg-card); border-radius: 10px; display: flex; flex-direction: column; gap: 12px;
-    }
-
-    .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
-    .badge-active { background: rgba(0, 184, 148, 0.2); color: var(--accent-green); }
-    .badge-locked { background: rgba(231, 76, 60, 0.2); color: var(--danger); }
-
-    /* KHUNG CHAT TRAO ĐỔI BÀI TẬP */
-    .chat-container {
-      background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; height: 500px; margin-top: 20px;
-    }
-    .chat-messages {
-      flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #141722; border-radius: 16px 16px 0 0;
-    }
-    .chat-message-item {
-      background: var(--bg-card); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); max-width: 80%;
-    }
-    .chat-message-item.mine {
-      background: rgba(108, 92, 231, 0.2); border-color: var(--primary); align-self: flex-end;
-    }
-    .chat-message-header {
-      font-size: 0.75rem; color: var(--primary-bright); margin-bottom: 4px; font-weight: 600; display: flex; justify-content: space-between; gap: 10px;
-    }
-    .chat-input-area {
-      padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border); display: flex; gap: 10px; border-radius: 0 0 16px 16px;
-    }
-    .chat-input-area input {
-      flex-grow: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-dark); color: #fff; outline: none; font-family: var(--font-family);
-    }
-  </style>
-</head>
-<body>
-
-  <div id="loginScreen">
-    <div class="login-card">
-      <h2>🎓 STUDY Login</h2>
-      <form onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label>Tài khoản</label>
-          <input type="text" id="username" placeholder="admin hoặc user" required>
-        </div>
-        <div class="form-group">
-          <label>Mật khẩu</label>
-          <input type="password" id="password" placeholder="Mật khẩu" required>
-        </div>
-        <div class="form-group">
-          <label>Mã Thiết Bị / Máy đang dùng</label>
-          <select id="deviceSelect">
-            <option value="Device_PC_1">Máy 1 (Điện thoại/PC)</option>
-            <option value="Device_Laptop_2">Máy 2 (Laptop)</option>
-            <option value="Device_Phone_3">Máy 3 (Giới hạn bảo mật user)</option>
-          </select>
-        </div>
-        <button type="submit" class="btn-submit">Đăng Nhập</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="appScreen">
-    <div class="app-container">
-      
-      <div class="icon-sidebar">
-        <div class="icon-group">
-          <div class="nav-icon active" onclick="switchMainTab('learn')" title="Học tập">🏠</div>
-          <div class="nav-icon" id="adminAnalyticsIcon" onclick="switchMainTab('analytics')" style="display:none;" title="Thống kê Admin">📊</div>
-        </div>
-        <div class="nav-icon" onclick="handleLogout()" title="Đăng xuất">⚙️</div>
-      </div>
-
-      <div class="sub-sidebar" id="subSidebar">
-        <div class="sub-sidebar-header">
-          <div class="sub-sidebar-title">Danh Mục Chính</div>
-          <button class="toggle-sidebar-btn" onclick="toggleSidebar()" id="sidebarCloseBtn" title="Thu gọn danh mục">◀</button>
-        </div>
-        <button class="sub-nav-btn active" id="btnTabCourses" onclick="switchTab('courses')">📖 Khóa Học Của Tôi</button>
-        <button class="sub-nav-btn" id="btnTabDocs" onclick="switchTab('documents')">📁 Thảo Luận & Hỏi Đáp</button>
-        
-        <div class="sub-sidebar-title" style="margin-top: 20px;">Tài Khoản</div>
-        <div style="font-size: 0.85rem; color: var(--text-muted); padding: 0 12px;">
-          Đang truy cập: <br><b id="userLabelName" style="color: #fff;">-</b>
-        </div>
-      </div>
-
-      <div class="main-content">
-        <div class="page-header">
-          <div class="page-title-box">
-            <button class="toggle-sidebar-btn" id="sidebarOpenBtn" onclick="toggleSidebar()" style="display: none; width:36px; height:36px; font-size:1rem;" title="Mở rộng danh mục">▶</button>
-            <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
-          </div>
-          <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
-        </div>
-
-        <section id="adminAnalyticsSection" style="display: none;">
-          <div class="stats-grid">
-            <div class="stat-card">
-              <span style="color: var(--text-muted); font-size: 0.85rem;">TỔNG THỜI GIAN HỌC TẬP HỆ THỐNG</span>
-              <div class="stat-big-num">4,725.05 Giờ</div>
-              <div class="badge-percent">23% ↑ tuần này</div>
-            </div>
-            <div class="stat-card">
-              <span style="color: var(--text-muted); font-size: 0.85rem;">SỐ NGƯỜI DÙNG TỔNG CỘNG</span>
-              <div class="stat-big-num" id="totalUserCount">0 Người</div>
-              <span style="color: var(--accent-green); font-size: 0.85rem;">● Đang hoạt động</span>
-            </div>
-          </div>
-
-          <div class="stat-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <h3>Quản Lý Mã Kích Hoạt Khóa Lớn</h3>
-              <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateActivationCode()">+ Tạo Mã Kích Hoạt Mới</button>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Mã Kích Hoạt</th>
-                  <th>Thuộc Khóa Học Lớn</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody id="adminCodesTable"></tbody>
-            </table>
-          </div>
-
-          <div class="stat-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <h3>Quản Lý Người Dùng (Admin: Toàn quyền)</h3>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateUser()">+ Tạo Tài Khoản Mới</button>
-                <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetUsersToDefault()">🔄 Reset User Mặc Định</button>
-              </div>
-            </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Tên học viên</th>
-                  <th>Tài khoản</th>
-                  <th>Số máy đã dùng</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác Admin</th>
-                </tr>
-              </thead>
-              <tbody id="adminUsersTable"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section id="coursesTab">
-          <div class="activation-box">
-            <span style="font-weight: 600; color: var(--primary-bright);">🔑 Kích hoạt khóa học lớn:</span>
-            <input type="text" id="activationCodeInput" placeholder="Nhập mã kích hoạt khóa học lớn (do Admin cấp)...">
-            <button class="btn-ctrl" style="background: var(--accent-green); color:#000; font-weight:600;" onclick="activateCourseCode()">Kích Hoạt Ngay</button>
-          </div>
-
-          <div id="adminGlobalCourseControls" class="admin-action-bar" style="display: none;">
-            <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminAddBigCourse()">➕ Thêm Khóa Học Lớn Mới</button>
-            <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Học Mặc Định</button>
-          </div>
-
-          <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
-            <h3 id="currentMediaTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Nội dung bài học</h3>
-            
-            <div class="media-wrapper" id="mediaContainerWrapper"></div>
-            
-            <div class="doc-below-container" id="docBelowContainer" style="display: none;">
-              <b style="color: var(--primary-bright);">📎 Tài Liệu Đính Kèm Khóa Học:</b>
-              <div class="media-
+      display
