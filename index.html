@@ -13,6 +13,9 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+  <!-- YOUTUBE IFRAME API SDK -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <style>
     :root {
       --bg-dark: #12141d;
@@ -61,7 +64,7 @@
 
     .icon-sidebar {
       width: 70px; background-color: var(--bg-sidebar-left); display: flex; flex-direction: column;
-      align-items: center; padding: 20px 0; justify-content: space-between; flex-shrink: 0;
+      align-items: center; padding: 20px 0; justify-content: space-between; flex-shrink: 0; z-index: 20;
     }
     .icon-group { display: flex; flex-direction: column; gap: 24px; align-items: center; }
     .nav-icon {
@@ -70,19 +73,36 @@
     }
     .nav-icon:hover, .nav-icon.active { color: #fff; background-color: rgba(255, 255, 255, 0.2); }
 
+    /* SUB SIDEBAR VÀ NÚT THU GỌN */
     .sub-sidebar {
       width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
       padding: 24px 16px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; overflow-y: auto;
+      transition: all 0.3s ease; position: relative;
     }
-    .sub-sidebar-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .sub-sidebar.collapsed {
+      width: 0; padding: 24px 0; overflow: hidden; border-right: none;
+    }
+    .sub-sidebar-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+    }
+    .sub-sidebar-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+    
+    .toggle-sidebar-btn {
+      background: var(--bg-hover); color: var(--primary-bright); border: 1px solid var(--border);
+      width: 28px; height: 28px; border-radius: 6px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; font-size: 0.8rem; transition: 0.2s; flex-shrink: 0;
+    }
+    .toggle-sidebar-btn:hover { background: var(--primary); color: #fff; }
+
     .sub-nav-btn {
       padding: 12px; border-radius: 10px; color: var(--text-muted); background: transparent; border: none;
-      text-align: left; font-size: 0.9rem; cursor: pointer; font-family: var(--font-family); transition: 0.2s; font-weight: 500;
+      text-align: left; font-size: 0.9rem; cursor: pointer; font-family: var(--font-family); transition: 0.2s; font-weight: 500; white-space: nowrap;
     }
     .sub-nav-btn:hover, .sub-nav-btn.active { background: var(--bg-card); color: #fff; font-weight: 600; }
 
     .main-content { flex-grow: 1; padding: 32px; overflow-y: auto; background-color: var(--bg-dark); }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+    .page-title-box { display: flex; align-items: center; gap: 12px; }
     .page-title { font-size: 1.6rem; font-weight: 700; color: var(--text-main); }
 
     /* Ô KÍCH HOẠT KHÓA HỌC */
@@ -151,23 +171,26 @@
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    /* FRAME HIỂN THỊ NỘI DUNG NHÚNG TRỰC TIẾP (KHÔNG LINK NGOÀI) */
+    /* FRAME HIỂN THỊ NỘI DUNG NHÚNG TRỰC TIẾP */
     .media-player-container {
       background: var(--bg-panel); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
     .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
-    .media-wrapper video, .media-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ CHẶN NÚT MỞ RA TAB MỚI CỦA DRIVE */
+    /* LỚP PHỦ TỐI ƯU DÀNH RIÊNG CHO YOUTUBE PLAYER (CHE TIÊU ĐỀ, SHARE, LOGO, CHẶN CHUYỂN HƯỚNG) */
+    .yt-blocker-top {
+      position: absolute; top: 0; left: 0; width: 100%; height: 75px; z-index: 10; background: transparent; cursor: default;
+    }
+    .yt-blocker-bottom-right {
+      position: absolute; bottom: 35px; right: 0; width: 120px; height: 60px; z-index: 10; background: transparent; cursor: default;
+    }
+    .yt-blocker-bottom-left {
+      position: absolute; bottom: 35px; left: 0; width: 250px; height: 60px; z-index: 10; background: transparent; cursor: default;
+    }
+
     .iframe-blocker {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 70px;
-      height: 50px;
-      z-index: 10;
-      background: transparent;
-      cursor: default;
+      position: absolute; top: 0; right: 0; width: 100px; height: 60px; z-index: 10; background: transparent; cursor: default;
     }
 
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
@@ -246,9 +269,12 @@
         <div class="nav-icon" onclick="handleLogout()" title="Đăng xuất">⚙️</div>
       </div>
 
-      <!-- SUB SIDEBAR -->
-      <div class="sub-sidebar">
-        <div class="sub-sidebar-title">Danh Mục Chính</div>
+      <!-- SUB SIDEBAR (DANH MỤC CHÍNH) -->
+      <div class="sub-sidebar" id="subSidebar">
+        <div class="sub-sidebar-header">
+          <div class="sub-sidebar-title">Danh Mục Chính</div>
+          <button class="toggle-sidebar-btn" onclick="toggleSidebar()" id="sidebarCloseBtn" title="Thu gọn danh mục">◀</button>
+        </div>
         <button class="sub-nav-btn active" id="btnTabCourses" onclick="switchTab('courses')">📖 Khóa Học Của Tôi</button>
         <button class="sub-nav-btn" id="btnTabDocs" onclick="switchTab('documents')">📁 Thảo Luận & Hỏi Đáp</button>
         
@@ -261,7 +287,10 @@
       <!-- MAIN CONTENT -->
       <div class="main-content">
         <div class="page-header">
-          <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
+          <div class="page-title-box">
+            <button class="toggle-sidebar-btn" id="sidebarOpenBtn" onclick="toggleSidebar()" style="display: none; width:36px; height:36px; font-size:1rem;" title="Mở rộng danh mục">▶</button>
+            <div class="page-title" id="pageTitle">Khóa Học Của Tôi</div>
+          </div>
           <button class="btn-ctrl" style="background: var(--danger);" onclick="handleLogout()">Đăng xuất</button>
         </div>
 
@@ -301,7 +330,7 @@
 
           <div class="stat-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <h3>Quản Lý Người Dùng (Admin: Toàn quyền, Không giới hạn thiết bị)</h3>
+              <h3>Quản Lý Người Dùng (Admin: Toàn quyền)</h3>
               <div style="display: flex; gap: 8px;">
                 <button class="btn-ctrl" style="background: var(--bg-sidebar-left);" onclick="adminCreateUser()">+ Tạo Tài Khoản Mới</button>
                 <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetUsersToDefault()">🔄 Reset User Mặc Định</button>
@@ -340,7 +369,7 @@
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
             <h3 id="currentMediaTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Nội dung bài học</h3>
             
-            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME + LỚP PHỦ CHẶN -->
+            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME / YOUTUBE + LỚP PHỦ CHẶN -->
             <div class="media-wrapper" id="mediaContainerWrapper"></div>
             
             <!-- KHUNG HIỂN THỊ TÀI LIỆU NHÚNG ĐÍNH KỀM NẾU CÓ -->
@@ -394,7 +423,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DỮ LIỆU MẶC ĐỊNH
+    // DỮ LIỆU MẶC ĐỊNH (Đã cập nhật mật khẩu Admin mới: hhh@123456)
     const defaultBigCoursesData = [
       {
         bigCourseId: 'VACT_BIG_999',
@@ -416,8 +445,8 @@
                 partTitle: 'Phần 2: Chuyên đề Đạo hàm & Ứng dụng',
                 lessons: [
                   { 
-                    title: 'Bài 1: Khảo sát sự biến thiên hàm số (Video MP4)', 
-                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', 
+                    title: 'Bài 1: Khảo sát sự biến thiên hàm số (Video YouTube mẫu)', 
+                    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 
                     docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' 
                   }
                 ]
@@ -429,7 +458,7 @@
     ];
 
     const defaultUserAccounts = [
-      { id: 1, name: 'Admin Tối Cao', username: 'admin', password: 'admin123', role: 'admin', devices: ['Device_PC_1'], isLocked: false, unlockedBigCourses: ['VACT_BIG_999'] },
+      { id: 1, name: 'Admin Tối Cao', username: 'admin', password: 'hhh@123456', role: 'admin', devices: ['Device_PC_1'], isLocked: false, unlockedBigCourses: ['VACT_BIG_999'] },
       { id: 2, name: 'Học viên Demo', username: 'user', password: 'user123', role: 'user', devices: ['Device_PC_1'], isLocked: false, unlockedBigCourses: [] }
     ];
 
@@ -441,12 +470,23 @@
     let bigCoursesData = [];
     let activationCodes = [];
     let currentUser = null;
+    let ytPlayerInstance = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE
     db.ref('users').on('value', (snapshot) => {
       const data = snapshot.val();
-      if (data) { userAccounts = data; } 
-      else { userAccounts = defaultUserAccounts; db.ref('users').set(defaultUserAccounts); }
+      if (data) { 
+        userAccounts = data; 
+        // Đảm bảo mật khẩu admin cập nhật chính xác
+        const adminAcc = userAccounts.find(a => a.username === 'admin');
+        if (adminAcc && adminAcc.password !== 'hhh@123456') {
+          adminAcc.password = 'hhh@123456';
+          saveUsersToStorage();
+        }
+      } else { 
+        userAccounts = defaultUserAccounts; 
+        db.ref('users').set(defaultUserAccounts); 
+      }
       if (currentUser && currentUser.role === 'admin') { renderAdminUsers(); }
     });
 
@@ -474,7 +514,7 @@
     function saveCodesToStorage() { db.ref('activationCodes').set(activationCodes); }
 
     function resetUsersToDefault() {
-      if(confirm('Khôi phục danh sách User về mặc định?')) {
+      if(confirm('Khôi phục danh sách User về mặc định? (Mật khẩu admin sẽ là hhh@123456)')) {
         userAccounts = JSON.parse(JSON.stringify(defaultUserAccounts));
         saveUsersToStorage();
         alert('Đã reset User!');
@@ -486,6 +526,20 @@
         bigCoursesData = JSON.parse(JSON.stringify(defaultBigCoursesData));
         saveBigCoursesToStorage();
         alert('Đã reset Khóa học!');
+      }
+    }
+
+    // THU GỌN / MỞ RỘNG SIDEBAR DANH MỤC
+    function toggleSidebar() {
+      const sidebar = document.getElementById('subSidebar');
+      const openBtn = document.getElementById('sidebarOpenBtn');
+      
+      if (sidebar.classList.contains('collapsed')) {
+        sidebar.classList.remove('collapsed');
+        openBtn.style.display = 'none';
+      } else {
+        sidebar.classList.add('collapsed');
+        openBtn.style.display = 'flex';
       }
     }
 
@@ -555,6 +609,14 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
+    // TRÍCH XUẤT YOUTUBE VIDEO ID TỪ NHIỀU DẠNG LINK
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
     // TỰ ĐỘNG CHUYỂN BẤT KỲ LINK GOOGLE DRIVE HOẶC DOCS/SHEETS THÀNH DẠNG EMBED TRỰC TIẾP
     function convertToEmbedUrl(url) {
       if (!url) return '';
@@ -572,7 +634,7 @@
       return embedUrl;
     }
 
-    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG KÈM LỚP PHỦ CHẶN NÚT DRIVE
+    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG (ẨN TOÀN BỘ LOGO/LINK CHUYỂN HƯỚNG YOUTUBE)
     function playMediaContent(title, mediaUrl, docUrl) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
@@ -586,8 +648,38 @@
       wrapper.innerHTML = '';
       docEmbeddedWrapper.innerHTML = '';
 
+      if (ytPlayerInstance && typeof ytPlayerInstance.destroy === 'function') {
+        try { ytPlayerInstance.destroy(); } catch(e) {}
+        ytPlayerInstance = null;
+      }
+
+      const ytId = extractYouTubeId(mediaUrl);
+
       if (!mediaUrl) {
         wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có nội dung hiển thị</div>';
+      } else if (ytId) {
+        // NHÚNG YOUTUBE BẢO MẬT CÙNG LỚP PHỦ CHE TIÊU ĐỀ/LOGO/NÚT MỞ SANG YOUTUBE
+        wrapper.innerHTML = `
+          <div id="ytPlayerDiv"></div>
+          <div class="yt-blocker-top" title="Hệ thống Học trực tuyến"></div>
+          <div class="yt-blocker-bottom-right" title="Hệ thống Học trực tuyến"></div>
+          <div class="yt-blocker-bottom-left" title="Hệ thống Học trực tuyến"></div>
+        `;
+
+        ytPlayerInstance = new YT.Player('ytPlayerDiv', {
+          videoId: ytId,
+          playerVars: {
+            'autoplay': 1,
+            'controls': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'showinfo': 0,
+            'fs': 1,
+            'playsinline': 1,
+            'enablejsapi': 1,
+            'origin': window.location.origin
+          }
+        });
       } else if (mediaUrl.endsWith('.mp4') || mediaUrl.includes('commondatastorage.googleapis.com')) {
         wrapper.innerHTML = `<video controls autoplay><source src="${mediaUrl}" type="video/mp4">Trình duyệt không hỗ trợ video.</video>`;
       } else {
@@ -600,11 +692,21 @@
 
       if (docUrl) {
         docContainer.style.display = 'flex';
-        const docEmbedUrl = convertToEmbedUrl(docUrl);
-        docEmbeddedWrapper.innerHTML = `
-          <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
-          <div class="iframe-blocker" title="Đã vô hiệu hóa chuyển hướng"></div>
-        `;
+        const docYtId = extractYouTubeId(docUrl);
+
+        if (docYtId) {
+          docEmbeddedWrapper.innerHTML = `
+            <iframe src="https://www.youtube-nocookie.com/embed/${docYtId}?modestbranding=1&rel=0&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="yt-blocker-top"></div>
+            <div class="yt-blocker-bottom-right"></div>
+          `;
+        } else {
+          const docEmbedUrl = convertToEmbedUrl(docUrl);
+          docEmbeddedWrapper.innerHTML = `
+            <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
+            <div class="iframe-blocker" title="Đã vô hiệu hóa chuyển hướng"></div>
+          `;
+        }
       } else {
         docContainer.style.display = 'none';
       }
@@ -800,7 +902,7 @@
     function adminAddPart(bigIdx, subIdx) {
       const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Google Sheet hoặc Phần 2: Bài học):');
       if(!title) return;
-      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video / File)', '1');
+      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video YouTube / Drive / File)', '1');
       
       let partObj = { partId: Date.now(), partTitle: title };
       if(typeChoice === '1') {
@@ -821,8 +923,8 @@
     function adminAddLesson(bigIdx, subIdx, partIdx) {
       const title = prompt('Nhập tên Bài học:');
       if(!title) return;
-      const videoUrl = prompt('Nhập link Video / Link Drive MP4:');
-      const docUrl = prompt('Nhập link tài liệu Google Docs/Sheet đính kèm (nếu có):');
+      const videoUrl = prompt('Nhập link Video (YouTube / Google Drive / MP4):');
+      const docUrl = prompt('Nhập link tài liệu đính kèm (Docs / Sheet / Drive / YouTube nếu có):');
 
       if(!bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons) {
         bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons = [];
@@ -992,4 +1094,3 @@
   </script>
 </body>
 </html>
-
