@@ -291,31 +291,46 @@
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    /* GIAO DIỆN BÀI GIẢNG DẠNG 2 CỘT NHƯ ẢNH MẪU */
+    /* GIAO DIỆN BÀI GIẢNG THEO YÊU CẦU MỚI (MẶC ĐỊNH VIDEO TOÀN MÀN HÌNH, BẤM TÀI LIỆU MỚI CHIA ĐÔI) */
     .media-player-container {
       background: var(--bg-panel); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
+    
     .lesson-view-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr; /* Mặc định video full chiều rộng */
       gap: 20px;
+      transition: all 0.3s ease;
+    }
+    .lesson-view-layout.split-screen {
+      grid-template-columns: 1fr 1fr; /* Chia đôi khi chọn tài liệu */
     }
     @media (max-width: 992px) {
-      .lesson-view-layout {
+      .lesson-view-layout.split-screen {
         grid-template-columns: 1fr;
       }
     }
     
-    .media-column, .docs-column {
+    .media-column {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      width: 100%;
+    }
+
+    .docs-column {
+      display: none; /* Mặc định ẩn cột tài liệu cho đến khi người dùng bấm vào một tài liệu cụ thể */
+      flex-direction: column;
+      gap: 16px;
+    }
+    .docs-column.active {
+      display: flex;
     }
 
     .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ CHE TIÊU ĐỀ VÀ NÚT CHUYỂN HƯỚNG YOUTUBE */
+    /* LỚP PHỦ CHE TIÊU ĐỀ VÀ NÚT CHUYỂN HƯỚNG YOUTUBE & DRIVE */
     .yt-blocker-top {
       position: absolute; top: 0; left: 0; width: 100%; height: 80px; z-index: 20; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important;
     }
@@ -332,56 +347,81 @@
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
     .btn-ctrl:hover { background: var(--bg-sidebar-left); }
 
-    /* KHUNG TÀI LIỆU BÊN CẠNH */
-    .doc-item-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
+    /* KHU VỰC DANH SÁCH TÀI LIỆU ĐÍNH KÈM PHÍA DƯỚI VIDEO */
+    .bottom-docs-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .bottom-docs-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-bright);
+      margin-bottom: 12px;
+    }
+    .docs-list-row {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
-    .doc-item-header {
+    .doc-link-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .doc-link-item:hover {
+      background: var(--bg-hover);
+      border-color: var(--primary);
+    }
+    .doc-link-item.selected {
+      border-color: var(--accent-green);
+      background: rgba(0, 184, 148, 0.1);
+    }
+    .doc-name-span {
       font-size: 0.95rem;
-      color: var(--primary-bright);
-    }
-    .doc-preview-box {
-      position: relative;
-      width: 100%;
-      height: 320px;
-      background: #000;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .doc-preview-box iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+      font-weight: 600;
+      color: #fff;
     }
     .btn-download-direct {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       background: var(--bg-sidebar-left);
       color: #fff;
-      padding: 10px 16px;
-      border-radius: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       transition: 0.2s;
       border: none;
       cursor: pointer;
-      align-self: flex-start;
     }
     .btn-download-direct:hover {
       background: var(--primary);
+    }
+
+    /* KHUNG HIỂN THỊ TÀI LIỆU ĐƯỢC CHỌN KHI CHIA ĐÔI MÀN HÌNH */
+    .doc-preview-box-side {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .doc-preview-box-side iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
 
     .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
@@ -549,18 +589,24 @@
             <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Học Mặc Định</button>
           </div>
 
-          <!-- FRAME HIỂN THỊ NỘI DUNG BÀI HỌC VÀ TÀI LIỆU 2 BÊN NHƯ ẢNH MẪU -->
+          <!-- FRAME HIỂN THỊ BÀI HỌC VÀ TÀI LIỆU DƯỚI DẠNG MẶC ĐỊNH FULL VIDEO, BẤM TÀI LIỆU MỚI CHIA ĐÔI -->
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
             <h3 id="currentMediaTitle" style="margin-bottom: 16px; color: var(--primary-bright);">Nội dung bài học</h3>
             
-            <div class="lesson-view-layout">
-              <!-- CỘT 1: TRÌNH PHÁT VIDEO -->
+            <div class="lesson-view-layout" id="lessonViewLayout">
+              <!-- CỘT 1: TRÌNH PHÁT VIDEO (LUÔN HIỂN THỊ) -->
               <div class="media-column">
                 <div class="media-wrapper" id="mediaContainerWrapper"></div>
               </div>
               
-              <!-- CỘT 2: TÀI LIỆU NHÚNG TRỰC TIẾP & TẢI VỀ -->
+              <!-- CỘT 2: TÀI LIỆU NHÚNG (CHỈ XUẤT HIỆN KHI BẤM VÀO TÊN TÀI LIỆU) -->
               <div class="docs-column" id="docsColumnContainer"></div>
+            </div>
+
+            <!-- PHẦN DANH SÁCH TÀI LIỆU ĐÍNH KÈM Ở PHÍA DƯỚI -->
+            <div class="bottom-docs-section">
+              <div class="bottom-docs-title">📁 Tài liệu đính kèm buổi học (Bấm vào tên tài liệu để xem trực tiếp):</div>
+              <div class="docs-list-row" id="bottomDocsList"></div>
             </div>
           </div>
 
@@ -850,18 +896,25 @@
       return embedUrl;
     }
 
-    // PHÁT NỘI DUNG BÀI GIẢNG VÀ HIỂN THỊ CÁC TÀI LIỆU NHÚNG KÈM THEO NÚT TẢI VỀ TRỰC TIẾP
+    // MỞ BÀI GIẢNG: MẶC ĐỊNH VIDEO CHIẾM TOÀN MÀN HÌNH, TÀI LIỆU Ở PHÍA DƯỚI
     function playMediaContent(title, mediaUrl, documentsArray) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
       const titleElem = document.getElementById('currentMediaTitle');
+      const bottomDocsList = document.getElementById('bottomDocsList');
       const docsColumnContainer = document.getElementById('docsColumnContainer');
+      const lessonViewLayout = document.getElementById('lessonViewLayout');
 
       playerBox.style.display = 'block';
       titleElem.innerText = title;
 
-      wrapper.innerHTML = '';
+      // Reset trạng thái chia đôi màn hình khi chọn bài mới
+      lessonViewLayout.classList.remove('split-screen');
+      docsColumnContainer.classList.remove('active');
       docsColumnContainer.innerHTML = '';
+
+      wrapper.innerHTML = '';
+      bottomDocsList.innerHTML = '';
 
       if (ytPlayerInstance && typeof ytPlayerInstance.destroy === 'function') {
         try { ytPlayerInstance.destroy(); } catch(e) {}
@@ -905,29 +958,56 @@
         `;
       }
 
-      // Xử lý hiển thị danh sách tài liệu bên cạnh (hỗ trợ nhiều tài liệu trong 1 bài)
+      // Đưa danh sách tài liệu xuống phía dưới video (đúng như hình mẫu)
       if (documentsArray && documentsArray.length > 0) {
-        documentsArray.forEach(doc => {
-          const docEmbedUrl = convertToEmbedUrl(doc.docUrl);
-          docsColumnContainer.innerHTML += `
-            <div class="doc-item-card">
-              <div class="doc-item-header">
-                <span>📄 ${doc.docName}</span>
-              </div>
-              <div class="doc-preview-box">
-                <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
-              </div>
-              <a href="${doc.docUrl}" target="_blank" download class="btn-download-direct">
-                📥 Tải về máy ngay
+        documentsArray.forEach((doc, idx) => {
+          const escapedUrl = doc.docUrl.replace(/'/g, "\\'");
+          const escapedName = doc.docName.replace(/'/g, "\\'");
+          
+          bottomDocsList.innerHTML += `
+            <div class="doc-link-item" id="docItem_${idx}" onclick="selectAndShowDoc('${escapedName}', '${escapedUrl}', ${idx})">
+              <span class="doc-name-span">📄 ${doc.docName}</span>
+              <a href="${doc.docUrl}" target="_blank" download class="btn-download-direct" onclick="event.stopPropagation();">
+                📥 Tải về
               </a>
             </div>
           `;
         });
       } else {
-        docsColumnContainer.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem; padding:12px; background:var(--bg-card); border-radius:12px;">Bài giảng này không có tài liệu đính kèm.</div>';
+        bottomDocsList.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem;">Bài giảng này không có tài liệu đính kèm.</div>';
       }
 
       playerBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // KHI BẤM VÀO TÊN TÀI LIỆU DƯỚI -> CHIA ĐÔI MÀN HÌNH VÀ HIỂN THỊ TÀI LIỆU ĐÓ (THAY THẾ NẾU CHỌN TÀI LIỆU KHÁC)
+    function selectAndShowDoc(docName, docUrl, index) {
+      const lessonViewLayout = document.getElementById('lessonViewLayout');
+      const docsColumnContainer = document.getElementById('docsColumnContainer');
+
+      // Đánh dấu trạng thái đang chọn
+      document.querySelectorAll('.doc-link-item').forEach(el => el.classList.remove('selected'));
+      const activeItem = document.getElementById(`docItem_${index}`);
+      if(activeItem) activeItem.classList.add('selected');
+
+      // Chuyển sang chế độ chia đôi màn hình
+      lessonViewLayout.classList.add('split-screen');
+      docsColumnContainer.classList.add('active');
+
+      const docEmbedUrl = convertToEmbedUrl(docUrl);
+
+      // Hiển thị nội dung tài liệu và nút tải về trực tiếp bên trong khung tài liệu
+      docsColumnContainer.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:600; color:var(--primary-bright); font-size:0.95rem;">
+          <span>📄 ${docName}</span>
+          <a href="${docUrl}" target="_blank" download class="btn-download-direct">
+            📥 Tải về máy ngay
+          </a>
+        </div>
+        <div class="doc-preview-box-side">
+          <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
+        </div>
+      `;
     }
 
     // CHAT REALTIME
@@ -1151,9 +1231,7 @@
         partId: Date.now(), 
         partTitle: title, 
         type: 'lessons',
-        documents: [
-          { docName: title + '.pdf', docUrl: prompt('Nhập link tài liệu:', 'https://docs.google.com/document/d/.../preview') }
-        ],
+        documents: [],
         lessons: []
       };
 
@@ -1202,7 +1280,7 @@
       renderCoursesUI();
     }
 
-    // HIỂN THỊ GIAO DIỆN KHÓA HỌC (2 MÀN HÌNH: DANH SÁCH KHÓA LỚN VÀ CHI TIẾT KHÓA NHỎ)
+    // HIỂN THỊ GIAO DIỆN KHÓA HỌC
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
       const backNavContainer = document.getElementById('backNavContainer');
@@ -1216,9 +1294,7 @@
 
       const isAdmin = currentUser && currentUser.role === 'admin';
 
-      // =========================================================================
-      // MÀN HÌNH 1: HIỂN THỊ DANH SÁCH KHÓA HỌC LỚN (GIAO DIỆN CARD - LƯỚI)
-      // =========================================================================
+      // MÀN HÌNH 1: HIỂN THỊ DANH SÁCH KHÓA HỌC LỚN (GIAO DIỆN CARD)
       if (!selectedBigCourseId) {
         backNavContainer.style.display = 'none';
 
@@ -1279,9 +1355,7 @@
         return;
       }
 
-      // =========================================================================
       // MÀN HÌNH 2: BẤM VÀO KHÓA LỚN -> HIỂN THỊ CÁC KHÓA NHỎ VÀ BÀI HỌC
-      // =========================================================================
       const bigC = bigCoursesData.find(bc => bc.bigCourseId === selectedBigCourseId);
       const bigIdx = bigCoursesData.findIndex(bc => bc.bigCourseId === selectedBigCourseId);
 
@@ -1312,7 +1386,6 @@
               let lessonsHTML = '';
               if (part.lessons && part.lessons.length > 0) {
                 part.lessons.forEach((les, lesIdx) => {
-                  // Truyền danh sách tài liệu vào hàm phát bài giảng
                   const docsParam = JSON.stringify(les.documents || []).replace(/"/g, '&quot;');
                   lessonsHTML += `
                     <div class="lesson-item" onclick="playMediaContent('${les.title}', '${les.videoUrl}', ${docsParam})">
