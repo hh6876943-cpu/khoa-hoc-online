@@ -291,11 +291,28 @@
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    /* FRAME HIỂN THỊ NỘI DUNG NHÚNG TRỰC TIẾP */
+    /* GIAO DIỆN BÀI GIẢNG DẠNG 2 CỘT NHƯ ẢNH MẪU */
     .media-player-container {
-      background: var(--bg-panel); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
+      background: var(--bg-panel); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
-    .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .lesson-view-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 992px) {
+      .lesson-view-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .media-column, .docs-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
     /* LỚP PHỦ CHE TIÊU ĐỀ VÀ NÚT CHUYỂN HƯỚNG YOUTUBE */
@@ -315,8 +332,56 @@
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
     .btn-ctrl:hover { background: var(--bg-sidebar-left); }
 
-    .doc-below-container {
-      margin-top: 16px; padding: 16px; background: var(--bg-card); border-radius: 10px; display: flex; flex-direction: column; gap: 12px;
+    /* KHUNG TÀI LIỆU BÊN CẠNH */
+    .doc-item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .doc-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--primary-bright);
+    }
+    .doc-preview-box {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .doc-preview-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .btn-download-direct {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--bg-sidebar-left);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      border: none;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+    .btn-download-direct:hover {
+      background: var(--primary);
     }
 
     .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
@@ -484,17 +549,18 @@
             <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Học Mặc Định</button>
           </div>
 
-          <!-- FRAME HIỂN THỊ NỘI DUNG BÀI HỌC TRỰC TIẾP -->
+          <!-- FRAME HIỂN THỊ NỘI DUNG BÀI HỌC VÀ TÀI LIỆU 2 BÊN NHƯ ẢNH MẪU -->
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
-            <h3 id="currentMediaTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Nội dung bài học</h3>
+            <h3 id="currentMediaTitle" style="margin-bottom: 16px; color: var(--primary-bright);">Nội dung bài học</h3>
             
-            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME / YOUTUBE -->
-            <div class="media-wrapper" id="mediaContainerWrapper"></div>
-            
-            <!-- KHUNG HIỂN THỊ TÀI LIỆU NHÚNG ĐÍNH KỀM NẾU CÓ -->
-            <div class="doc-below-container" id="docBelowContainer" style="display: none;">
-              <b style="color: var(--primary-bright);">📎 Tài Liệu Đính Kèm Khóa Học:</b>
-              <div class="media-wrapper" id="docEmbeddedWrapper" style="margin-bottom: 0;"></div>
+            <div class="lesson-view-layout">
+              <!-- CỘT 1: TRÌNH PHÁT VIDEO -->
+              <div class="media-column">
+                <div class="media-wrapper" id="mediaContainerWrapper"></div>
+              </div>
+              
+              <!-- CỘT 2: TÀI LIỆU NHÚNG TRỰC TIẾP & TẢI VỀ -->
+              <div class="docs-column" id="docsColumnContainer"></div>
             </div>
           </div>
 
@@ -504,7 +570,7 @@
             <span id="currentBreadcrumb" style="font-size: 1.1rem; font-weight: 700; color: var(--primary-bright);"></span>
           </div>
 
-          <!-- DANH SÁCH KHÓA HỌC (HIỂN THỊ CARD HOẶC CHI TIẾT) -->
+          <!-- DANH SÁCH KHÓA HỌC -->
           <div id="coursesContainer">Đang tải dữ liệu khóa học...</div>
         </section>
 
@@ -565,7 +631,9 @@
                 partId: 1001, 
                 type: 'sheet', 
                 partTitle: 'Phần 1: Lịch học Khóa 1 (Google Sheet)', 
-                sheetUrl: 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing' 
+                documents: [
+                  { docName: 'Lịch học chi tiết.pdf', docUrl: 'https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit?usp=sharing' }
+                ]
               },
               { 
                 partId: 1002, 
@@ -575,7 +643,10 @@
                   { 
                     title: 'Bài 1: Khảo sát sự biến thiên hàm số (Video YouTube mẫu)', 
                     videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 
-                    docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' 
+                    documents: [
+                      { docName: '[Handout] Theme 26.pdf', docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' },
+                      { docName: '[Tài liệu] Bài tập tự luyện.pdf', docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' }
+                    ]
                   }
                 ]
               }
@@ -615,7 +686,7 @@
     let activationCodes = [];
     let currentUser = null;
     let ytPlayerInstance = null;
-    let selectedBigCourseId = null; // Trạng thái theo dõi khóa học lớn đang được chọn xem
+    let selectedBigCourseId = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE
     db.ref('users').on('value', (snapshot) => {
@@ -714,7 +785,7 @@
       }
 
       currentUser = user;
-      selectedBigCourseId = null; // Đặt lại trạng thái về trang chủ Khóa lớn khi mới đăng nhập
+      selectedBigCourseId = null; 
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appScreen').style.display = 'block';
       document.getElementById('userLabelName').innerText = `${currentUser.name} (${currentUser.role.toUpperCase()})`;
@@ -754,7 +825,7 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
-    // TRÍCH XUẤT YOUTUBE VIDEO ID TỪ NHIỀU DẠNG LINK
+    // TRÍCH XUẤT YOUTUBE VIDEO ID
     function extractYouTubeId(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -762,7 +833,7 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // TỰ ĐỘNG CHUYỂN BẤT KỲ LINK GOOGLE DRIVE HOẶC DOCS/SHEETS THÀNH DẠNG EMBED TRỰC TIẾP
+    // CHUYỂN LINK GOOGLE DRIVE THÀNH PREVIEW
     function convertToEmbedUrl(url) {
       if (!url) return '';
       let embedUrl = url;
@@ -779,19 +850,18 @@
       return embedUrl;
     }
 
-    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG VỚI ĐẦY ĐỦ CÁC TÍNH NĂNG TƯƠNG TÁC PLAYER
-    function playMediaContent(title, mediaUrl, docUrl) {
+    // PHÁT NỘI DUNG BÀI GIẢNG VÀ HIỂN THỊ CÁC TÀI LIỆU NHÚNG KÈM THEO NÚT TẢI VỀ TRỰC TIẾP
+    function playMediaContent(title, mediaUrl, documentsArray) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
       const titleElem = document.getElementById('currentMediaTitle');
-      const docContainer = document.getElementById('docBelowContainer');
-      const docEmbeddedWrapper = document.getElementById('docEmbeddedWrapper');
+      const docsColumnContainer = document.getElementById('docsColumnContainer');
 
       playerBox.style.display = 'block';
       titleElem.innerText = title;
 
       wrapper.innerHTML = '';
-      docEmbeddedWrapper.innerHTML = '';
+      docsColumnContainer.innerHTML = '';
 
       if (ytPlayerInstance && typeof ytPlayerInstance.destroy === 'function') {
         try { ytPlayerInstance.destroy(); } catch(e) {}
@@ -801,7 +871,7 @@
       const ytId = extractYouTubeId(mediaUrl);
 
       if (!mediaUrl) {
-        wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có nội dung hiển thị</div>';
+        wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có video hiển thị</div>';
       } else if (ytId) {
         wrapper.innerHTML = `
           <div id="ytPlayerDiv"></div>
@@ -835,26 +905,26 @@
         `;
       }
 
-      if (docUrl) {
-        docContainer.style.display = 'flex';
-        const docYtId = extractYouTubeId(docUrl);
-
-        if (docYtId) {
-          docEmbeddedWrapper.innerHTML = `
-            <iframe src="https://www.youtube-nocookie.com/embed/${docYtId}?modestbranding=1&rel=0&controls=1&fs=1&cc_load_policy=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <div class="yt-blocker-top"></div>
-            <div class="yt-blocker-bottom-right"></div>
-            <div class="yt-blocker-bottom-left"></div>
+      // Xử lý hiển thị danh sách tài liệu bên cạnh (hỗ trợ nhiều tài liệu trong 1 bài)
+      if (documentsArray && documentsArray.length > 0) {
+        documentsArray.forEach(doc => {
+          const docEmbedUrl = convertToEmbedUrl(doc.docUrl);
+          docsColumnContainer.innerHTML += `
+            <div class="doc-item-card">
+              <div class="doc-item-header">
+                <span>📄 ${doc.docName}</span>
+              </div>
+              <div class="doc-preview-box">
+                <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
+              </div>
+              <a href="${doc.docUrl}" target="_blank" download class="btn-download-direct">
+                📥 Tải về máy ngay
+              </a>
+            </div>
           `;
-        } else {
-          const docEmbedUrl = convertToEmbedUrl(docUrl);
-          docEmbeddedWrapper.innerHTML = `
-            <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
-            <div class="iframe-blocker"></div>
-          `;
-        }
+        });
       } else {
-        docContainer.style.display = 'none';
+        docsColumnContainer.innerHTML = '<div style="color:var(--text-muted); font-size:0.9rem; padding:12px; background:var(--bg-card); border-radius:12px;">Bài giảng này không có tài liệu đính kèm.</div>';
       }
 
       playerBox.scrollIntoView({ behavior: 'smooth' });
@@ -1030,7 +1100,7 @@
     function adminAddBigCourse() {
       const title = prompt('Nhập tên Khóa học lớn mới:');
       if(!title) return;
-      const imgUrl = prompt('Nhập link hình ảnh ảnh đại diện (để trống nếu dùng mặc định):');
+      const imgUrl = prompt('Nhập link hình ảnh đại diện (để trống nếu dùng mặc định):');
       const totalLessonsText = prompt('Số bài giảng hiển thị (Ví dụ: 0/15 bài):', '0/0 bài');
       const priceText = prompt('Số tiền hiển thị (Ví dụ: 800.000 VNĐ):', '800.000 VNĐ');
 
@@ -1074,19 +1144,18 @@
     }
 
     function adminAddPart(bigIdx, subIdx) {
-      const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Google Sheet hoặc Phần 2: Bài học):');
+      const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Tài liệu chung):');
       if(!title) return;
-      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video YouTube / Drive / File)', '1');
       
-      let partObj = { partId: Date.now(), partTitle: title };
-      if(typeChoice === '1') {
-        const url = prompt('Nhập link Google Sheet / Drive / Docs:');
-        partObj.type = 'sheet';
-        partObj.sheetUrl = url || '';
-      } else {
-        partObj.type = 'lessons';
-        partObj.lessons = [];
-      }
+      let partObj = { 
+        partId: Date.now(), 
+        partTitle: title, 
+        type: 'lessons',
+        documents: [
+          { docName: title + '.pdf', docUrl: prompt('Nhập link tài liệu:', 'https://docs.google.com/document/d/.../preview') }
+        ],
+        lessons: []
+      };
 
       if(!bigCoursesData[bigIdx].subCourses[subIdx].parts) bigCoursesData[bigIdx].subCourses[subIdx].parts = [];
       bigCoursesData[bigIdx].subCourses[subIdx].parts.push(partObj);
@@ -1098,12 +1167,25 @@
       const title = prompt('Nhập tên Bài học:');
       if(!title) return;
       const videoUrl = prompt('Nhập link Video (YouTube / Google Drive / MP4):');
-      const docUrl = prompt('Nhập link tài liệu đính kèm (Docs / Sheet / Drive / YouTube nếu có):');
+      
+      // Hỗ trợ thêm nhiều tài liệu cho 1 bài giảng
+      let documents = [];
+      let addMoreDoc = true;
+      while(addMoreDoc) {
+        const docName = prompt('Nhập tên tài liệu (Ví dụ: [Handout] Buổi 2.pdf):');
+        if(docName) {
+          const docUrl = prompt('Nhập link tài liệu (Docs / Sheet / Drive):');
+          documents.push({ docName, docUrl: docUrl || '' });
+          addMoreDoc = confirm('Bạn có muốn thêm tài liệu khác cho bài giảng này không?');
+        } else {
+          break;
+        }
+      }
 
       if(!bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons) {
         bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons = [];
       }
-      bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons.push({ title, videoUrl: videoUrl || '', docUrl: docUrl || '' });
+      bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons.push({ title, videoUrl: videoUrl || '', documents });
       saveBigCoursesToStorage();
       renderCoursesUI();
     }
@@ -1140,7 +1222,6 @@
       if (!selectedBigCourseId) {
         backNavContainer.style.display = 'none';
 
-        // Lọc khóa học: Admin xem được tất cả, User chỉ xem các khóa đã kích hoạt
         const visibleBigCourses = bigCoursesData.filter(bc => {
           if (isAdmin) return true;
           return currentUser.unlockedBigCourses && currentUser.unlockedBigCourses.includes(bc.bigCourseId);
@@ -1178,7 +1259,7 @@
                   <span class="trophy-icon">🏆</span>
                 </div>
                 <div class="card-tags">
-                  <span class="tag-target">Dành cho học sinh 2k9</span>
+                  <span class="tag-target">Hệ thống chuẩn</span>
                   <span class="tag-video">📹 Video bài giảng</span>
                 </div>
                 ${isAdmin ? `
@@ -1228,44 +1309,37 @@
           let partsHTML = '';
           if (subC.parts && subC.parts.length > 0) {
             subC.parts.forEach((part, partIdx) => {
-              if (part.type === 'sheet') {
-                partsHTML += `
-                  <div class="part-header-box" onclick="playMediaContent('${part.partTitle}', '${part.sheetUrl}', '')">
-                    <span>📊 ${part.partTitle} <span style="font-size:0.75rem; color:var(--accent-green);">(Mở trực tiếp)</span></span>
-                    ${isAdmin ? `<button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart(${bigIdx}, ${subIdx}, ${partIdx})">Xóa</button>` : ''}
-                  </div>
-                `;
-              } else {
-                let lessonsHTML = '';
-                if (part.lessons && part.lessons.length > 0) {
-                  part.lessons.forEach((les, lesIdx) => {
-                    lessonsHTML += `
-                      <div class="lesson-item" onclick="playMediaContent('${les.title}', '${les.videoUrl}', '${les.docUrl}')">
-                        <span>▶️ ${les.title}</span>
-                        ${isAdmin ? `<button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteLesson(${bigIdx}, ${subIdx}, ${partIdx}, ${lesIdx})">Xóa</button>` : ''}
-                      </div>
-                    `;
-                  });
-                } else {
-                  lessonsHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:6px;">Chưa có bài học nào.</div>';
-                }
-
-                partsHTML += `
-                  <div class="part-header-box" onclick="toggleElement('lessons_${bigIdx}_${subIdx}_${partIdx}')">
-                    <span>📁 ${part.partTitle}</span>
-                    <div style="display:flex; gap:6px;">
-                      ${isAdmin ? `
-                        <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson(${bigIdx}, ${subIdx}, ${partIdx})">+ Thêm Bài</button>
-                        <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart(${bigIdx}, ${subIdx}, ${partIdx})">Xóa Phần</button>
-                      ` : ''}
-                      <span>▼</span>
+              let lessonsHTML = '';
+              if (part.lessons && part.lessons.length > 0) {
+                part.lessons.forEach((les, lesIdx) => {
+                  // Truyền danh sách tài liệu vào hàm phát bài giảng
+                  const docsParam = JSON.stringify(les.documents || []).replace(/"/g, '&quot;');
+                  lessonsHTML += `
+                    <div class="lesson-item" onclick="playMediaContent('${les.title}', '${les.videoUrl}', ${docsParam})">
+                      <span>▶️ ${les.title}</span>
+                      ${isAdmin ? `<button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteLesson(${bigIdx}, ${subIdx}, ${partIdx}, ${lesIdx})">Xóa</button>` : ''}
                     </div>
-                  </div>
-                  <div class="lessons-list" id="lessons_${bigIdx}_${subIdx}_${partIdx}">
-                    ${lessonsHTML}
-                  </div>
-                `;
+                  `;
+                });
+              } else {
+                lessonsHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:6px;">Chưa có bài học nào.</div>';
               }
+
+              partsHTML += `
+                <div class="part-header-box" onclick="toggleElement('lessons_${bigIdx}_${subIdx}_${partIdx}')">
+                  <span>📁 ${part.partTitle}</span>
+                  <div style="display:flex; gap:6px;">
+                    ${isAdmin ? `
+                      <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson(${bigIdx}, ${subIdx}, ${partIdx})">+ Thêm Bài</button>
+                      <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart(${bigIdx}, ${subIdx}, ${partIdx})">Xóa Phần</button>
+                    ` : ''}
+                    <span>▼</span>
+                  </div>
+                </div>
+                <div class="lessons-list" id="lessons_${bigIdx}_${subIdx}_${partIdx}">
+                  ${lessonsHTML}
+                </div>
+              `;
             });
           } else {
             partsHTML = '<div style="color:var(--text-muted); font-size:0.85rem;">Chưa có phần học nào.</div>';
