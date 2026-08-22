@@ -13,6 +13,9 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+  <!-- YOUTUBE IFRAME API SDK -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <style>
     :root {
       --bg-dark: #12141d;
@@ -156,18 +159,38 @@
       background: var(--bg-panel); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
     .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
-    .media-wrapper video, .media-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ CHẶN NÚT MỞ RA TAB MỚI CỦA DRIVE */
+    /* LỚP PHỦ CHẶN NÚT MỞ RA TAB MỚI CỦA DRIVE VÀ YOUTUBE */
     .iframe-blocker {
       position: absolute;
       top: 0;
       right: 0;
-      width: 70px;
-      height: 50px;
+      width: 100px;
+      height: 60px;
       z-index: 10;
       background: transparent;
       cursor: default;
+    }
+
+    /* LỚP PHỦ BẢO VỆ CHẶN CHUYỂN HƯỚNG TRÊN BỀ MẶT YOUTUBE PLAYER */
+    .yt-top-blocker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 65px;
+      z-index: 10;
+      background: transparent;
+    }
+    .yt-bottom-right-blocker {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 110px;
+      height: 50px;
+      z-index: 10;
+      background: transparent;
     }
 
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
@@ -340,7 +363,7 @@
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
             <h3 id="currentMediaTitle" style="margin-bottom: 12px; color: var(--primary-bright);">Nội dung bài học</h3>
             
-            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME + LỚP PHỦ CHẶN -->
+            <!-- KHUNG CHÍNH CHỨA VIDEO / DRIVE IFRAME / YOUTUBE + LỚP PHỦ CHẶN -->
             <div class="media-wrapper" id="mediaContainerWrapper"></div>
             
             <!-- KHUNG HIỂN THỊ TÀI LIỆU NHÚNG ĐÍNH KỀM NẾU CÓ -->
@@ -441,6 +464,7 @@
     let bigCoursesData = [];
     let activationCodes = [];
     let currentUser = null;
+    let ytPlayerInstance = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE
     db.ref('users').on('value', (snapshot) => {
@@ -555,6 +579,14 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
+    // TRÍCH XUẤT YOUTUBE VIDEO ID TỪ NHIỀU DẠNG LINK
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
     // TỰ ĐỘNG CHUYỂN BẤT KỲ LINK GOOGLE DRIVE HOẶC DOCS/SHEETS THÀNH DẠNG EMBED TRỰC TIẾP
     function convertToEmbedUrl(url) {
       if (!url) return '';
@@ -572,7 +604,7 @@
       return embedUrl;
     }
 
-    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG KÈM LỚP PHỦ CHẶN NÚT DRIVE
+    // PHÁT VÀ HIỂN THỊ TRỰC TIẾP TRÊN TRANG KÈM LỚP PHỦ CHẶN NÚT DRIVE & YOUTUBE
     function playMediaContent(title, mediaUrl, docUrl) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
@@ -586,8 +618,38 @@
       wrapper.innerHTML = '';
       docEmbeddedWrapper.innerHTML = '';
 
+      // Hủy bỏ player cũ nếu có
+      if (ytPlayerInstance && typeof ytPlayerInstance.destroy === 'function') {
+        try { ytPlayerInstance.destroy(); } catch(e) {}
+        ytPlayerInstance = null;
+      }
+
+      const ytId = extractYouTubeId(mediaUrl);
+
       if (!mediaUrl) {
         wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có nội dung hiển thị</div>';
+      } else if (ytId) {
+        // XỬ LÝ NHÚNG VIDEO YOUTUBE BẢO MẬT KHÔNG RÒ RỈ LINK & CÓ LỚP PHỦ CHẶN KHÔNG CHO CHUYỂN HƯỚNG
+        wrapper.innerHTML = `
+          <div id="ytPlayerDiv"></div>
+          <div class="yt-top-blocker" title="Xem trực tiếp trên ứng dụng"></div>
+          <div class="yt-bottom-right-blocker" title="Xem trực tiếp trên ứng dụng"></div>
+        `;
+
+        ytPlayerInstance = new YT.Player('ytPlayerDiv', {
+          videoId: ytId,
+          playerVars: {
+            'autoplay': 1,
+            'controls': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'showinfo': 0,
+            'fs': 1,
+            'playsinline': 1,
+            'enablejsapi': 1,
+            'origin': window.location.origin
+          }
+        });
       } else if (mediaUrl.endsWith('.mp4') || mediaUrl.includes('commondatastorage.googleapis.com')) {
         wrapper.innerHTML = `<video controls autoplay><source src="${mediaUrl}" type="video/mp4">Trình duyệt không hỗ trợ video.</video>`;
       } else {
@@ -600,11 +662,21 @@
 
       if (docUrl) {
         docContainer.style.display = 'flex';
-        const docEmbedUrl = convertToEmbedUrl(docUrl);
-        docEmbeddedWrapper.innerHTML = `
-          <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
-          <div class="iframe-blocker" title="Đã vô hiệu hóa chuyển hướng"></div>
-        `;
+        const docYtId = extractYouTubeId(docUrl);
+
+        if (docYtId) {
+          docEmbeddedWrapper.innerHTML = `
+            <iframe src="https://www.youtube-nocookie.com/embed/${docYtId}?modestbranding=1&rel=0&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div class="yt-top-blocker"></div>
+            <div class="yt-bottom-right-blocker"></div>
+          `;
+        } else {
+          const docEmbedUrl = convertToEmbedUrl(docUrl);
+          docEmbeddedWrapper.innerHTML = `
+            <iframe src="${docEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
+            <div class="iframe-blocker" title="Đã vô hiệu hóa chuyển hướng"></div>
+          `;
+        }
       } else {
         docContainer.style.display = 'none';
       }
@@ -800,7 +872,7 @@
     function adminAddPart(bigIdx, subIdx) {
       const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Google Sheet hoặc Phần 2: Bài học):');
       if(!title) return;
-      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video / File)', '1');
+      const typeChoice = prompt('Loại phần này là gì?\n1. Google Sheet / Docs / Drive nhúng trực tiếp\n2. Danh sách bài học (Video YouTube / Drive / File)', '1');
       
       let partObj = { partId: Date.now(), partTitle: title };
       if(typeChoice === '1') {
@@ -821,8 +893,8 @@
     function adminAddLesson(bigIdx, subIdx, partIdx) {
       const title = prompt('Nhập tên Bài học:');
       if(!title) return;
-      const videoUrl = prompt('Nhập link Video / Link Drive MP4:');
-      const docUrl = prompt('Nhập link tài liệu Google Docs/Sheet đính kèm (nếu có):');
+      const videoUrl = prompt('Nhập link Video (YouTube / Google Drive / MP4):');
+      const docUrl = prompt('Nhập link tài liệu đính kèm (Docs / Sheet / Drive / YouTube nếu có):');
 
       if(!bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons) {
         bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons = [];
@@ -992,4 +1064,3 @@
   </script>
 </body>
 </html>
-
