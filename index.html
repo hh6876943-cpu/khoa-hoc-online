@@ -178,15 +178,38 @@
     .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ CHO PHÉP TƯƠNG TÁC ĐẦY ĐỦ VỚI NÚT VÀ CÁC TÍNH NĂNG CỦA PLAYER */
+    /* LỚP PHỦ CHE TIÊU ĐỀ VÀ NÚT CHUYỂN HƯỚNG YOUTUBE */
     .yt-blocker-top {
-      position: absolute; top: 0; left: 0; width: 100%; height: 75px; z-index: 10; background: transparent; pointer-events: none;
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 80px; 
+      z-index: 20; 
+      background: rgba(0, 0, 0, 0.01);
+      pointer-events: auto !important;
     }
+
     .yt-blocker-bottom-right {
-      position: absolute; bottom: 35px; right: 0; width: 120px; height: 60px; z-index: 10; background: transparent; pointer-events: none;
+      position: absolute; 
+      bottom: 0; 
+      right: 0; 
+      width: 180px; 
+      height: 60px; 
+      z-index: 20; 
+      background: rgba(0, 0, 0, 0.01);
+      pointer-events: auto !important;
     }
+
     .yt-blocker-bottom-left {
-      position: absolute; bottom: 35px; left: 0; width: 250px; height: 60px; z-index: 10; background: transparent; pointer-events: none;
+      position: absolute; 
+      bottom: 0; 
+      left: 0; 
+      width: 90px; 
+      height: 60px; 
+      z-index: 20; 
+      background: rgba(0, 0, 0, 0.01);
+      pointer-events: auto !important;
     }
 
     .iframe-blocker {
@@ -657,7 +680,6 @@
       if (!mediaUrl) {
         wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có nội dung hiển thị</div>';
       } else if (ytId) {
-        // CẤU HÌNH YOUTUBE BẬT FULL TÍNH NĂNG TUA, TỐC ĐỘ, ĐỘ PHÂN GIẢI, PHỤ ĐỀ, PHÓNG TO
         wrapper.innerHTML = `
           <div id="ytPlayerDiv"></div>
           <div class="yt-blocker-top"></div>
@@ -672,7 +694,7 @@
             'controls': 1,
             'modestbranding': 1,
             'rel': 0,
-            'showinfo': 1,
+            'showinfo': 0,
             'fs': 1,
             'cc_load_policy': 1,
             'playsinline': 1,
@@ -699,6 +721,7 @@
             <iframe src="https://www.youtube-nocookie.com/embed/${docYtId}?modestbranding=1&rel=0&controls=1&fs=1&cc_load_policy=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <div class="yt-blocker-top"></div>
             <div class="yt-blocker-bottom-right"></div>
+            <div class="yt-blocker-bottom-left"></div>
           `;
         } else {
           const docEmbedUrl = convertToEmbedUrl(docUrl);
