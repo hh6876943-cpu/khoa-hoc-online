@@ -291,19 +291,19 @@
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    /* GIAO DIỆN BÀI GIẢNG CHIA ĐÔI KHI BẤM TÀI LIỆU */
+    /* GIAO DIỆN BÀI GIẢNG THEO YÊU CẦU MỚI (MẶC ĐỊNH VIDEO TOÀN MÀN HÌNH, BẤM TÀI LIỆU MỚI CHIA ĐÔI) */
     .media-player-container {
       background: var(--bg-panel); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
     
     .lesson-view-layout {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr; /* Mặc định video full chiều rộng */
       gap: 20px;
       transition: all 0.3s ease;
     }
     .lesson-view-layout.split-screen {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr; /* Chia đôi khi chọn tài liệu */
     }
     @media (max-width: 992px) {
       .lesson-view-layout.split-screen {
@@ -319,7 +319,7 @@
     }
 
     .docs-column {
-      display: none;
+      display: none; /* Mặc định ẩn cột tài liệu cho đến khi người dùng bấm vào một tài liệu cụ thể */
       flex-direction: column;
       gap: 16px;
     }
@@ -327,61 +327,23 @@
       display: flex;
     }
 
-    .media-wrapper { 
-      position: relative; 
-      padding-top: 56.25%; 
-      background: #000; 
-      border-radius: 12px; 
-      overflow: hidden; 
-    }
-    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 100%; 
-      height: 100%; 
-      border: none; 
-    }
+    .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
+    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
-    /* LỚP PHỦ CHẶN NÚT "POP-OUT" GÓC TRÊN PHẢI */
+    /* LỚP PHỦ CHẶN VỊ TRÍ THEO YÊU CẦU (ĐÃ ĐIỀU CHỈNH THEO HÌNH KHOANH TRÒN) */
+    .yt-blocker-top-full {
+      position: absolute; top: 0; left: 0; width: 100%; height: 75px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+    }
+    .yt-blocker-bottom-left-icon {
+      position: absolute; bottom: 0; left: 0; width: 85px; height: 60px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+    }
+    .yt-blocker-bottom-right-fullscreen {
+      position: absolute; bottom: 0; right: 0; width: 150px; height: 50px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+    }
+
+    /* MỚI: LỚP PHỦ CHẶN NÚT "POP-OUT" GÓC TRÊN PHẢI ĐỐI VỚI DRIVE, DOCS, YOUTUBE */
     .iframe-blocker {
       position: absolute; top: 0; right: 0; width: 80px; height: 80px; z-index: 999; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
-    }
-
-    /* NÚT PHÓNG TO GIẢ LẬP CHO TOÀN BỘ KHUNG MEDIA WRAPPER */
-    .custom-fullscreen-btn {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      z-index: 1000;
-      background: rgba(18, 20, 29, 0.85);
-      color: #fff;
-      border: 1px solid var(--border);
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
-    }
-    .custom-fullscreen-btn:hover {
-      background: var(--bg-sidebar-left);
-      border-color: var(--primary-bright);
-    }
-
-    /* TRẠNG THÁI TOÀN MÀN HÌNH TOÀN BỘ KHUNG */
-    .media-wrapper.pseudo-fullscreen {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      padding-top: 0 !important;
-      z-index: 99999 !important;
-      border-radius: 0 !important;
     }
 
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
@@ -629,21 +591,21 @@
             <button class="btn-ctrl" style="background: var(--warning); color: #000; font-weight: 600;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Học Mặc Định</button>
           </div>
 
-          <!-- FRAME HIỂN THỊ BÀI HỌC VÀ TÀI LIỆU -->
+          <!-- FRAME HIỂN THỊ BÀI HỌC VÀ TÀI LIỆU DƯỚI DẠNG MẶC ĐỊNH FULL VIDEO, BẤM TÀI LIỆU MỚI CHIA ĐÔI -->
           <div id="mediaPlayerBox" class="media-player-container" style="display: none;">
             <h3 id="currentMediaTitle" style="margin-bottom: 16px; color: var(--primary-bright);">Nội dung bài học</h3>
             
             <div class="lesson-view-layout" id="lessonViewLayout">
-              <!-- CỘT 1: TRÌNH PHÁT VIDEO -->
+              <!-- CỘT 1: TRÌNH PHÁT VIDEO (LUÔN HIỂN THỊ) -->
               <div class="media-column">
                 <div class="media-wrapper" id="mediaContainerWrapper"></div>
               </div>
               
-              <!-- CỘT 2: TÀI LIỆU NHÚNG (KHI CHIA ĐÔI) -->
+              <!-- CỘT 2: TÀI LIỆU NHÚNG (CHỈ XUẤT HIỆN KHI BẤM VÀO TÊN TÀI LIỆU) -->
               <div class="docs-column" id="docsColumnContainer"></div>
             </div>
 
-            <!-- DANH SÁCH TÀI LIỆU ĐÍNH KÈM Ở PHÍA DƯỚI -->
+            <!-- PHẦN DANH SÁCH TÀI LIỆU ĐÍNH KÈM Ở PHÍA DƯỚI -->
             <div class="bottom-docs-section">
               <div class="bottom-docs-title">📁 Tài liệu đính kèm buổi học (Bấm vào tên tài liệu để xem trực tiếp):</div>
               <div class="docs-list-row" id="bottomDocsList"></div>
@@ -700,7 +662,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DỮ LIỆU MẶC ĐỊNH (ĐÃ CẬP NHẬT VIDEO ID CỦA BẠN: VftOR72Yw08)
+    // DỮ LIỆU MẶC ĐỊNH
     const defaultBigCoursesData = [
       {
         bigCourseId: 'VACT_BIG_999',
@@ -708,7 +670,7 @@
         imgUrl: 'https://tse4.mm.bing.net/th/id/OIP.bzQbi8wRpFDN50Yq2FG-pwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3?w=500&q=80',
         totalLessonsText: '50/100',
         priceText: '200.000VNĐ (Không sách)',
-        scheduleUrl: '',
+        scheduleUrl: '', // Nơi chứa link Thời khóa biểu
         subCourses: [
           {
             courseId: 101,
@@ -720,8 +682,8 @@
                 partTitle: 'Phần 1: Chuyên đề Đạo hàm & Ứng dụng',
                 lessons: [
                   { 
-                    title: 'Bài 1: Video Bài Giảng Trọng Tâm', 
-                    videoUrl: 'https://www.youtube.com/embed/VftOR72Yw08?si=kX2Dgd-47WF5hgMM', 
+                    title: 'Bài 1: Khảo sát sự biến thiên hàm số (Video YouTube mẫu)', 
+                    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 
                     documents: [
                       { docName: '[Handout] Theme 26.pdf', docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' },
                       { docName: '[Tài liệu] Bài tập tự luyện.pdf', docUrl: 'https://docs.google.com/document/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/preview' }
@@ -748,6 +710,7 @@
     let bigCoursesData = [];
     let activationCodes = [];
     let currentUser = null;
+    let ytPlayerInstance = null;
     let selectedBigCourseId = null;
 
     // LẮNG NGHE DỮ LIỆU REALTIME TỪ FIREBASE
@@ -806,9 +769,11 @@
       }
     }
 
+    // THU GỌN / MỞ RỘNG SIDEBAR DANH MỤC
     function toggleSidebar() {
       const sidebar = document.getElementById('subSidebar');
       const openBtn = document.getElementById('sidebarOpenBtn');
+      
       if (sidebar.classList.contains('collapsed')) {
         sidebar.classList.remove('collapsed');
         openBtn.style.display = 'none';
@@ -818,6 +783,7 @@
       }
     }
 
+    // ĐĂNG NHẬP & BẢO MẬT
     function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
@@ -884,6 +850,7 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
+    // TRÍCH XUẤT YOUTUBE VIDEO ID
     function extractYouTubeId(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -891,13 +858,16 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
+    // CHUYỂN LINK GOOGLE DRIVE THÀNH PREVIEW
     function convertToEmbedUrl(url) {
       if (!url) return '';
       let embedUrl = url;
+
       if (embedUrl.includes('drive.google.com') || embedUrl.includes('docs.google.com')) {
         embedUrl = embedUrl.replace(/\/view(\?.*)?$/, '/preview')
                            .replace(/\/edit(\?.*)?$/, '/preview')
                            .replace(/\/sharing(\?.*)?$/, '/preview');
+        
         if (!embedUrl.includes('/preview')) {
           embedUrl = embedUrl.split('?')[0] + '/preview';
         }
@@ -905,21 +875,7 @@
       return embedUrl;
     }
 
-    // HÀM BẬT/TẮT PHÓNG TO TOÀN KHUNG GIẢ LẬP
-    function togglePseudoFullscreen() {
-      const wrapper = document.getElementById('mediaContainerWrapper');
-      const btn = document.getElementById('pseudoFsBtn');
-      if (!wrapper) return;
-
-      if (wrapper.classList.contains('pseudo-fullscreen')) {
-        wrapper.classList.remove('pseudo-fullscreen');
-        if (btn) btn.innerHTML = '⛶ Phóng to toàn màn hình';
-      } else {
-        wrapper.classList.add('pseudo-fullscreen');
-        if (btn) btn.innerHTML = '🗗 Thu nhỏ màn hình';
-      }
-    }
-
+    // MỞ BÀI GIẢNG / TÀI LIỆU CÓ BLOCKER LỚP PHỦ
     function playMediaContent(title, mediaUrl, documentsArray) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
@@ -938,33 +894,46 @@
       wrapper.innerHTML = '';
       bottomDocsList.innerHTML = '';
 
-      const ytId = extractYouTubeId(mediaUrl);
+      if (ytPlayerInstance && typeof ytPlayerInstance.destroy === 'function') {
+        try { ytPlayerInstance.destroy(); } catch(e) {}
+        ytPlayerInstance = null;
+      }
 
-      const pseudoFullscreenButtonHTML = `
-        <button class="custom-fullscreen-btn" id="pseudoFsBtn" onclick="togglePseudoFullscreen()">
-          ⛶ Phóng to toàn màn hình
-        </button>
-      `;
+      const ytId = extractYouTubeId(mediaUrl);
 
       if (!mediaUrl) {
         wrapper.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);">Chưa có video hoặc link hiển thị</div>';
       } else if (ytId) {
         wrapper.innerHTML = `
-          <iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&fs=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <div id="ytPlayerDiv"></div>
+          <div class="yt-blocker-top-full" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
+          <div class="yt-blocker-bottom-left-icon" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
+          <div class="yt-blocker-bottom-right-fullscreen" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
           <div class="iframe-blocker" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
-          ${pseudoFullscreenButtonHTML}
         `;
+
+        ytPlayerInstance = new YT.Player('ytPlayerDiv', {
+          videoId: ytId,
+          playerVars: {
+            'autoplay': 1,
+            'controls': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'showinfo': 0,
+            'fs': 1,
+            'cc_load_policy': 1,
+            'playsinline': 1,
+            'enablejsapi': 1,
+            'origin': window.location.origin
+          }
+        });
       } else if (mediaUrl.endsWith('.mp4') || mediaUrl.includes('commondatastorage.googleapis.com')) {
-        wrapper.innerHTML = `
-          <video controls autoplay><source src="${mediaUrl}" type="video/mp4">Trình duyệt không hỗ trợ video.</video>
-          ${pseudoFullscreenButtonHTML}
-        `;
+        wrapper.innerHTML = `<video controls autoplay><source src="${mediaUrl}" type="video/mp4">Trình duyệt không hỗ trợ video.</video>`;
       } else {
         const finalEmbedUrl = convertToEmbedUrl(mediaUrl);
         wrapper.innerHTML = `
           <iframe src="${finalEmbedUrl}" allow="autoplay" allowfullscreen></iframe>
           <div class="iframe-blocker" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
-          ${pseudoFullscreenButtonHTML}
         `;
       }
 
@@ -989,6 +958,7 @@
       playerBox.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // CHIA ĐÔI MÀN HÌNH TÀI LIỆU VỚI LỚP PHỦ BLOCKER
     function selectAndShowDoc(docName, docUrl, index) {
       const lessonViewLayout = document.getElementById('lessonViewLayout');
       const docsColumnContainer = document.getElementById('docsColumnContainer');
@@ -1024,6 +994,7 @@
       playMediaContent('THỜI KHÓA BIỂU', url, []);
     }
 
+    // CHAT REALTIME
     function sendChatMessage() {
       const input = document.getElementById('chatMessageInput');
       const text = input.value.trim();
@@ -1067,6 +1038,7 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    // KÍCH HOẠT KHÓA LỚN
     function activateCourseCode() {
       const codeInput = document.getElementById('activationCodeInput').value.trim();
       if(!codeInput) { alert('Vui lòng nhập mã kích hoạt!'); return; }
@@ -1090,6 +1062,7 @@
       renderCoursesUI();
     }
 
+    // QUẢN LÝ MÃ VÀ USER CHO ADMIN
     function renderAdminCodes() {
       const tbody = document.getElementById('adminCodesTable');
       if(!tbody) return;
@@ -1110,6 +1083,7 @@
 
     function adminCreateActivationCode() {
       if(!bigCoursesData || bigCoursesData.length === 0) { alert('Chưa có khóa học lớn nào!'); return; }
+      
       let listStr = "Chọn Khóa Học Lớn tương ứng:\n";
       bigCoursesData.forEach((bc, index) => { listStr += `${index + 1}. ${bc.bigCourseTitle}\n`; });
       
@@ -1185,12 +1159,17 @@
       alert('Tạo tài khoản thành công!');
     }
 
+    // -------------------------------------------------------------
+    // QUẢN LÝ KHÓA HỌC DÀNH CHO ADMIN (THÊM, SỬA, XÓA TOÀN DIỆN)
+    // -------------------------------------------------------------
+    
+    // KHÓA LỚN
     function adminAddBigCourse() {
       const title = prompt('Nhập tên Khóa học lớn mới:');
       if(!title) return;
-      const imgUrl = prompt('Nhập link hình ảnh đại diện:');
-      const totalLessonsText = prompt('Số bài giảng hiển thị:', '0/0 bài');
-      const priceText = prompt('Số tiền hiển thị:', '800.000 VNĐ');
+      const imgUrl = prompt('Nhập link hình ảnh đại diện (để trống nếu dùng mặc định):');
+      const totalLessonsText = prompt('Số bài giảng hiển thị (Ví dụ: 0/15 bài):', '0/0 bài');
+      const priceText = prompt('Số tiền hiển thị (Ví dụ: 800.000 VNĐ):', '800.000 VNĐ');
 
       const bigCourseId = 'BIG_' + Date.now();
       bigCoursesData.push({ 
@@ -1224,25 +1203,27 @@
     }
 
     function adminDeleteBigCourse(bigIdx) {
-      if(confirm('Bạn có chắc chắn muốn xóa khóa học lớn này?')) {
+      if(confirm('Bạn có chắc chắn muốn xóa khóa học lớn này? Toàn bộ dữ liệu bên trong sẽ mất.')) {
         bigCoursesData.splice(bigIdx, 1);
         saveBigCoursesToStorage();
         renderCoursesUI();
       }
     }
 
+    // THỜI KHÓA BIỂU
     function adminEditSchedule(bigIdx) {
-      const url = prompt('Nhập link Thời Khóa Biểu:', bigCoursesData[bigIdx].scheduleUrl || '');
+      const url = prompt('Nhập link Google Drive / Docs / Sheet chứa Thời Khóa Biểu:', bigCoursesData[bigIdx].scheduleUrl || '');
       if (url !== null) {
         bigCoursesData[bigIdx].scheduleUrl = url.trim();
         saveBigCoursesToStorage();
         renderCoursesUI();
-        alert('Cập nhật thành công!');
+        alert('Cập nhật link Thời Khóa Biểu thành công!');
       }
     }
 
+    // KHÓA NHỎ
     function adminAddSubCourse(bigIdx) {
-      const title = prompt('Nhập tên Khóa nhỏ:');
+      const title = prompt('Nhập tên Khóa nhỏ (Ví dụ: Khóa 1: Toán Tư Duy & Logic):');
       if(!title) return;
       if(!bigCoursesData[bigIdx].subCourses) bigCoursesData[bigIdx].subCourses = [];
       bigCoursesData[bigIdx].subCourses.push({ courseId: Date.now(), courseTitle: title, parts: [] });
@@ -1260,17 +1241,26 @@
     }
 
     function adminDeleteSubCourse(bigIdx, subIdx) {
-      if(confirm('Xóa khóa học nhỏ này?')) {
+      if(confirm('Xóa khóa học nhỏ này? Các phần bên trong cũng sẽ bị xóa.')) {
         bigCoursesData[bigIdx].subCourses.splice(subIdx, 1);
         saveBigCoursesToStorage();
         renderCoursesUI();
       }
     }
 
+    // PHẦN
     function adminAddPart(bigIdx, subIdx) {
-      const title = prompt('Nhập tên Phần:');
+      const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Tài liệu chung):');
       if(!title) return;
-      let partObj = { partId: Date.now(), partTitle: title, type: 'lessons', documents: [], lessons: [] };
+      
+      let partObj = { 
+        partId: Date.now(), 
+        partTitle: title, 
+        type: 'lessons',
+        documents: [],
+        lessons: []
+      };
+
       if(!bigCoursesData[bigIdx].subCourses[subIdx].parts) bigCoursesData[bigIdx].subCourses[subIdx].parts = [];
       bigCoursesData[bigIdx].subCourses[subIdx].parts.push(partObj);
       saveBigCoursesToStorage();
@@ -1287,17 +1277,18 @@
     }
 
     function adminDeletePart(bigIdx, subIdx, partIdx) {
-      if(confirm('Xóa phần này?')) {
+      if(confirm('Xóa phần này? Các bài học bên trong cũng sẽ bị xóa.')) {
         bigCoursesData[bigIdx].subCourses[subIdx].parts.splice(partIdx, 1);
         saveBigCoursesToStorage();
         renderCoursesUI();
       }
     }
 
+    // BÀI HỌC VÀ TÀI LIỆU
     function adminAddLesson(bigIdx, subIdx, partIdx) {
       const title = prompt('Nhập tên Bài học:');
       if(!title) return;
-      const videoUrl = prompt('Nhập link Video (YouTube nhúng):');
+      const videoUrl = prompt('Nhập link Video (YouTube / Google Drive / MP4):');
       
       let documents = [];
       let addMoreDoc = true;
@@ -1306,7 +1297,7 @@
         if(docName) {
           const docUrl = prompt('Nhập link tài liệu (Docs / Sheet / Drive):');
           documents.push({ docName, docUrl: docUrl || '' });
-          addMoreDoc = confirm('Thêm tài liệu khác?');
+          addMoreDoc = confirm('Bạn có muốn thêm tài liệu khác cho bài giảng này không?');
         } else {
           break;
         }
@@ -1334,15 +1325,15 @@
     }
 
     function adminEditLessonDocs(bigIdx, subIdx, partIdx, lesIdx) {
-      if(confirm('Đặt lại danh sách tài liệu của bài học này?')) {
+      if(confirm('Bạn có muốn đặt lại danh sách tài liệu của bài học này? (Sẽ cần nhập lại từ đầu)')) {
         let documents = [];
         let addMoreDoc = true;
         while(addMoreDoc) {
           const docName = prompt('Nhập tên tài liệu mới (để trống để kết thúc):');
           if(docName) {
-            const docUrl = prompt('Nhập link tài liệu:');
+            const docUrl = prompt('Nhập link tài liệu (Docs / Sheet / Drive):');
             documents.push({ docName, docUrl: docUrl || '' });
-            addMoreDoc = confirm('Thêm tài liệu khác?');
+            addMoreDoc = confirm('Bạn có muốn thêm tài liệu khác không?');
           } else {
             break;
           }
@@ -1354,13 +1345,15 @@
     }
 
     function adminDeleteLesson(bigIdx, subIdx, partIdx, lesIdx) {
-      if(confirm('Xóa bài học này?')) {
+      if(confirm('Bạn muốn xóa bài học này?')) {
         bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons.splice(lesIdx, 1);
         saveBigCoursesToStorage();
         renderCoursesUI();
       }
     }
 
+
+    // ĐIỀU HƯỚNG
     function goBackToBigCourses() {
       selectedBigCourseId = null;
       document.getElementById('mediaPlayerBox').style.display = 'none';
@@ -1372,6 +1365,9 @@
       renderCoursesUI();
     }
 
+    // -------------------------------------------------------------
+    // RENDER GIAO DIỆN
+    // -------------------------------------------------------------
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
       const backNavContainer = document.getElementById('backNavContainer');
@@ -1385,6 +1381,7 @@
 
       const isAdmin = currentUser && currentUser.role === 'admin';
 
+      // HIỂN THỊ DANH SÁCH KHÓA HỌC LỚN (GIAO DIỆN CARD)
       if (!selectedBigCourseId) {
         backNavContainer.style.display = 'none';
 
@@ -1404,6 +1401,7 @@
         }
 
         let gridHTML = '<div class="big-course-grid">';
+        
         visibleBigCourses.forEach((bigC) => {
           const originalIndex = bigCoursesData.findIndex(item => item.bigCourseId === bigC.bigCourseId);
           const defaultImg = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80';
@@ -1438,11 +1436,13 @@
             </div>
           `;
         });
+
         gridHTML += '</div>';
         container.innerHTML = gridHTML;
         return;
       }
 
+      // HIỂN THỊ CHI TIẾT BÊN TRONG KHÓA LỚN
       const bigC = bigCoursesData.find(bc => bc.bigCourseId === selectedBigCourseId);
       const bigIdx = bigCoursesData.findIndex(bc => bc.bigCourseId === selectedBigCourseId);
 
@@ -1456,6 +1456,7 @@
       document.getElementById('currentBreadcrumb').innerText = '▸ ' + bigC.bigCourseTitle;
 
       let subCoursesHTML = '';
+
       if (isAdmin) {
         subCoursesHTML += `
           <div style="margin-bottom: 20px;">
@@ -1464,6 +1465,7 @@
         `;
       }
 
+      // HIỂN THỊ KHÓA NHỎ: THỜI KHÓA BIỂU
       subCoursesHTML += `
         <div class="course-card-box" style="border-color: var(--primary-bright); background: rgba(162, 155, 254, 0.05);">
           <div class="course-header" onclick="openSchedule('${bigC.scheduleUrl || ''}')">
@@ -1477,6 +1479,7 @@
         </div>
       `;
 
+      // HIỂN THỊ CÁC KHÓA NHỎ VÀ BÀI HỌC
       if (bigC.subCourses && bigC.subCourses.length > 0) {
         bigC.subCourses.forEach((subC, subIdx) => {
           let partsHTML = '';
@@ -1544,7 +1547,7 @@
           `;
         });
       } else {
-        subCoursesHTML += '<div style="color:var(--text-muted); font-size:0.9rem; padding: 20px; background: var(--bg-panel); border-radius: 12px; text-align: center;">Chưa có khóa học thành phần nào khác.</div>';
+        subCoursesHTML += '<div style="color:var(--text-muted); font-size:0.9rem; padding: 20px; background: var(--bg-panel); border-radius: 12px; text-align: center;">Chưa có khóa học thành phần nào khác trong khóa lớn này.</div>';
       }
 
       container.innerHTML = subCoursesHTML;
