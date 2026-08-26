@@ -291,19 +291,19 @@
     .admin-btn-danger { background: var(--danger); }
     .admin-action-bar { margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-    /* GIAO DIỆN BÀI GIẢNG THEO YÊU CẦU MỚI (MẶC ĐỊNH VIDEO TOÀN MÀN HÌNH, BẤM TÀI LIỆU MỚI CHIA ĐÔI) */
+    /* GIAO DIỆN BÀI GIẢNG VÀ CHUẨN TỈ LỆ 16:9 */
     .media-player-container {
       background: var(--bg-panel); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
     }
     
     .lesson-view-layout {
       display: grid;
-      grid-template-columns: 1fr; /* Mặc định video full chiều rộng */
+      grid-template-columns: 1fr;
       gap: 20px;
       transition: all 0.3s ease;
     }
     .lesson-view-layout.split-screen {
-      grid-template-columns: 1fr 1fr; /* Chia đôi khi chọn tài liệu */
+      grid-template-columns: 1fr 1fr;
     }
     @media (max-width: 992px) {
       .lesson-view-layout.split-screen {
@@ -319,7 +319,7 @@
     }
 
     .docs-column {
-      display: none; /* Mặc định ẩn cột tài liệu cho đến khi người dùng bấm vào một tài liệu cụ thể */
+      display: none;
       flex-direction: column;
       gap: 16px;
     }
@@ -327,18 +327,87 @@
       display: flex;
     }
 
-    .media-wrapper { position: relative; padding-top: 56.25%; background: #000; border-radius: 12px; overflow: hidden; }
-    .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    /* ĐẢM BẢO KHUNG HIỂN THỊ VIDEO LUÔN ĐÚNG TỈ LỆ 16:9 TUYỆT ĐỐI */
+    .media-wrapper { 
+      position: relative; 
+      width: 100%; 
+      padding-top: 56.25%; /* Tỉ lệ chuẩn 16:9 (9 / 16 = 56.25%) */
+      background: #000; 
+      border-radius: 12px; 
+      overflow: hidden; 
+    }
+    .media-wrapper video, 
+    .media-wrapper iframe, 
+    .media-wrapper div#ytPlayerDiv { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      border: none; 
+    }
     
-    /* LỚP PHỦ CHẶN VỊ TRÍ THEO YÊU CẦU (ĐÃ ĐIỀU CHỈNH THEO HÌNH KHOANH TRÒN) */
-    .yt-blocker-top-full {
-      position: absolute; top: 0; left: 0; width: 100%; height: 75px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+    /* LỚP PHỦ TOÀN BỘ MẶT VIDEO & THANH ĐIỀU KHIỂN GIẢ LẬP AN TOÀN */
+    .video-secure-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 40;
+      background: transparent;
+      pointer-events: none; /* Cho phép sự kiện xuyên qua khi không chạm panel điều khiển bên dưới */
     }
-    .yt-blocker-bottom-left-icon {
-      position: absolute; bottom: 0; left: 0; width: 85px; height: 60px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+
+    .custom-video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 50;
+      pointer-events: auto; /* Bật tương tác riêng cho thanh điều khiển */
+      opacity: 0.9;
+      transition: opacity 0.2s;
     }
-    .yt-blocker-bottom-right-fullscreen {
-      position: absolute; bottom: 0; right: 0; width: 150px; height: 50px; z-index: 30; background: rgba(0, 0, 0, 0.01); pointer-events: auto !important; cursor: not-allowed;
+    .custom-video-controls:hover { opacity: 1; }
+
+    .ctrl-btn {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s;
+    }
+    .ctrl-btn:hover { background: var(--bg-sidebar-left); }
+
+    .ctrl-select {
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      outline: none;
+      cursor: pointer;
+    }
+    .ctrl-select option { background: var(--bg-dark); color: #fff; }
+
+    .volume-slider {
+      width: 70px;
+      accent-color: var(--primary);
+      cursor: pointer;
     }
 
     /* MỚI: LỚP PHỦ CHẶN NÚT "POP-OUT" GÓC TRÊN PHẢI ĐỐI VỚI DRIVE, DOCS, YOUTUBE */
@@ -349,7 +418,7 @@
     .btn-ctrl { background: var(--bg-card); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
     .btn-ctrl:hover { background: var(--bg-sidebar-left); }
 
-    /* KHU VỰC DANH SÁCH TÀI LIỆU ĐÍNH KÈM PHÍA DƯỚI VIDEO */
+    /* KHU VỰC DANH SÁCH TÀI LIỆU ĐÍNH KÈM PHÍA DƯỚI */
     .bottom-docs-section {
       margin-top: 20px;
       padding-top: 16px;
@@ -596,7 +665,7 @@
             <h3 id="currentMediaTitle" style="margin-bottom: 16px; color: var(--primary-bright);">Nội dung bài học</h3>
             
             <div class="lesson-view-layout" id="lessonViewLayout">
-              <!-- CỘT 1: TRÌNH PHÁT VIDEO (LUÔN HIỂN THỊ) -->
+              <!-- CỘT 1: TRÌNH PHÁT VIDEO VỚI THANH ĐIỀU KHIỂN GIẢ LẬP AN TOÀN -->
               <div class="media-column">
                 <div class="media-wrapper" id="mediaContainerWrapper"></div>
               </div>
@@ -670,7 +739,7 @@
         imgUrl: 'https://tse4.mm.bing.net/th/id/OIP.bzQbi8wRpFDN50Yq2FG-pwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3?w=500&q=80',
         totalLessonsText: '50/100',
         priceText: '200.000VNĐ (Không sách)',
-        scheduleUrl: '', // Nơi chứa link Thời khóa biểu
+        scheduleUrl: '', 
         subCourses: [
           {
             courseId: 101,
@@ -769,11 +838,9 @@
       }
     }
 
-    // THU GỌN / MỞ RỘNG SIDEBAR DANH MỤC
     function toggleSidebar() {
       const sidebar = document.getElementById('subSidebar');
       const openBtn = document.getElementById('sidebarOpenBtn');
-      
       if (sidebar.classList.contains('collapsed')) {
         sidebar.classList.remove('collapsed');
         openBtn.style.display = 'none';
@@ -783,7 +850,6 @@
       }
     }
 
-    // ĐĂNG NHẬP & BẢO MẬT
     function handleLogin(e) {
       e.preventDefault();
       const u = document.getElementById('username').value.trim();
@@ -850,7 +916,6 @@
       document.getElementById('coursesTab').style.display = subTab === 'courses' ? 'block' : 'none';
     }
 
-    // TRÍCH XUẤT YOUTUBE VIDEO ID
     function extractYouTubeId(url) {
       if (!url) return null;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -858,16 +923,13 @@
       return (match && match[2].length === 11) ? match[2] : null;
     }
 
-    // CHUYỂN LINK GOOGLE DRIVE THÀNH PREVIEW
     function convertToEmbedUrl(url) {
       if (!url) return '';
       let embedUrl = url;
-
       if (embedUrl.includes('drive.google.com') || embedUrl.includes('docs.google.com')) {
         embedUrl = embedUrl.replace(/\/view(\?.*)?$/, '/preview')
                            .replace(/\/edit(\?.*)?$/, '/preview')
                            .replace(/\/sharing(\?.*)?$/, '/preview');
-        
         if (!embedUrl.includes('/preview')) {
           embedUrl = embedUrl.split('?')[0] + '/preview';
         }
@@ -875,7 +937,54 @@
       return embedUrl;
     }
 
-    // MỞ BÀI GIẢNG / TÀI LIỆU CÓ BLOCKER LỚP PHỦ
+    // --- CÁC HÀM ĐIỀU KHIỂN VIDEO GIẢ LẬP AN TOÀN (KHÔNG CHUYỂN HƯỚNG YOUTUBE) ---
+    function customPlayPause() {
+      if (!ytPlayerInstance || typeof ytPlayerInstance.getPlayerState !== 'function') return;
+      const state = ytPlayerInstance.getPlayerState();
+      if (state === YT.PlayerState.PLAYING) {
+        ytPlayerInstance.pauseVideo();
+      } else {
+        ytPlayerInstance.playVideo();
+      }
+    }
+
+    function customSeek(seconds) {
+      if (!ytPlayerInstance || typeof ytPlayerInstance.getCurrentTime !== 'function') return;
+      const curr = ytPlayerInstance.getCurrentTime();
+      ytPlayerInstance.seekTo(curr + seconds, true);
+    }
+
+    function customVolume(val) {
+      if (!ytPlayerInstance || typeof ytPlayerInstance.setVolume !== 'function') return;
+      ytPlayerInstance.setVolume(val);
+    }
+
+    function customSubtitles(enabled) {
+      if (!ytPlayerInstance || typeof ytPlayerInstance.loadModule !== 'function') return;
+      if (enabled) {
+        ytPlayerInstance.loadModule('caption');
+      } else {
+        ytPlayerInstance.unloadModule('caption');
+      }
+    }
+
+    function customQuality(qualityLevel) {
+      if (!ytPlayerInstance || typeof ytPlayerInstance.setPlaybackQuality !== 'function') return;
+      ytPlayerInstance.setPlaybackQuality(qualityLevel);
+    }
+
+    function customToggleFullscreen() {
+      const wrapper = document.getElementById('mediaContainerWrapper');
+      if (!document.fullscreenElement) {
+        if (wrapper.requestFullscreen) { wrapper.requestFullscreen(); }
+        else if (wrapper.webkitRequestFullscreen) { wrapper.webkitRequestFullscreen(); }
+        else if (wrapper.msRequestFullscreen) { wrapper.msRequestFullscreen(); }
+      } else {
+        if (document.exitFullscreen) { document.exitFullscreen(); }
+      }
+    }
+
+    // MỞ BÀI GIẢNG / TÀI LIỆU KÈM LỚP PHỦ VÀ BẢNG NÚT GIẢ LẬP
     function playMediaContent(title, mediaUrl, documentsArray) {
       const playerBox = document.getElementById('mediaPlayerBox');
       const wrapper = document.getElementById('mediaContainerWrapper');
@@ -906,9 +1015,30 @@
       } else if (ytId) {
         wrapper.innerHTML = `
           <div id="ytPlayerDiv"></div>
-          <div class="yt-blocker-top-full" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
-          <div class="yt-blocker-bottom-left-icon" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
-          <div class="yt-blocker-bottom-right-fullscreen" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
+          <!-- Lớp phủ toàn bộ mặt video kèm thanh điều khiển giả lập độc quyền -->
+          <div class="video-secure-overlay"></div>
+          <div class="custom-video-controls">
+            <button class="ctrl-btn" onclick="customPlayPause()" title="Phát / Tạm dừng">⏯ Phát</button>
+            <button class="ctrl-btn" onclick="customSeek(-10)" title="Tua lùi 10 giây">⏪ 10s</button>
+            <button class="ctrl-btn" onclick="customSeek(10)" title="Tua nhanh 10 giây">10s ⏩</button>
+            <span style="font-size:0.8rem; color:#ccc; margin-left:4px;">🔊</span>
+            <input type="range" class="volume-slider" min="0" max="100" value="100" oninput="customVolume(this.value)" title="Điều chỉnh âm lượng">
+            
+            <select class="ctrl-select" onchange="customSubtitles(this.value === 'true')" title="Phụ đề">
+              <option value="false">Tắt Phụ đề</option>
+              <option value="true">Bật Phụ đề</option>
+            </select>
+
+            <select class="ctrl-select" onchange="customQuality(this.value)" title="Chất lượng độ phân giải">
+              <option value="hd1080">1080p HD</option>
+              <option value="hd720">720p HD</option>
+              <option value="large">480p</option>
+              <option value="medium" selected>360p</option>
+              <option value="small">240p</option>
+            </select>
+
+            <button class="ctrl-btn" style="margin-left:auto;" onclick="customToggleFullscreen()" title="Phóng to thu nhỏ toàn màn hình">⛶ Phóng to</button>
+          </div>
           <div class="iframe-blocker" title="Bị vô hiệu hóa để bảo vệ bản quyền"></div>
         `;
 
@@ -916,11 +1046,11 @@
           videoId: ytId,
           playerVars: {
             'autoplay': 1,
-            'controls': 1,
+            'controls': 0, /* Tắt hoàn toàn controls gốc của Youtube để dùng thanh giả lập an toàn */
             'modestbranding': 1,
             'rel': 0,
             'showinfo': 0,
-            'fs': 1,
+            'fs': 0,
             'cc_load_policy': 1,
             'playsinline': 1,
             'enablejsapi': 1,
@@ -958,7 +1088,6 @@
       playerBox.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // CHIA ĐÔI MÀN HÌNH TÀI LIỆU VỚI LỚP PHỦ BLOCKER
     function selectAndShowDoc(docName, docUrl, index) {
       const lessonViewLayout = document.getElementById('lessonViewLayout');
       const docsColumnContainer = document.getElementById('docsColumnContainer');
@@ -994,7 +1123,6 @@
       playMediaContent('THỜI KHÓA BIỂU', url, []);
     }
 
-    // CHAT REALTIME
     function sendChatMessage() {
       const input = document.getElementById('chatMessageInput');
       const text = input.value.trim();
@@ -1038,7 +1166,6 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // KÍCH HOẠT KHÓA LỚN
     function activateCourseCode() {
       const codeInput = document.getElementById('activationCodeInput').value.trim();
       if(!codeInput) { alert('Vui lòng nhập mã kích hoạt!'); return; }
@@ -1062,7 +1189,6 @@
       renderCoursesUI();
     }
 
-    // QUẢN LÝ MÃ VÀ USER CHO ADMIN
     function renderAdminCodes() {
       const tbody = document.getElementById('adminCodesTable');
       if(!tbody) return;
@@ -1159,11 +1285,6 @@
       alert('Tạo tài khoản thành công!');
     }
 
-    // -------------------------------------------------------------
-    // QUẢN LÝ KHÓA HỌC DÀNH CHO ADMIN (THÊM, SỬA, XÓA TOÀN DIỆN)
-    // -------------------------------------------------------------
-    
-    // KHÓA LỚN
     function adminAddBigCourse() {
       const title = prompt('Nhập tên Khóa học lớn mới:');
       if(!title) return;
@@ -1210,7 +1331,6 @@
       }
     }
 
-    // THỜI KHÓA BIỂU
     function adminEditSchedule(bigIdx) {
       const url = prompt('Nhập link Google Drive / Docs / Sheet chứa Thời Khóa Biểu:', bigCoursesData[bigIdx].scheduleUrl || '');
       if (url !== null) {
@@ -1221,7 +1341,6 @@
       }
     }
 
-    // KHÓA NHỎ
     function adminAddSubCourse(bigIdx) {
       const title = prompt('Nhập tên Khóa nhỏ (Ví dụ: Khóa 1: Toán Tư Duy & Logic):');
       if(!title) return;
@@ -1248,7 +1367,6 @@
       }
     }
 
-    // PHẦN
     function adminAddPart(bigIdx, subIdx) {
       const title = prompt('Nhập tên Phần (Ví dụ: Phần 1: Tài liệu chung):');
       if(!title) return;
@@ -1284,7 +1402,6 @@
       }
     }
 
-    // BÀI HỌC VÀ TÀI LIỆU
     function adminAddLesson(bigIdx, subIdx, partIdx) {
       const title = prompt('Nhập tên Bài học:');
       if(!title) return;
@@ -1352,8 +1469,6 @@
       }
     }
 
-
-    // ĐIỀU HƯỚNG
     function goBackToBigCourses() {
       selectedBigCourseId = null;
       document.getElementById('mediaPlayerBox').style.display = 'none';
@@ -1365,9 +1480,6 @@
       renderCoursesUI();
     }
 
-    // -------------------------------------------------------------
-    // RENDER GIAO DIỆN
-    // -------------------------------------------------------------
     function renderCoursesUI() {
       const container = document.getElementById('coursesContainer');
       const backNavContainer = document.getElementById('backNavContainer');
@@ -1381,7 +1493,6 @@
 
       const isAdmin = currentUser && currentUser.role === 'admin';
 
-      // HIỂN THỊ DANH SÁCH KHÓA HỌC LỚN (GIAO DIỆN CARD)
       if (!selectedBigCourseId) {
         backNavContainer.style.display = 'none';
 
@@ -1442,7 +1553,6 @@
         return;
       }
 
-      // HIỂN THỊ CHI TIẾT BÊN TRONG KHÓA LỚN
       const bigC = bigCoursesData.find(bc => bc.bigCourseId === selectedBigCourseId);
       const bigIdx = bigCoursesData.findIndex(bc => bc.bigCourseId === selectedBigCourseId);
 
@@ -1465,7 +1575,6 @@
         `;
       }
 
-      // HIỂN THỊ KHÓA NHỎ: THỜI KHÓA BIỂU
       subCoursesHTML += `
         <div class="course-card-box" style="border-color: var(--primary-bright); background: rgba(162, 155, 254, 0.05);">
           <div class="course-header" onclick="openSchedule('${bigC.scheduleUrl || ''}')">
@@ -1479,7 +1588,6 @@
         </div>
       `;
 
-      // HIỂN THỊ CÁC KHÓA NHỎ VÀ BÀI HỌC
       if (bigC.subCourses && bigC.subCourses.length > 0) {
         bigC.subCourses.forEach((subC, subIdx) => {
           let partsHTML = '';
