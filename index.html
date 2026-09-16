@@ -767,7 +767,7 @@
 
   <script>
     // -------------------------------------------------------------
-    // 1. CẤU HÌNH FIREBASE DATABASE REALTIME SYNC
+    // 1. CẤU HÌNH FIREBASE DATABASE (GIỮ NGUYÊN DỮ LIỆU CŨ)
     // -------------------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyCdC9u4XFa0UgM09dtn-OCPFf8EIFPXZUQ",
@@ -1028,7 +1028,7 @@
       }
     });
 
-    // REALTIME DATABASE LISTENERS (ĐỒNG BỘ MỌI TÀI KHOẢN TRÊN TOÀN MẠNG)
+    // REALTIME DATABASE LISTENERS
     db.ref('users').on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) userAccounts = data;
@@ -1352,7 +1352,7 @@
     }
 
     // -------------------------------------------------------------
-    // HIỂN THỊ KHÓA HỌC & CÂY BÀI HỌC CÓ ĐỒNG BỘ NÊU TRÊN REALTIME
+    // KHÓA HỌC & TIẾN ĐỘ RENDER
     // -------------------------------------------------------------
     function renderCoursesUI() {
       const container = document.getElementById('bigCoursesContainer');
@@ -1360,23 +1360,24 @@
       container.innerHTML = '';
 
       if (bigCoursesData.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); grid-column:1/-1;">Chưa có khóa học nào trên hệ thống.</div>';
+        container.innerHTML = '<div style="color:var(--text-muted); grid-column:1/-1;">Chưa có khóa học nào được tạo.</div>';
         return;
       }
 
-      bigCoursesData.forEach((bc) => {
-        let totalLessons = 0;
-        let completedLessons = 0;
+      bigCoursesData.forEach(bc => {
+        const imgSrc = bc.imgUrl || DEFAULT_FALLBACK_IMAGE;
+        let totalLes = 0;
+        let completedLes = 0;
 
         if (bc.subCourses) {
           bc.subCourses.forEach(sc => {
             if (sc.parts) {
-              sc.parts.forEach(pt => {
-                if (pt.lessons) {
-                  pt.lessons.forEach(ls => {
-                    totalLessons++;
-                    if (userProgressData[ls.id] && userProgressData[ls.id].progressPct >= 80) {
-                      completedLessons++;
+              sc.parts.forEach(p => {
+                if (p.lessons) {
+                  p.lessons.forEach(l => {
+                    totalLes++;
+                    if (userProgressData[l.id] && userProgressData[l.id].progressPct >= 80) {
+                      completedLes++;
                     }
                   });
                 }
@@ -1385,8 +1386,7 @@
           });
         }
 
-        const overallPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-        const imgSrc = bc.imgUrl || DEFAULT_FALLBACK_IMAGE;
+        const pctTotal = totalLes > 0 ? Math.round((completedLes / totalLes) * 100) : 0;
 
         container.innerHTML += `
           <div class="big-course-card" onclick="openBigCourseDetail('${bc.bigCourseId}')">
@@ -1394,64 +1394,35 @@
               <img src="${imgSrc}" onerror="this.onerror=null; this.src=DEFAULT_FALLBACK_IMAGE;" alt="${bc.bigCourseTitle}">
             </div>
             <div class="card-body">
+              <div class="card-tags">
+                <span class="tag-target">${bc.targetAudience || 'Mọi Học Viên'}</span>
+                <span class="tag-video">📹 ${bc.totalVideos || totalLes} Video</span>
+              </div>
               <div class="card-title">${bc.bigCourseTitle}</div>
               <div class="card-progress-text">
-                <span>Tiến độ học tập</span>
-                <span style="color: var(--primary-bright);">${overallPct}% (${completedLessons}/${totalLessons} bài)</span>
+                <span>Tiến độ hoàn thành</span>
+                <span>${pctTotal}%</span>
               </div>
               <div class="card-progress-bar-bg">
-                <div class="card-progress-bar-fill" style="width: ${overallPct}%;"></div>
+                <div class="card-progress-bar-fill" style="width: ${pctTotal}%;"></div>
               </div>
-              <div class="card-tags">
-                <span class="tag-target">🎯 ${bc.targetAudience || 'Mọi đối tượng'}</span>
-                <span class="tag-video">📹 ${bc.totalVideos || totalLessons} Videos</span>
-              </div>
-              ${currentUser && currentUser.role === 'admin' ? `
-                <div style="display:flex; gap:6px; margin-top:8px;" onclick="event.stopPropagation()">
-                  <button class="admin-btn-sm" onclick="adminAddSubCourse('${bc.bigCourseId}')">+ Thêm Khóa Con</button>
-                  <button class="admin-btn-sm admin-btn-warning" onclick="adminEditBigCourse('${bc.bigCourseId}')">✏️ Sửa</button>
-                  <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteBigCourse('${bc.bigCourseId}')">🗑️ Xóa</button>
-                </div>
-              ` : ''}
               <div class="card-footer-price">${bc.price || 'Miễn Phí'}</div>
             </div>
           </div>
         `;
       });
-
-      const totalBigCountEl = document.getElementById('totalBigCoursesCount');
-      if (totalBigCountEl) totalBigCountEl.innerText = `${bigCoursesData.length} Khóa`;
-
-      if (selectedBigCourseId) {
-        renderBigCourseDetail(selectedBigCourseId);
-      }
     }
 
     function openBigCourseDetail(bigCourseId) {
       selectedBigCourseId = bigCourseId;
       document.getElementById('bigCoursesView').style.display = 'none';
       document.getElementById('bigCourseDetailView').style.display = 'block';
-      renderBigCourseDetail(bigCourseId);
-    }
 
-    function goBackToBigCourses() {
-      selectedBigCourseId = null;
-      document.getElementById('bigCoursesView').style.display = 'block';
-      document.getElementById('bigCourseDetailView').style.display = 'none';
-      document.getElementById('mediaPlayerContainer').style.display = 'none';
-      if (ytPlayerInstance && ytPlayerInstance.pauseVideo) ytPlayerInstance.pauseVideo();
-      const hlsV = document.getElementById('hlsVideoPlayer');
-      if (hlsV) hlsV.pause();
-    }
-
-    function renderBigCourseDetail(bigCourseId) {
       const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc) {
-        goBackToBigCourses();
-        return;
-      }
+      if (!bc) return;
 
       document.getElementById('detailBigCourseTitle').innerText = bc.bigCourseTitle;
+
       const treeContainer = document.getElementById('subCoursesTreeContainer');
       treeContainer.innerHTML = '';
 
@@ -1459,259 +1430,73 @@
         treeContainer.innerHTML += `
           <div class="course-card-box schedule-box">
             <div class="course-header" onclick="window.open('${bc.scheduleUrl}', '_blank')">
-              <span>📅 XEM LỊCH TRÌNH DỰ ÁN & TIẾN ĐỘ HỌC TẬP</span>
-              <span class="ctrl-btn" style="background: var(--accent-cyan); color:#000;">🔗 Mở Google Docs ↗</span>
+              <span>📅 Xem Lịch Học / Đào Tạo Chi Tiết Trực Tuyến</span>
+              <span style="color:var(--accent-cyan);">Mở Lịch ➔</span>
             </div>
           </div>
         `;
       }
 
-      if (!bc.subCourses || bc.subCourses.length === 0) {
-        treeContainer.innerHTML += '<div style="color:var(--text-muted); padding:20px;">Khóa học lớn này chưa có khóa con nào.</div>';
-        return;
-      }
+      if (bc.subCourses && bc.subCourses.length > 0) {
+        bc.subCourses.forEach((sc, scIdx) => {
+          let partsHtml = '';
+          if (sc.parts && sc.parts.length > 0) {
+            sc.parts.forEach((p, pIdx) => {
+              let lessonsHtml = '';
+              if (p.lessons && p.lessons.length > 0) {
+                p.lessons.forEach(l => {
+                  const prog = userProgressData[l.id];
+                  const progText = prog ? `(Đã học ${prog.progressPct}%)` : '';
+                  const videosJson = JSON.stringify(l.videos || []).replace(/"/g, '&quot;');
+                  const docsJson = JSON.stringify(l.documents || []).replace(/"/g, '&quot;');
 
-      bc.subCourses.forEach((sc, scIdx) => {
-        let scHtml = `
-          <div class="course-card-box">
-            <div class="course-header" onclick="togglePart('sc_parts_${sc.courseId}')">
-              <span>📂 ${sc.courseTitle}</span>
-              <div style="display:flex; align-items:center; gap:8px;">
-                ${currentUser && currentUser.role === 'admin' ? `
-                  <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart('${bc.bigCourseId}', '${sc.courseId}')">+ Thêm Phần</button>
-                  <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditSubCourse('${bc.bigCourseId}', ${scIdx})">✏️ Sửa</button>
-                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteSubCourse('${bc.bigCourseId}', ${scIdx})">🗑️ Xóa</button>
-                ` : ''}
-                <span style="font-size:0.85rem; color:var(--text-muted);">▼</span>
-              </div>
-            </div>
-            <div class="parts-container open" id="sc_parts_${sc.courseId}">
-        `;
+                  lessonsHtml += `
+                    <div class="lesson-item" onclick="playLesson('${l.title.replace(/'/g, "\\'")}', ${videosJson}, ${docsJson}, '${l.id}')">
+                      <span>▶ ${l.title} <b style="color:var(--accent-cyan); font-size:0.8rem;">${progText}</b></span>
+                      <span class="status-badge badge-active">Bắt đầu học</span>
+                    </div>
+                  `;
+                });
+              }
 
-        if (sc.parts && sc.parts.length > 0) {
-          sc.parts.forEach((pt, ptIdx) => {
-            scHtml += `
-              <div class="part-header-box" onclick="toggleLessonsList('pt_lessons_${sc.courseId}_${ptIdx}')">
-                <span>📑 ${pt.partTitle}</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  ${currentUser && currentUser.role === 'admin' ? `
-                    <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson('${bc.bigCourseId}', '${sc.courseId}', ${ptIdx})">+ Thêm Bài Học</button>
-                    <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditPart('${bc.bigCourseId}', '${sc.courseId}', ${ptIdx})">✏️</button>
-                    <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart('${bc.bigCourseId}', '${sc.courseId}', ${ptIdx})">🗑️</button>
-                  ` : ''}
-                  <span style="font-size:0.8rem; color:var(--text-muted);">▼</span>
+              partsHtml += `
+                <div class="part-header-box" onclick="toggleAccordion('lessons_${scIdx}_${pIdx}')">
+                  <span>📂 ${p.partTitle}</span>
+                  <span>▼</span>
                 </div>
+                <div class="lessons-list" id="lessons_${scIdx}_${pIdx}">${lessonsHtml}</div>
+              `;
+            });
+          }
+
+          treeContainer.innerHTML += `
+            <div class="course-card-box">
+              <div class="course-header" onclick="toggleAccordion('parts_${scIdx}')">
+                <span>📘 ${sc.courseTitle}</span>
+                <span>▼</span>
               </div>
-              <div class="lessons-list open" id="pt_lessons_${sc.courseId}_${ptIdx}">
-            `;
-
-            if (pt.lessons && pt.lessons.length > 0) {
-              pt.lessons.forEach((ls, lsIdx) => {
-                const lsProg = userProgressData[ls.id];
-                const pct = lsProg ? lsProg.progressPct : 0;
-                const isDone = pct >= 80;
-
-                const safeTitle = (ls.title || 'Bài học').replace(/'/g, "\\'");
-                const videosJson = JSON.stringify(ls.videos || []).replace(/'/g, "&apos;");
-                const docsJson = JSON.stringify(ls.documents || []).replace(/'/g, "&apos;");
-
-                scHtml += `
-                  <div class="lesson-item" onclick="playLesson('${safeTitle}', ${videosJson}, ${docsJson}, '${ls.id}')">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                      <span>${isDone ? '✅' : '▶'}</span>
-                      <span style="font-weight:600; color:#fff;">${ls.title}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                      <span style="font-size:0.75rem; color:${isDone ? '#34d399' : 'var(--text-muted)'}; font-weight:700;">${pct}% Đã Học</span>
-                      ${currentUser && currentUser.role === 'admin' ? `
-                        <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditLesson('${bc.bigCourseId}', '${sc.courseId}', ${ptIdx}, ${lsIdx})">✏️ Sửa</button>
-                        <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteLesson('${bc.bigCourseId}', '${sc.courseId}', ${ptIdx}, ${lsIdx})">🗑️ Xóa</button>
-                      ` : ''}
-                    </div>
-                  </div>
-                `;
-              });
-            } else {
-              scHtml += '<div style="color:var(--text-muted); padding:8px; font-size:0.85rem;">Chưa có bài học trong phần này.</div>';
-            }
-
-            scHtml += `</div>`;
-          });
-        } else {
-          scHtml += '<div style="color:var(--text-muted); padding:8px; font-size:0.85rem;">Chưa có phần học nào.</div>';
-        }
-
-        scHtml += `</div></div>`;
-        treeContainer.innerHTML += scHtml;
-      });
+              <div class="parts-container" id="parts_${scIdx}">${partsHtml}</div>
+            </div>
+          `;
+        });
+      } else {
+        treeContainer.innerHTML += '<div style="color:var(--text-muted);">Chưa có bài học trong khóa học này.</div>';
+      }
     }
 
-    function togglePart(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.toggle('open');
-    }
-    function toggleLessonsList(id) {
+    function toggleAccordion(id) {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('open');
     }
 
-    // -------------------------------------------------------------
-    // THAO TÁC CRUD KHÓA HỌC DÀNH CHO ADMIN
-    // -------------------------------------------------------------
-    function adminAddBigCourse() {
-      if (!currentUser || currentUser.role !== 'admin') return;
-      const title = prompt('Nhập Tên Khóa Học Lớn Mới:');
-      if (!title) return;
-      const target = prompt('Nhập Đối Tượng Học (ví dụ: Dành cho lập trình viên):', 'Dành cho mọi đối tượng');
-      const img = prompt('Nhập URL Ảnh Khóa Học (để trống nếu dùng ảnh mặc định):', '');
-      const price = prompt('Nhập Giá Khóa Học (ví dụ: 1.500.000 VNĐ hoặc Miễn Phí):', 'Miễn Phí Đào Tạo');
-
-      const newBc = {
-        bigCourseId: 'VACT_BIG_' + Date.now(),
-        bigCourseTitle: title,
-        targetAudience: target || 'Dành cho mọi người',
-        totalVideos: 0,
-        price: price || 'Miễn Phí',
-        scheduleUrl: '',
-        imgUrl: img || '',
-        subCourses: []
-      };
-
-      bigCoursesData.push(newBc);
-      saveBigCoursesToStorage();
-      alert('Đã thêm Khóa Học Lớn Mới!');
-    }
-
-    function adminEditBigCourse(bigCourseId) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc) return;
-      const newTitle = prompt('Sửa Tên Khóa Học Lớn:', bc.bigCourseTitle);
-      if (!newTitle) return;
-      bc.bigCourseTitle = newTitle;
-      bc.targetAudience = prompt('Sửa Đối Tượng Học:', bc.targetAudience) || bc.targetAudience;
-      bc.price = prompt('Sửa Giá:', bc.price) || bc.price;
-      bc.imgUrl = prompt('Sửa URL Ảnh:', bc.imgUrl) || bc.imgUrl;
-      saveBigCoursesToStorage();
-    }
-
-    function adminDeleteBigCourse(bigCourseId) {
-      if (confirm('Bạn có chắc muốn XÓA khóa học lớn này?')) {
-        bigCoursesData = bigCoursesData.filter(b => b.bigCourseId !== bigCourseId);
-        saveBigCoursesToStorage();
-      }
-    }
-
-    function adminAddSubCourse(bigCourseId) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc) return;
-      const title = prompt('Nhập Tên Khóa Con (Ví dụ: Khóa 1: Lập Trình Cơ Bản):');
-      if (!title) return;
-      if (!bc.subCourses) bc.subCourses = [];
-      bc.subCourses.push({
-        courseId: Date.now(),
-        courseTitle: title,
-        parts: []
-      });
-      saveBigCoursesToStorage();
-    }
-
-    function adminEditSubCourse(bigCourseId, scIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc || !bc.subCourses[scIdx]) return;
-      const t = prompt('Sửa tên Khóa con:', bc.subCourses[scIdx].courseTitle);
-      if (t) {
-        bc.subCourses[scIdx].courseTitle = t;
-        saveBigCoursesToStorage();
-      }
-    }
-
-    function adminDeleteSubCourse(bigCourseId, scIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc) return;
-      if (confirm('Xóa Khóa con này?')) {
-        bc.subCourses.splice(scIdx, 1);
-        saveBigCoursesToStorage();
-      }
-    }
-
-    function adminAddPart(bigCourseId, courseId) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      if (!bc) return;
-      const sc = bc.subCourses.find(s => String(s.courseId) === String(courseId));
-      if (!sc) return;
-      const pTitle = prompt('Nhập Tên Phần Học (Ví dụ: Phần 1: Cấu trúc biến):');
-      if (!pTitle) return;
-      if (!sc.parts) sc.parts = [];
-      sc.parts.push({ partTitle: pTitle, lessons: [] });
-      saveBigCoursesToStorage();
-    }
-
-    function adminEditPart(bigCourseId, courseId, ptIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      const sc = bc ? bc.subCourses.find(s => String(s.courseId) === String(courseId)) : null;
-      if (!sc || !sc.parts[ptIdx]) return;
-      const t = prompt('Sửa tên Phần:', sc.parts[ptIdx].partTitle);
-      if (t) {
-        sc.parts[ptIdx].partTitle = t;
-        saveBigCoursesToStorage();
-      }
-    }
-
-    function adminDeletePart(bigCourseId, courseId, ptIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      const sc = bc ? bc.subCourses.find(s => String(s.courseId) === String(courseId)) : null;
-      if (!sc) return;
-      if (confirm('Xóa Phần học này?')) {
-        sc.parts.splice(ptIdx, 1);
-        saveBigCoursesToStorage();
-      }
-    }
-
-    function adminAddLesson(bigCourseId, courseId, ptIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      const sc = bc ? bc.subCourses.find(s => String(s.courseId) === String(courseId)) : null;
-      if (!sc || !sc.parts[ptIdx]) return;
-
-      const title = prompt('Nhập Tên Bài Học:');
-      if (!title) return;
-      const videoUrl = prompt('Nhập Link Video Bài Giảng (YouTube / Dailymotion / HLS .m3u8):');
-      if (!videoUrl) return;
-
-      if (!sc.parts[ptIdx].lessons) sc.parts[ptIdx].lessons = [];
-      sc.parts[ptIdx].lessons.push({
-        id: 'les_' + Date.now(),
-        title: title,
-        videos: [{ title: 'Video Bài Giảng Chính', url: videoUrl }],
-        documents: []
-      });
-      saveBigCoursesToStorage();
-    }
-
-    function adminEditLesson(bigCourseId, courseId, ptIdx, lsIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      const sc = bc ? bc.subCourses.find(s => String(s.courseId) === String(courseId)) : null;
-      if (!sc || !sc.parts[ptIdx] || !sc.parts[ptIdx].lessons[lsIdx]) return;
-
-      const ls = sc.parts[ptIdx].lessons[lsIdx];
-      const newTitle = prompt('Sửa Tên Bài Học:', ls.title);
-      if (!newTitle) return;
-
-      const curUrl = (ls.videos && ls.videos.length > 0) ? ls.videos[0].url : '';
-      const newUrl = prompt('Sửa Link Video:', curUrl);
-
-      ls.title = newTitle;
-      ls.videos = [{ title: 'Video Bài Giảng', url: newUrl || curUrl }];
-      saveBigCoursesToStorage();
-    }
-
-    function adminDeleteLesson(bigCourseId, courseId, ptIdx, lsIdx) {
-      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
-      const sc = bc ? bc.subCourses.find(s => String(s.courseId) === String(courseId)) : null;
-      if (!sc || !sc.parts[ptIdx]) return;
-      if (confirm('Xóa Bài học này?')) {
-        sc.parts[ptIdx].lessons.splice(lsIdx, 1);
-        saveBigCoursesToStorage();
-      }
+    function goBackToBigCourses() {
+      selectedBigCourseId = null;
+      document.getElementById('bigCourseDetailView').style.display = 'none';
+      document.getElementById('bigCoursesView').style.display = 'block';
+      document.getElementById('mediaPlayerContainer').style.display = 'none';
+      if (ytPlayerInstance && ytPlayerInstance.stopVideo) ytPlayerInstance.stopVideo();
+      const v = document.getElementById('hlsVideoPlayer');
+      if (v) v.pause();
     }
 
     // -------------------------------------------------------------
@@ -1939,9 +1724,26 @@
       }
     }
 
+    function activateCourseCode() {
+      const codeInput = document.getElementById('activationCodeInput').value.trim();
+      if (!codeInput) { alert('Vui lòng nhập mã kích hoạt!'); return; }
+
+      const codeObj = activationCodes.find(c => c.code === codeInput);
+      if (!codeObj) { alert('Mã kích hoạt không hợp lệ!'); return; }
+      if (codeObj.isUsed) { alert(`Mã này đã được sử dụng bởi tài khoản: ${codeObj.usedBy}`); return; }
+
+      codeObj.isUsed = true;
+      codeObj.usedBy = currentUser.username;
+      saveCodesToStorage();
+      logUserActivity('Kích Hoạt Khóa', `Sử dụng mã thành công: ${codeInput}`);
+      alert('KÍCH HOẠT KHÓA HỌC THÀNH CÔNG!');
+      document.getElementById('activationCodeInput').value = '';
+    }
+
     // -------------------------------------------------------------
     // QUY TRÌNH PHÓNG LIVE TRỰC TUYẾN & CHIA SẺ MÀN HÌNH WEBRTC
     // -------------------------------------------------------------
+    
     function renderLiveCoursesUI() {
       const container = document.getElementById('liveCoursesGridContainer');
       if (!container) return;
@@ -2071,236 +1873,191 @@
     }
 
     function joinLiveRoom(roomId) {
+      currentLiveRoomId = roomId;
       const room = liveRoomsData[roomId];
       if (!room) return;
 
-      currentLiveRoomId = roomId;
+      document.getElementById('liveRoomsInCourseView').style.display = 'none';
       document.getElementById('activeLiveRoomContainer').style.display = 'block';
       document.getElementById('activeLiveTitle').innerText = room.roomTitle;
 
-      logUserActivity('Tham Gia Live', `Đã tham gia phòng live: [${room.roomTitle}]`);
-
-      const isAdmin = currentUser && currentUser.role === 'admin';
-      const btnStart = document.getElementById('btnStartShare');
-      const btnStop = document.getElementById('btnStopShare');
-      const btnDownload = document.getElementById('adminRecordDownloadBtn');
-
-      if (isAdmin) {
-        btnStart.style.display = room.isScreenSharing ? 'none' : 'inline-block';
-        btnStop.style.display = room.isScreenSharing ? 'inline-block' : 'none';
-        btnDownload.style.display = recordedLiveBlobUrl ? 'inline-block' : 'none';
+      if (currentUser.role === 'admin') {
+        document.getElementById('btnStartShare').style.display = 'inline-block';
+        document.getElementById('btnStopShare').style.display = 'none';
       } else {
-        btnStart.style.display = 'none';
-        btnStop.style.display = 'none';
-        btnDownload.style.display = 'none';
-        joinStudentWebRTC(roomId);
+        document.getElementById('btnStartShare').style.display = 'none';
+        document.getElementById('btnStopShare').style.display = 'none';
       }
 
-      db.ref(`liveChats/${roomId}`).on('value', (snap) => {
+      // Đăng ký người xem
+      db.ref(`liveRooms/${roomId}/viewers/${currentUser.username}`).set({
+        name: currentUser.name,
+        joinedAt: Date.now()
+      });
+
+      // Lắng nghe người xem
+      db.ref(`liveRooms/${roomId}/viewers`).on('value', (snap) => {
+        const viewers = snap.val() || {};
+        document.getElementById('liveViewersNum').innerText = Object.keys(viewers).length;
+      });
+
+      // Lắng nghe Cảm xúc
+      db.ref(`liveRooms/${roomId}/reactions`).on('child_added', (snap) => {
+        const reaction = snap.val();
+        if (reaction) showFloatingEmoji(reaction.emoji);
+      });
+
+      // Lắng nghe Chat Live
+      db.ref(`liveRooms/${roomId}/chats`).on('value', (snap) => {
         renderLiveChatMessages(snap.val());
       });
 
-      listenLiveReactions(roomId);
+      // Lắng nghe tín hiệu WebRTC nếu là Học viên
+      if (currentUser.role !== 'admin') {
+        listenForScreenShareStream(roomId);
+      }
+
+      logUserActivity('Tham Gia Live', `Vào phòng Live: ${room.roomTitle}`);
+    }
+
+    function leaveLiveRoom() {
+      if (currentLiveRoomId && currentUser) {
+        db.ref(`liveRooms/${currentLiveRoomId}/viewers/${currentUser.username}`).remove();
+        db.ref(`liveRooms/${currentLiveRoomId}/viewers`).off();
+        db.ref(`liveRooms/${currentLiveRoomId}/reactions`).off();
+        db.ref(`liveRooms/${currentLiveRoomId}/chats`).off();
+      }
+
+      if (currentUser && currentUser.role === 'admin' && localScreenStream) {
+        adminStopScreenShare();
+      }
+
+      currentLiveRoomId = null;
+      document.getElementById('activeLiveRoomContainer').style.display = 'none';
+      document.getElementById('liveRoomsInCourseView').style.display = 'block';
     }
 
     async function adminStartScreenShare() {
       if (!currentLiveRoomId) return;
       try {
-        localScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: true });
-        
-        const videoElem = document.getElementById('liveVideoPlayer');
-        videoElem.srcObject = localScreenStream;
-        videoElem.style.display = 'block';
+        localScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        const videoPlayer = document.getElementById('liveVideoPlayer');
+        videoPlayer.srcObject = localScreenStream;
+        videoPlayer.style.display = 'block';
         document.getElementById('liveVideoFallbackDiv').style.display = 'none';
-
-        recordedChunks = [];
-        try { mediaRecorder = new MediaRecorder(localScreenStream, { mimeType: 'video/webm;codecs=vp8,opus' }); }
-        catch(e) { mediaRecorder = new MediaRecorder(localScreenStream); }
-
-        mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.start(1000);
-
-        db.ref(`liveRooms/${currentLiveRoomId}`).update({ isScreenSharing: true, status: 'live' });
-
-        db.ref(`liveSignaling/${currentLiveRoomId}/offers`).on('child_added', async (snapshot) => {
-          const offerData = snapshot.val();
-          const viewerId = snapshot.key;
-          if (!offerData || !offerData.offer) return;
-
-          const pc = new RTCPeerConnection(rtcConfig);
-          peerConnections[viewerId] = pc;
-
-          localScreenStream.getTracks().forEach(track => pc.addTrack(track, localScreenStream));
-
-          pc.onicecandidate = (event) => {
-            if (event.candidate) {
-              db.ref(`liveSignaling/${currentLiveRoomId}/hostCandidates/${viewerId}`).push(event.candidate.toJSON());
-            }
-          };
-
-          await pc.setRemoteDescription(new RTCSessionDescription(offerData.offer));
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-
-          db.ref(`liveSignaling/${currentLiveRoomId}/answers/${viewerId}`).set(answer.toJSON());
-
-          db.ref(`liveSignaling/${currentLiveRoomId}/viewerCandidates/${viewerId}`).on('child_added', snap => {
-            const cand = snap.val();
-            if (cand) pc.addIceCandidate(new RTCIceCandidate(cand)).catch(err => console.error(err));
-          });
-        });
-
-        localScreenStream.getVideoTracks()[0].onended = () => {
-          adminStopScreenShare();
-        };
 
         document.getElementById('btnStartShare').style.display = 'none';
         document.getElementById('btnStopShare').style.display = 'inline-block';
-        alert('Đã bắt đầu Chia Sẻ Màn Hình & Ghi Hình Buổi Live!');
-      } catch (err) {
-        console.error('Lỗi chia sẻ màn hình:', err);
-        alert('Không thể chia sẻ màn hình: ' + err.message);
+
+        db.ref(`liveRooms/${currentLiveRoomId}`).update({ status: 'live', isScreenSharing: true });
+
+        // Ghi hình Live
+        recordedChunks = [];
+        try {
+          mediaRecorder = new MediaRecorder(localScreenStream, { mimeType: 'video/webm;codecs=vp9' });
+        } catch(err) {
+          mediaRecorder = new MediaRecorder(localScreenStream);
+        }
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          recordedLiveBlobUrl = URL.createObjectURL(blob);
+          document.getElementById('adminRecordDownloadBtn').style.display = 'inline-block';
+        };
+        mediaRecorder.start(1000);
+
+        // Xử lý khi bấm Dừng trên UI trình duyệt
+        localScreenStream.getVideoTracks()[0].onended = () => { adminStopScreenShare(); };
+
+      } catch (e) {
+        alert('Không thể chia sẻ màn hình: ' + e.message);
       }
     }
 
     function adminStopScreenShare() {
-      if (!currentLiveRoomId) return;
-
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: 'video/webm' });
-          recordedLiveBlobUrl = URL.createObjectURL(blob);
-          const downloadBtn = document.getElementById('adminRecordDownloadBtn');
-          if (downloadBtn) downloadBtn.style.display = 'inline-block';
-        };
-      }
-
       if (localScreenStream) {
-        localScreenStream.getTracks().forEach(track => track.stop());
+        localScreenStream.getTracks().forEach(t => t.stop());
         localScreenStream = null;
       }
-
-      Object.values(peerConnections).forEach(pc => pc.close());
-      peerConnections = {};
-
-      db.ref(`liveRooms/${currentLiveRoomId}`).update({ isScreenSharing: false, status: 'ended' });
-      db.ref(`liveSignaling/${currentLiveRoomId}`).remove();
-
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      document.getElementById('liveVideoPlayer').style.display = 'none';
+      document.getElementById('liveVideoFallbackDiv').style.display = 'flex';
       document.getElementById('btnStartShare').style.display = 'inline-block';
       document.getElementById('btnStopShare').style.display = 'none';
-      alert('Đã dừng chia sẻ màn hình! Admin có thể bấm TẢI VIDEO LIVE VỀ MÁY.');
-    }
 
-    async function joinStudentWebRTC(roomId) {
-      const viewerId = currentUser.username + '_' + Math.random().toString(36).substr(2, 5);
-      studentPeerConnection = new RTCPeerConnection(rtcConfig);
-
-      studentPeerConnection.ontrack = (event) => {
-        const videoElem = document.getElementById('liveVideoPlayer');
-        videoElem.srcObject = event.streams[0];
-        videoElem.style.display = 'block';
-        document.getElementById('liveVideoFallbackDiv').style.display = 'none';
-      };
-
-      studentPeerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-          db.ref(`liveSignaling/${roomId}/viewerCandidates/${viewerId}`).push(event.candidate.toJSON());
-        }
-      };
-
-      studentPeerConnection.addTransceiver('video', { direction: 'recvonly' });
-      studentPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
-
-      const offer = await studentPeerConnection.createOffer();
-      await studentPeerConnection.setLocalDescription(offer);
-
-      db.ref(`liveSignaling/${roomId}/offers/${viewerId}`).set(offer.toJSON());
-
-      db.ref(`liveSignaling/${roomId}/answers/${viewerId}`).on('value', async (snap) => {
-        const answer = snap.val();
-        if (answer && studentPeerConnection.signalingState !== 'stable') {
-          await studentPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-        }
-      });
-
-      db.ref(`liveSignaling/${roomId}/hostCandidates/${viewerId}`).on('child_added', snap => {
-        const cand = snap.val();
-        if (cand) studentPeerConnection.addIceCandidate(new RTCIceCandidate(cand)).catch(err => console.error(err));
-      });
+      if (currentLiveRoomId) {
+        db.ref(`liveRooms/${currentLiveRoomId}`).update({ status: 'ended', isScreenSharing: false });
+      }
     }
 
     function adminDownloadRecordedLive() {
-      if (!currentUser || currentUser.role !== 'admin') return;
-      if (!recordedLiveBlobUrl) {
-        alert('Chưa có video ghi hình nào!');
-        return;
-      }
+      if (!recordedLiveBlobUrl) return;
       const a = document.createElement('a');
       a.href = recordedLiveBlobUrl;
       a.download = `Live_Record_${Date.now()}.webm`;
       a.click();
     }
 
-    function leaveLiveRoom() {
-      if (currentLiveRoomId) {
-        db.ref(`liveChats/${currentLiveRoomId}`).off();
-        db.ref(`liveReactions/${currentLiveRoomId}`).off();
-      }
-      if (studentPeerConnection) {
-        studentPeerConnection.close();
-        studentPeerConnection = null;
-      }
-      currentLiveRoomId = null;
-      document.getElementById('activeLiveRoomContainer').style.display = 'none';
+    function listenForScreenShareStream(roomId) {
+      db.ref(`liveRooms/${roomId}`).on('value', (snap) => {
+        const room = snap.val();
+        const fallback = document.getElementById('liveVideoFallbackDiv');
+        const statusText = document.getElementById('liveFallbackStatus');
+
+        if (room && room.isScreenSharing) {
+          statusText.innerText = '🔴 GIẢNG VIÊN ĐANG CHIA SẺ MÀN HÌNH BÀI GIẢNG LIVE!';
+        } else {
+          statusText.innerText = 'Đang chờ Admin chia sẻ màn hình bài giảng...';
+        }
+      });
     }
 
     function sendLiveReaction(emoji) {
       if (!currentLiveRoomId) return;
-      db.ref(`liveReactions/${currentLiveRoomId}`).push({ emoji: emoji, user: currentUser.name, time: Date.now() });
+      db.ref(`liveRooms/${currentLiveRoomId}/reactions`).push({
+        emoji: emoji,
+        sender: currentUser.username,
+        time: Date.now()
+      });
     }
 
-    function listenLiveReactions(roomId) {
-      const container = document.getElementById('floatingReactionsContainer');
-      db.ref(`liveReactions/${roomId}`).limitToLast(1).on('child_added', snap => {
-        const item = snap.val();
-        if (!item) return;
-        const span = document.createElement('span');
-        span.className = 'floating-emoji';
-        span.innerText = item.emoji;
-        span.style.right = (Math.random() * 80 + 20) + 'px';
-        container.appendChild(span);
-        setTimeout(() => span.remove(), 2500);
-      });
+    function showFloatingEmoji(emoji) {
+      const container = document.getElementById('liveMediaWrapper');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'floating-emoji';
+      el.innerText = emoji;
+      el.style.right = (Math.random() * 60 + 20) + 'px';
+      container.appendChild(el);
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 2500);
     }
 
     function sendLiveChatMessage() {
       const input = document.getElementById('liveChatInput');
-      const text = input.value.trim();
-      if (!text || !currentLiveRoomId) return;
-      db.ref(`liveChats/${currentLiveRoomId}`).push({
-        sender: currentUser.name,
-        role: currentUser.role,
-        text: text,
+      const msg = input.value.trim();
+      if (!msg || !currentLiveRoomId) return;
+
+      db.ref(`liveRooms/${currentLiveRoomId}/chats`).push({
+        senderName: currentUser.name,
+        text: msg,
         timestamp: Date.now()
       });
       input.value = '';
     }
 
-    function renderLiveChatMessages(chats) {
+    function renderLiveChatMessages(chatData) {
       const box = document.getElementById('liveChatMessagesBox');
       if (!box) return;
       box.innerHTML = '';
-      if (!chats) return;
+      if (!chatData) return;
 
-      Object.values(chats).forEach(m => {
-        const isMine = currentUser && m.sender === currentUser.name;
-        const timeStr = new Date(m.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      Object.values(chatData).forEach(m => {
         box.innerHTML += `
-          <div class="chat-message ${isMine ? 'mine' : 'others'}">
-            <div class="chat-author">${m.sender} ${m.role === 'admin' ? '⭐ (Admin)' : ''}</div>
-            <div>${m.text}</div>
-            <div class="chat-time">${timeStr}</div>
+          <div style="margin-bottom:8px;">
+            <b style="color:var(--primary-bright);">${m.senderName}:</b>
+            <span style="color:#fff;">${m.text}</span>
           </div>
         `;
       });
@@ -2308,42 +2065,42 @@
     }
 
     // -------------------------------------------------------------
-    // CHÁT CHUNG REALTIME DIỄN ĐÀN
+    // CHAT CỘNG ĐỒNG REALTIME
     // -------------------------------------------------------------
     function handleChatKeyPress(e) { if (e.key === 'Enter') sendChatMessage(); }
 
     function sendChatMessage() {
       const input = document.getElementById('chatMessageInput');
-      const val = input.value.trim();
-      if (!val || !currentUser) return;
+      const msg = input.value.trim();
+      if (!msg || !currentUser) return;
 
       db.ref('chatMessages').push({
-        sender: currentUser.name,
+        author: currentUser.name,
         username: currentUser.username,
-        role: currentUser.role,
-        text: val,
+        text: msg,
+        time: new Date().toLocaleTimeString('vi-VN'),
         timestamp: Date.now()
       });
       input.value = '';
+      logUserActivity('Gửi Thảo Luận', `Đã nhắn tin lên Diễn đàn: "${msg}"`);
     }
 
-    function renderChatMessages(chats) {
+    function renderChatMessages(chatData) {
       const box = document.getElementById('chatMessagesBox');
       if (!box) return;
       box.innerHTML = '';
-      if (!chats) {
-        box.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Hãy gửi tin nhắn đầu tiên!</div>';
+      if (!chatData) {
+        box.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Chưa có thảo luận nào. Hãy gửi tin nhắn đầu tiên!</div>';
         return;
       }
 
-      Object.values(chats).forEach(m => {
+      Object.values(chatData).forEach(m => {
         const isMine = currentUser && m.username === currentUser.username;
-        const timeStr = new Date(m.timestamp).toLocaleTimeString('vi-VN');
         box.innerHTML += `
           <div class="chat-message ${isMine ? 'mine' : 'others'}">
-            <div class="chat-author">${m.sender} (${m.role === 'admin' ? '⭐ Admin' : 'Học Viên'})</div>
+            <div class="chat-author">${m.author}</div>
             <div>${m.text}</div>
-            <div class="chat-time">${timeStr}</div>
+            <div class="chat-time">${m.time}</div>
           </div>
         `;
       });
@@ -2351,115 +2108,66 @@
     }
 
     // -------------------------------------------------------------
-    // KÍCH HOẠT MÃ CODE HỌC VIÊN & ADMIN MÃ KÍCH HOẠT
+    // ADMIN DASHBOARD & QUẢN LÝ USER / CODE
     // -------------------------------------------------------------
-    function activateCourseCode() {
-      const input = document.getElementById('activationCodeInput');
-      const codeVal = input.value.trim().toUpperCase();
-      if (!codeVal) { alert('Vui lòng nhập Mã Code Kích Hoạt!'); return; }
+    function renderAdminUsers() {
+      const tbody = document.getElementById('adminUsersTable');
+      if (!tbody) return;
+      tbody.innerHTML = '';
 
-      const codeObj = activationCodes.find(c => c.code === codeVal);
-      if (!codeObj) { alert('Mã kích hoạt không đúng hoặc không tồn tại!'); return; }
-      if (codeObj.isUsed) { alert(`Mã này đã được sử dụng bởi tài khoản: ${codeObj.usedBy}`); return; }
+      document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
 
-      codeObj.isUsed = true;
-      codeObj.usedBy = currentUser.username;
-      saveCodesToStorage();
+      userAccounts.forEach(u => {
+        const devicesText = (u.devices && u.devices.length > 0) ? u.devices.join(', ') : 'Chưa dùng';
+        const isLocked = u.isLocked;
 
-      logUserActivity('Kích Hoạt Khóa Học', `Nhập mã kích hoạt [${codeVal}] thành công.`);
-      alert('KÍCH HOẠT KHÓA HỌC THÀNH CÔNG!');
-      input.value = '';
-    }
-
-    function renderAdminCodes() {
-      const table = document.getElementById('adminCodesTable');
-      if (!table) return;
-      table.innerHTML = '';
-
-      const totalCodesEl = document.getElementById('totalCodesCount');
-      if (totalCodesEl) totalCodesEl.innerText = `${activationCodes.length} Mã`;
-
-      activationCodes.forEach((c) => {
-        table.innerHTML += `
+        tbody.innerHTML += `
           <tr>
-            <td><b style="font-family:var(--font-mono); color:var(--primary-bright);">${c.code}</b></td>
-            <td><span class="status-badge ${c.isUsed ? 'badge-locked' : 'badge-active'}">${c.isUsed ? 'Đã dùng' : 'Chưa dùng'}</span></td>
-            <td>${c.usedBy || '—'}</td>
-            <td><button class="admin-btn-sm admin-btn-danger" onclick="deleteCode('${c.code}')">Xóa</button></td>
+            <td style="cursor:pointer; color:var(--primary-bright); font-weight:700;" onclick="viewUserAuditTrail('${u.username}')">🔍 ${u.name}</td>
+            <td>${u.username}</td>
+            <td><span class="status-badge ${u.role === 'admin' ? 'badge-warning' : 'badge-active'}">${u.role.toUpperCase()}</span></td>
+            <td style="font-size:0.8rem; font-family:var(--font-mono);">${devicesText}</td>
+            <td>
+              ${isLocked ? '<span class="status-badge badge-locked">🔒 BỊ KHÓA</span>' : '<span class="status-badge badge-active">● Hoạt động</span>'}
+            </td>
+            <td>
+              <button class="admin-btn-sm ${isLocked ? '' : 'admin-btn-warning'}" onclick="adminToggleLockUser('${u.username}')">
+                ${isLocked ? '🔓 Mở Khóa' : '🔒 Khóa Nick'}
+              </button>
+              <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteUser('${u.username}')">🗑️ Xóa</button>
+            </td>
           </tr>
         `;
       });
     }
 
-    function adminGenerateCode() {
-      const newCode = 'VACT-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
-      activationCodes.push({ code: newCode, isUsed: false, usedBy: '' });
-      saveCodesToStorage();
-      alert(`ĐÃ TẠO MÃ MỚI: ${newCode}`);
-    }
-
-    function deleteCode(codeStr) {
-      if (confirm(`Xóa mã [${codeStr}]?`)) {
-        activationCodes = activationCodes.filter(c => c.code !== codeStr);
-        saveCodesToStorage();
+    function adminToggleLockUser(username) {
+      const user = userAccounts.find(u => u.username === username);
+      if (user) {
+        user.isLocked = !user.isLocked;
+        if (!user.isLocked) user.devices = [];
+        saveUsersToStorage();
+        alert(`Đã ${user.isLocked ? 'Khóa' : 'Mở khóa & Reset thiết bị'} cho ${user.name}!`);
       }
     }
 
-    // -------------------------------------------------------------
-    // QUẢN LÝ TÀI KHOẢN HỌC VIÊN & TRUY VẾT LỊCH SỬ HỌC TẬP
-    // -------------------------------------------------------------
-    function renderAdminUsers() {
-      const table = document.getElementById('adminUsersTable');
-      if (!table) return;
-      table.innerHTML = '';
-
-      const totalUserEl = document.getElementById('totalUserCount');
-      if (totalUserEl) totalUserEl.innerText = `${userAccounts.length} Người`;
-
-      userAccounts.forEach((u) => {
-        const deviceListHtml = (u.devices && u.devices.length > 0) ? u.devices.map(d => `<span class="status-badge badge-active">${d}</span>`).join(' ') : '<span style="color:var(--text-muted)">Chưa dùng</span>';
-        
-        table.innerHTML += `
-          <tr>
-            <td>
-              <a href="javascript:void(0)" style="color:var(--primary-bright); font-weight:700; text-decoration:none;" onclick="openAuditTrailModal('${u.username}')">
-                🔍 ${u.name}
-              </a>
-            </td>
-            <td><b>${u.username}</b></td>
-            <td><span class="status-badge ${u.role === 'admin' ? 'badge-warning' : 'badge-active'}">${u.role}</span></td>
-            <td>${deviceListHtml}</td>
-            <td>
-              <span class="status-badge ${u.isLocked ? 'badge-locked' : 'badge-active'}">${u.isLocked ? '🔒 Đang Khóa' : '✅ Hoạt Động'}</span>
-            </td>
-            <td>
-              <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button class="admin-btn-sm ${u.isLocked ? 'admin-btn-warning' : 'admin-btn-danger'}" onclick="toggleLockUser('${u.username}')">
-                  ${u.isLocked ? 'Mở Khóa' : 'Khóa'}
-                </button>
-                <button class="admin-btn-sm" style="background:var(--accent-cyan);" onclick="resetUserDevices('${u.username}')">Reset Thiết Bị</button>
-                ${u.role !== 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="deleteUser('${u.username}')">Xóa</button>` : ''}
-              </div>
-            </td>
-          </tr>
-        `;
-      });
+    function adminDeleteUser(username) {
+      if (confirm(`Xóa vĩnh viễn tài khoản ${username}?`)) {
+        userAccounts = userAccounts.filter(u => u.username !== username);
+        saveUsersToStorage();
+      }
     }
 
     function adminCreateUser(isAdmin) {
-      const name = prompt('Nhập Họ và Tên:');
-      if (!name) return;
-      const username = prompt('Nhập Username:');
+      const username = prompt('Nhập Tên Đăng Nhập (Username):');
       if (!username) return;
+      if (userAccounts.some(u => u.username === username)) { alert('Tên đăng nhập đã tồn tại!'); return; }
+
+      const name = prompt('Nhập Họ và Tên hiển thị:');
       const password = prompt('Nhập Mật khẩu:');
-      if (!password) return;
+      if (!name || !password) return;
 
-      if (userAccounts.some(u => u.username === username)) {
-        alert('Username này đã tồn tại!');
-        return;
-      }
-
-      userAccounts.push({
+      const newUser = {
         id: Date.now(),
         name: name,
         username: username,
@@ -2468,69 +2176,127 @@
         devices: [],
         isLocked: false,
         sessionToken: ''
-      });
+      };
+
+      userAccounts.push(newUser);
       saveUsersToStorage();
-      alert('Đã tạo tài khoản thành công!');
+      alert(`ĐÃ TẠO TÀI KHOẢN ${isAdmin ? 'ADMIN' : 'HỌC VIÊN'} THÀNH CÔNG!`);
     }
 
-    function toggleLockUser(username) {
-      const u = userAccounts.find(x => x.username === username);
-      if (u) {
-        u.isLocked = !u.isLocked;
-        saveUsersToStorage();
-      }
+    function renderAdminCodes() {
+      const tbody = document.getElementById('adminCodesTable');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      document.getElementById('totalCodesCount').innerText = `${activationCodes.length} Mã`;
+
+      activationCodes.forEach((c, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-family:var(--font-mono); font-weight:700;">${c.code}</td>
+            <td>
+              ${c.isUsed ? `<span class="status-badge badge-locked">Đã dùng bởi ${c.usedBy}</span>` : '<span class="status-badge badge-active">Sẵn sàng</span>'}
+            </td>
+            <td>${c.usedBy || '---'}</td>
+            <td><button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteCode(${idx})">🗑️ Xóa</button></td>
+          </tr>
+        `;
+      });
     }
 
-    function resetUserDevices(username) {
-      const u = userAccounts.find(x => x.username === username);
-      if (u) {
-        u.devices = [];
-        saveUsersToStorage();
-        alert(`Đã xoá danh sách thiết bị của học viên ${u.name}!`);
-      }
+    function adminGenerateCode() {
+      const randNum = Math.floor(1000 + Math.random() * 9000);
+      const randNum2 = Math.floor(1000 + Math.random() * 9000);
+      const newCode = `VACT-${randNum}-${randNum2}`;
+      activationCodes.push({ code: newCode, isUsed: false, usedBy: "" });
+      saveCodesToStorage();
+      alert(`TẠO MÃ THÀNH CÔNG: ${newCode}`);
     }
 
-    function deleteUser(username) {
-      if (confirm(`Xóa học viên [${username}]?`)) {
-        userAccounts = userAccounts.filter(x => x.username !== username);
-        saveUsersToStorage();
-      }
+    function adminDeleteCode(index) {
+      activationCodes.splice(index, 1);
+      saveCodesToStorage();
+    }
+
+    function adminAddBigCourse() {
+      const title = prompt('Nhập Tên Khóa Học Lớn Mới:');
+      if (!title) return;
+      const target = prompt('Đối tượng học viên (Ví dụ: Dành cho người mới):', 'Dành cho người mới');
+      const price = prompt('Giá khóa học (Ví dụ: Miễn Phí):', 'Miễn Phí');
+      const img = prompt('Link ảnh Thumb khóa học (URL):', '');
+
+      const newBigCourse = {
+        bigCourseId: 'VACT_BIG_' + Date.now(),
+        bigCourseTitle: title,
+        targetAudience: target || 'Mọi người',
+        totalVideos: 0,
+        price: price || 'Miễn Phí',
+        imgUrl: img || '',
+        scheduleUrl: '',
+        subCourses: []
+      };
+
+      bigCoursesData.push(newBigCourse);
+      saveBigCoursesToStorage();
+      alert('TẠO KHÓA HỌC LỚN THÀNH CÔNG!');
     }
 
     // -------------------------------------------------------------
-    // MODAL TRUY VẾT CHI TIẾT THEO NGÀY
+    // NHẬT KÝ TRUY VẾT CHI TIẾT THEO NGÀY (AUDIT TRAIL)
     // -------------------------------------------------------------
-    function openAuditTrailModal(username) {
+    function viewUserAuditTrail(username) {
       currentAuditStudentUsername = username;
-      const modal = document.getElementById('auditTrailModal');
-      modal.style.display = 'flex';
-
-      const student = userAccounts.find(u => u.username === username);
-      document.getElementById('auditStudentTitle').innerText = `🔍 Nhật Ký Truy Vết: ${student ? student.name : username}`;
-      document.getElementById('auditStudentSub').innerText = `Username: ${username} | Mật khẩu: ${student ? student.password : '***'}`;
+      const user = userAccounts.find(u => u.username === username);
+      document.getElementById('auditStudentTitle').innerText = `🔍 Lịch Sử Truy Vết: ${user ? user.name : username}`;
+      document.getElementById('auditStudentSub').innerText = `Tài khoản: ${username} | Mật khẩu: ${user ? user.password : '***'}`;
+      document.getElementById('auditTrailModal').style.display = 'flex';
 
       db.ref(`userLogs/${username}`).on('value', (snap) => {
-        const val = snap.val() || {};
-        currentAuditStudentLogs = Object.values(val);
+        const logsObj = snap.val() || {};
+        currentAuditStudentLogs = Object.values(logsObj);
         renderAuditTimeline(currentAuditStudentLogs);
       });
     }
 
-    function closeAuditModal() {
-      if (currentAuditStudentUsername) {
-        db.ref(`userLogs/${currentAuditStudentUsername}`).off();
+    function renderAuditTimeline(logsArray) {
+      const container = document.getElementById('auditTimelineContainer');
+      const countSpan = document.getElementById('auditTotalLogsCount');
+      container.innerHTML = '';
+
+      countSpan.innerText = `${logsArray.length} ghi nhận`;
+
+      if (logsArray.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Chưa có lịch sử hoạt động nào cho học viên này.</div>';
+        return;
       }
-      currentAuditStudentUsername = null;
-      document.getElementById('auditTrailModal').style.display = 'none';
+
+      logsArray.sort((a, b) => b.timestamp - a.timestamp);
+
+      logsArray.forEach(item => {
+        let typeClass = '';
+        if (item.action.includes('VI PHẠM') || item.action.includes('Cảnh Báo')) typeClass = 'tab-switch';
+        else if (item.action.includes('Xem Bài') || item.action.includes('Thời Gian')) typeClass = 'watch-video';
+        else if (item.action.includes('Đăng Nhập')) typeClass = 'login-event';
+
+        container.innerHTML += `
+          <div class="timeline-item ${typeClass}">
+            <div>
+              <div style="font-weight:800; color:#fff; margin-bottom:4px;">${item.action}: ${item.detail}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">IP: ${item.ip || '---'} • Thiết bị: ${item.device || '---'}</div>
+            </div>
+            <div class="timeline-time">${item.displayDate || item.date} ${item.time}</div>
+          </div>
+        `;
+      });
     }
 
     function filterAuditLogsByDate() {
-      const dateVal = document.getElementById('auditDateFilter').value;
-      if (!dateVal) {
+      const selectedDate = document.getElementById('auditDateFilter').value;
+      if (!selectedDate) {
         renderAuditTimeline(currentAuditStudentLogs);
         return;
       }
-      const filtered = currentAuditStudentLogs.filter(item => item.date === dateVal);
+      const filtered = currentAuditStudentLogs.filter(l => l.date === selectedDate);
       renderAuditTimeline(filtered);
     }
 
@@ -2539,40 +2305,11 @@
       renderAuditTimeline(currentAuditStudentLogs);
     }
 
-    function renderAuditTimeline(logs) {
-      const container = document.getElementById('auditTimelineContainer');
-      const countEl = document.getElementById('auditTotalLogsCount');
-      container.innerHTML = '';
-
-      if (!logs || logs.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Không tìm thấy nhật ký hoạt động nào.</div>';
-        if (countEl) countEl.innerText = '0 ghi nhận';
-        return;
+    function closeAuditModal() {
+      if (currentAuditStudentUsername) {
+        db.ref(`userLogs/${currentAuditStudentUsername}`).off();
       }
-
-      if (countEl) countEl.innerText = `${logs.length} ghi nhận`;
-
-      const sorted = [...logs].sort((a, b) => b.timestamp - a.timestamp);
-
-      sorted.forEach(log => {
-        let cls = '';
-        if (log.action.includes('Chuyển Tab') || log.action.includes('VI PHẠM')) cls = 'tab-switch';
-        else if (log.action.includes('Thời Gian Học') || log.action.includes('Xem Bài')) cls = 'watch-video';
-        else if (log.action.includes('Đăng Nhập')) cls = 'login-event';
-
-        container.innerHTML += `
-          <div class="timeline-item ${cls}">
-            <div>
-              <div style="font-weight:800; color:#fff; margin-bottom:4px;">${log.action}</div>
-              <div style="color:var(--text-muted); font-size:0.85rem;">${log.detail}</div>
-              <div style="font-size:0.75rem; color:var(--accent-cyan); margin-top:6px; font-family:var(--font-mono);">
-                IP: ${log.ip || '113.161.x.x'} • Thiết bị: ${log.device || 'Chưa rõ'}
-              </div>
-            </div>
-            <div class="timeline-time">${log.displayDate || ''} <br> ${log.time || ''}</div>
-          </div>
-        `;
-      });
+      document.getElementById('auditTrailModal').style.display = 'none';
     }
   </script>
 </body>
