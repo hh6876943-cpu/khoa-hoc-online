@@ -245,9 +245,14 @@
     .media-wrapper { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     
+    /* LỚP PHỦ BẢO VỆ DỰA THEO DẠNG LINK */
     .video-transparent-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 50px);
       z-index: 95; background: transparent; pointer-events: auto;
+    }
+    /* Lớp phủ riêng cho Google Drive: Chỉ cài ở góc trên bên phải */
+    .video-transparent-overlay.overlay-gdrive {
+      top: 0; right: 0; left: auto; bottom: auto; width: 90px; height: 55px; z-index: 95; pointer-events: auto; background: transparent;
     }
 
     .custom-video-controls {
@@ -467,7 +472,7 @@
                     <!-- THỦY ẤN ĐỘNG NGẮN GỌN -->
                     <div id="dynamicWatermark">Watermark Loading...</div>
 
-                    <!-- LỚP PHỦ TRONG SUỐT BẢO VỆ VIDEO -->
+                    <!-- LỚP PHỦ TRONG SUỐT BẢO VỆ VIDEO / FRAME -->
                     <div class="video-transparent-overlay" id="videoTransparentOverlay"></div>
 
                     <!-- FRAME PHỤ ĐỀ -->
@@ -520,7 +525,8 @@
                     <span style="font-size: 0.9rem; font-weight: 800; color: var(--primary-bright);">📄 Tài liệu đính kèm:</span>
                     <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng</button>
                   </div>
-                  <div style="flex-grow: 1; height: 100%; min-height: 400px; position: relative;">
+                  <div style="flex-grow: 1; height: 100%; min-height: 400px; position: relative;" id="docFrameWrapper">
+                    <div id="docOverlay" class="video-transparent-overlay"></div>
                     <iframe id="docSideFrame" src="" style="width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 12px; background: #fff;" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
                   </div>
                 </div>
@@ -1153,7 +1159,7 @@
         renderAdminCodes();
         logUserActivity('Xem Tab', 'Admin mở Bảng Điều Khiển Quản Lý');
       } else if (tab === 'chat') {
-        const chatIdx = currentUser.role === 'admin' ? 3 : 2;
+        const chatIdx = currentUser && currentUser.role === 'admin' ? 3 : 2;
         if(document.querySelectorAll('.nav-icon')[chatIdx]) document.querySelectorAll('.nav-icon')[chatIdx].classList.add('active');
         document.getElementById('btnSubChat').classList.add('active');
         document.getElementById('chatTab').style.display = 'block';
@@ -1309,13 +1315,12 @@
     }
 
     // -------------------------------------------------------------
-    // HÀM XỬ LÝ LINK MEDIA & BÓC TÁCH IFRAME YOUTUBE
+    // HÀM XỬ LÝ LINK MEDIA & BÓC TÁCH IFRAME YOUTUBE / GDRIVE
     // -------------------------------------------------------------
     function parseMediaUrl(url) {
       if (!url) return { type: 'unknown', src: '' };
       let src = url.trim();
 
-      // Nếu người dùng dán toàn bộ thẻ iframe: <iframe ... src="URL" ...></iframe>
       if (src.includes('<iframe')) {
         const matchSrc = src.match(/src=["']([^"']+)["']/i);
         if (matchSrc && matchSrc[1]) {
@@ -1323,19 +1328,16 @@
         }
       }
 
-      // YouTube Match
       const ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
       if (ytMatch) {
         return { type: 'youtube', id: ytMatch[1], src: `https://www.youtube.com/embed/${ytMatch[1]}?enablejsapi=1&autoplay=1` };
       }
 
-      // Facebook Match
       if (src.includes('facebook.com') || src.includes('fb.watch')) {
         const encoded = encodeURIComponent(src);
         return { type: 'facebook', src: `https://www.facebook.com/plugins/video.php?href=${encoded}&show_text=false&autoplay=true` };
       }
 
-      // Google Drive / Google Docs Match
       if (src.includes('drive.google.com') || src.includes('docs.google.com')) {
         let embedUrl = src;
         if (src.includes('/view')) embedUrl = src.replace('/view', '/preview');
@@ -1343,13 +1345,11 @@
         return { type: 'gdrive', src: embedUrl };
       }
 
-      // Dailymotion Match
       const dmMatch = src.match(/dailymotion\.com\/(?:video|embed\/video)\/([a-zA-Z0-9]+)/);
       if (dmMatch) {
         return { type: 'dailymotion', src: `https://www.dailymotion.com/embed/video/${dmMatch[1]}?autoplay=1` };
       }
 
-      // HLS .m3u8 Stream
       if (src.includes('.m3u8')) {
         return { type: 'hls', src: src };
       }
@@ -1358,7 +1358,229 @@
     }
 
     // -------------------------------------------------------------
-    // TRÌNH PHÁT BÀI HỌC VỚI NHIỀU VIDEO & NHIỀU TÀI LIỆU
+    // HIỂN THỊ CÁC KHÓA HỌC & TREE NỘI DUNG
+    // -------------------------------------------------------------
+    function renderCoursesUI() {
+      const container = document.getElementById('bigCoursesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const isAdmin = currentUser && currentUser.role === 'admin';
+
+      if (bigCoursesData.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); grid-column:1/-1; text-align:center; padding:40px;">Chưa có khóa học nào trên hệ thống.</div>';
+        return;
+      }
+
+      bigCoursesData.forEach(bc => {
+        let totalLessons = 0;
+        let completedLessons = 0;
+
+        (bc.subCourses || []).forEach(sub => {
+          (sub.parts || []).forEach(part => {
+            (part.lessons || []).forEach(les => {
+              totalLessons++;
+              const prog = userProgressData[les.id];
+              if (prog && prog.progressPct >= 90) completedLessons++;
+            });
+          });
+        });
+
+        const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+        const imgSrc = bc.imgUrl || DEFAULT_FALLBACK_IMAGE;
+
+        container.innerHTML += `
+          <div class="big-course-card">
+            <div class="card-thumb-box" onclick="openBigCourseDetail('${bc.bigCourseId}')">
+              <img src="${imgSrc}" onerror="this.onerror=null; this.src=DEFAULT_FALLBACK_IMAGE;" alt="${bc.bigCourseTitle}">
+            </div>
+            <div class="card-body">
+              <div class="card-title" onclick="openBigCourseDetail('${bc.bigCourseId}')">${bc.bigCourseTitle}</div>
+              <div class="card-tags">
+                <span class="tag-target">${bc.targetAudience || 'Khóa học Master'}</span>
+                <span class="tag-video">📹 ${bc.totalVideos || 0} Video</span>
+              </div>
+              <div class="card-progress-text">
+                <span>Tiến độ học</span>
+                <span>${progressPct}%</span>
+              </div>
+              <div class="card-progress-bar-bg">
+                <div class="card-progress-bar-fill" style="width: ${progressPct}%"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+                <span class="card-footer-price">${bc.price || 'Miễn Phí'}</span>
+                <button class="ctrl-btn" style="background:var(--primary);" onclick="openBigCourseDetail('${bc.bigCourseId}')">Vào Học ➔</button>
+              </div>
+              ${isAdmin ? `
+                <div style="display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); flex-wrap:wrap;">
+                  <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditBigCourse('${bc.bigCourseId}')">✏️ Sửa Khóa</button>
+                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteBigCourse('${bc.bigCourseId}')">🗑️ Xóa Khóa</button>
+                  <button class="admin-btn-sm" style="background:var(--accent-cyan); color:#000;" onclick="event.stopPropagation(); adminEditSchedule('${bc.bigCourseId}')">📅 TKB</button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      if (selectedBigCourseId) {
+        const currentBc = bigCoursesData.find(b => b.bigCourseId === selectedBigCourseId);
+        if (currentBc) renderSubCoursesTree(currentBc);
+      }
+    }
+
+    function openBigCourseDetail(bigCourseId) {
+      selectedBigCourseId = bigCourseId;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc) return;
+
+      document.getElementById('bigCoursesView').style.display = 'none';
+      document.getElementById('bigCourseDetailView').style.display = 'block';
+      document.getElementById('detailBigCourseTitle').innerText = bc.bigCourseTitle;
+
+      renderSubCoursesTree(bc);
+      logUserActivity('Xem Chi Tiết Khóa', `Mở xem các môn của khóa lớn: [${bc.bigCourseTitle}]`);
+    }
+
+    function goBackToBigCourses() {
+      selectedBigCourseId = null;
+      document.getElementById('bigCoursesView').style.display = 'block';
+      document.getElementById('bigCourseDetailView').style.display = 'none';
+      document.getElementById('mediaPlayerContainer').style.display = 'none';
+      if (ytPlayerInstance && ytPlayerInstance.stopVideo) ytPlayerInstance.stopVideo();
+      const v = document.getElementById('hlsVideoPlayer');
+      if (v) v.pause();
+      clearInterval(videoWatchTimer);
+    }
+
+    function renderSubCoursesTree(bc) {
+      const container = document.getElementById('subCoursesTreeContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const isAdmin = currentUser && currentUser.role === 'admin';
+
+      if (isAdmin) {
+        container.innerHTML += `
+          <div style="margin-bottom: 20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="admin-btn-sm" style="padding:10px 16px; font-size:0.85rem;" onclick="adminAddSubCourse('${bc.bigCourseId}')">+ Thêm Môn Học / Khóa Nhỏ Mới</button>
+            <button class="admin-btn-sm admin-btn-warning" style="padding:10px 16px; font-size:0.85rem;" onclick="adminEditSchedule('${bc.bigCourseId}')">✏️ Sửa Thời Khóa Biểu</button>
+          </div>
+        `;
+      }
+
+      if (bc.scheduleUrl) {
+        container.innerHTML += `
+          <div class="course-card-box schedule-box">
+            <div class="course-header" style="cursor:default;">
+              <span>📅 THỜI KHÓA BIỂU HỌC TẬP & TIẾN ĐỘ</span>
+              <div style="display:flex; gap:8px;">
+                <button class="ctrl-btn" style="background:var(--accent-cyan); color:#000;" onclick="showDocSideBySide('Thời khóa biểu', '${bc.scheduleUrl}')">👁️ Xem Thời Khóa Biểu</button>
+                ${isAdmin ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminEditSchedule('${bc.bigCourseId}')">✏️ Sửa TKB</button>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (!bc.subCourses || bc.subCourses.length === 0) {
+        container.innerHTML += '<div style="color:var(--text-muted); padding:20px 0;">Khóa học này chưa có nội dung bài giảng.</div>';
+        return;
+      }
+
+      bc.subCourses.forEach((sub, sIdx) => {
+        let partsHtml = '';
+        if (sub.parts && sub.parts.length > 0) {
+          sub.parts.forEach((part, pIdx) => {
+            let lessonsHtml = '';
+            if (part.lessons && part.lessons.length > 0) {
+              part.lessons.forEach((les, lIdx) => {
+                const lesProg = userProgressData[les.id];
+                const isCompleted = lesProg && lesProg.progressPct >= 90;
+
+                const safeTitle = les.title.replace(/'/g, "\\'");
+                const jsonVideos = JSON.stringify(les.videos || []).replace(/"/g, '&quot;');
+                const jsonDocs = JSON.stringify(les.documents || []).replace(/"/g, '&quot;');
+
+                lessonsHtml += `
+                  <div class="lesson-item" onclick="playLesson('${safeTitle}', ${jsonVideos}, ${jsonDocs}, '${les.id}')">
+                    <div style="display:flex; align-items:center; gap:10px; flex-grow:1;">
+                      <span style="font-size:1.1rem;">${isCompleted ? '✅' : '▶️'}</span>
+                      <span style="font-weight:700; color:#fff;">${les.title}</span>
+                      ${isCompleted ? '<span class="status-badge badge-active">Đã hoàn thành</span>' : ''}
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span style="font-size:0.75rem; color:var(--text-muted);">📹 ${(les.videos || []).length} video • 📄 ${(les.documents || []).length} tài liệu</span>
+                      <button class="ctrl-btn" style="padding:4px 10px; font-size:0.75rem;">Học Ngay</button>
+                      ${isAdmin ? `
+                        <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditLesson('${bc.bigCourseId}', ${sub.courseId}, ${pIdx}, ${lIdx})">✏️</button>
+                        <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteLesson('${bc.bigCourseId}', ${sub.courseId}, ${pIdx}, ${lIdx})">🗑️</button>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              });
+            } else {
+              lessonsHtml = '<div style="color:var(--text-muted); font-size:0.85rem; padding:8px;">Chưa có bài học trong phần này.</div>';
+            }
+
+            partsHtml += `
+              <div style="margin-bottom:12px;">
+                <div class="part-header-box" onclick="togglePart('part_${sIdx}_${pIdx}')">
+                  <span>📂 ${part.partTitle}</span>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">${(part.lessons || []).length} bài học</span>
+                    ${isAdmin ? `
+                      <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson('${bc.bigCourseId}', ${sub.courseId}, ${pIdx})">+ Bài</button>
+                      <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditPart('${bc.bigCourseId}', ${sub.courseId}, ${pIdx})">✏️</button>
+                      <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeletePart('${bc.bigCourseId}', ${sub.courseId}, ${pIdx})">🗑️</button>
+                    ` : ''}
+                    <span>▼</span>
+                  </div>
+                </div>
+                <div class="lessons-list open" id="part_${sIdx}_${pIdx}">
+                  ${lessonsHtml}
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          partsHtml = '<div style="color:var(--text-muted); font-size:0.85rem; padding:8px;">Chưa có phần nào trong môn học này.</div>';
+        }
+
+        container.innerHTML += `
+          <div class="course-card-box">
+            <div class="course-header" onclick="toggleSubCourse('sub_${sIdx}')">
+              <span>📘 ${sub.courseTitle}</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${isAdmin ? `
+                  <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart('${bc.bigCourseId}', ${sub.courseId})">+ Phần</button>
+                  <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditSubCourse('${bc.bigCourseId}', ${sub.courseId})">✏️</button>
+                  <button class="admin-btn-sm admin-btn-danger" onclick="event.stopPropagation(); adminDeleteSubCourse('${bc.bigCourseId}', ${sub.courseId})">🗑️</button>
+                ` : ''}
+                <span>▼</span>
+              </div>
+            </div>
+            <div class="parts-container open" id="sub_${sIdx}">
+              ${partsHtml}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function togglePart(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('open');
+    }
+
+    function toggleSubCourse(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('open');
+    }
+
+    // -------------------------------------------------------------
+    // TRÌNH PHÁT BÀI HỌC VỚI LỚP PHỦ THÔNG MINH CHO GD RIVE
     // -------------------------------------------------------------
     function playLesson(title, videos, docs, lessonId = "les_default") {
       if (currentWatchingLesson && watchTimeSeconds > 5) {
@@ -1379,7 +1601,6 @@
       document.getElementById('mediaPlayerContainer').style.display = 'block';
       document.getElementById('currentLessonTitle').innerText = title;
 
-      // Xử lý danh sách nhiều video
       const multiVidBar = document.getElementById('multipleVideosBar');
       const videoTabsList = document.getElementById('videoTabsList');
       videoTabsList.innerHTML = '';
@@ -1407,13 +1628,12 @@
       const activeUrl = videoList.length > 0 ? videoList[0].url : '';
       loadVideoSource(activeUrl, lessonId);
 
-      // Rendering danh sách nhiều tài liệu
       const docsList = document.getElementById('lessonDocsList');
       const docsContainer = document.getElementById('lessonDocsContainer');
       docsList.innerHTML = '';
       if (docs && docs.length > 0) {
         docsContainer.style.display = 'block';
-        docs.forEach(d => {
+        docs.forEach((d, dIdx) => {
           docsList.innerHTML += `
             <div style="display:inline-flex; gap:8px; align-items:center; background: var(--bg-card); padding:8px 14px; border-radius:12px; border:1px solid var(--border);">
               <span style="font-size:0.88rem; color:#fff; font-weight:700;">📄 ${d.docName}</span>
@@ -1440,6 +1660,18 @@
       const hlsVideo = document.getElementById('hlsVideoPlayer');
       const customControls = document.getElementById('customControls');
       const wrapper = document.getElementById('mediaWrapper');
+      const overlay = document.getElementById('videoTransparentOverlay');
+
+      const mediaInfo = parseMediaUrl(mediaUrl);
+
+      // CÀI ĐẶT LỚP PHỦ: Link Google Drive chỉ phủ góc trên bên phải, các link khác phủ toàn phần
+      if (overlay) {
+        if (mediaInfo.type === 'gdrive' || (mediaUrl && (mediaUrl.includes('drive.google.com') || mediaUrl.includes('docs.google.com')))) {
+          overlay.className = "video-transparent-overlay overlay-gdrive";
+        } else {
+          overlay.className = "video-transparent-overlay";
+        }
+      }
 
       const prevProg = userProgressData[lessonId];
       let resumeTime = 0;
@@ -1448,8 +1680,6 @@
           resumeTime = prevProg.lastTime;
         }
       }
-
-      const mediaInfo = parseMediaUrl(mediaUrl);
 
       if (mediaInfo.type === 'youtube') {
         hlsVideo.style.display = 'none';
@@ -1488,9 +1718,11 @@
         ytDiv.style.display = 'none';
         hlsVideo.style.display = 'none';
         customControls.style.display = 'none';
+
+        const overlayClass = (mediaInfo.type === 'gdrive' || (mediaUrl && (mediaUrl.includes('drive.google.com') || mediaUrl.includes('docs.google.com')))) ? "video-transparent-overlay overlay-gdrive" : "video-transparent-overlay";
         
         wrapper.innerHTML = `
-          <div class="video-transparent-overlay"></div>
+          <div class="${overlayClass}" id="videoTransparentOverlay"></div>
           <iframe src="${mediaInfo.src}" allow="autoplay; fullscreen" style="width:100%; height:100%; border:none; position:absolute; top:0; left:0;" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"></iframe>
           <div id="dynamicWatermark">Watermark...</div>
         `;
@@ -1573,6 +1805,16 @@
       logUserActivity('Xem Tài Liệu', `Mở xem tài liệu: [${docName}]`);
       const mediaInfo = parseMediaUrl(docUrl);
       document.getElementById('docSideFrame').src = mediaInfo.src;
+      
+      const docOverlay = document.getElementById('docOverlay');
+      if (docOverlay) {
+        if (mediaInfo.type === 'gdrive' || docUrl.includes('drive.google.com') || docUrl.includes('docs.google.com')) {
+          docOverlay.className = "video-transparent-overlay overlay-gdrive";
+        } else {
+          docOverlay.className = "video-transparent-overlay";
+        }
+      }
+
       document.getElementById('docsColumn').classList.add('active');
       document.getElementById('lessonViewLayout').classList.add('split-screen');
     }
@@ -1585,10 +1827,296 @@
     }
 
     // -------------------------------------------------------------
+    // CHỨC NĂNG ADMIN THÊM - SỬA - XÓA NỘI DUNG (FULL QUYỀN)
+    // -------------------------------------------------------------
+    function adminAddBigCourse() {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const title = prompt('Nhập Tên Khóa Học Lớn Mới:');
+      if (!title) return;
+      const target = prompt('Đối tượng học viên (VD: Dành cho người mới):', 'Dành cho mọi học viên') || '';
+      const price = prompt('Giá khóa học / Trạng thái (VD: Miễn Phí, 500.000đ):', 'Miễn Phí') || 'Miễn Phí';
+      const scheduleUrl = prompt('Đường dẫn Thời Khóa Biểu (Google Docs/Drive/Web):', '') || '';
+      const imgUrl = prompt('Đường dẫn ảnh Thumbnail (URL ảnh):', '') || '';
+
+      const newBig = {
+        bigCourseId: 'BIG_' + Date.now(),
+        bigCourseTitle: title,
+        targetAudience: target,
+        totalVideos: 0,
+        price: price,
+        scheduleUrl: scheduleUrl,
+        imgUrl: imgUrl,
+        subCourses: []
+      };
+
+      bigCoursesData.push(newBig);
+      saveBigCoursesToStorage();
+      alert('Đã thêm Khóa Học Lớn thành công!');
+    }
+
+    function adminEditBigCourse(bigCourseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc) return;
+
+      const newTitle = prompt('Sửa Tên Khóa Học Lớn:', bc.bigCourseTitle);
+      if (newTitle !== null) bc.bigCourseTitle = newTitle;
+
+      const newTarget = prompt('Sửa Đối tượng học viên:', bc.targetAudience || '');
+      if (newTarget !== null) bc.targetAudience = newTarget;
+
+      const newPrice = prompt('Sửa Giá / Trạng thái:', bc.price || '');
+      if (newPrice !== null) bc.price = newPrice;
+
+      const newImg = prompt('Sửa URL Ảnh Thumbnail:', bc.imgUrl || '');
+      if (newImg !== null) bc.imgUrl = newImg;
+
+      saveBigCoursesToStorage();
+      alert('Cập nhật Khóa Học thành công!');
+    }
+
+    function adminDeleteBigCourse(bigCourseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      if (confirm('Bạn có chắc chắn muốn XÓA Khóa Học Lớn này? Tất cả môn học và bài giảng trong khóa sẽ bị xóa!')) {
+        bigCoursesData = bigCoursesData.filter(b => b.bigCourseId !== bigCourseId);
+        saveBigCoursesToStorage();
+        if (selectedBigCourseId === bigCourseId) goBackToBigCourses();
+        alert('Đã xóa khóa học!');
+      }
+    }
+
+    function adminEditSchedule(bigCourseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc) return;
+
+      const newSchedule = prompt('Nhập URL Thời Khóa Biểu Mới (Google Docs/Drive preview...):', bc.scheduleUrl || '');
+      if (newSchedule !== null) {
+        bc.scheduleUrl = newSchedule.trim();
+        saveBigCoursesToStorage();
+        alert('Đã cập nhật Thời Khóa Biểu!');
+      }
+    }
+
+    function adminAddSubCourse(bigCourseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc) return;
+
+      const title = prompt('Nhập Tên Khóa Nhỏ / Môn Học Mới:');
+      if (!title) return;
+
+      if (!bc.subCourses) bc.subCourses = [];
+      bc.subCourses.push({
+        courseId: Date.now(),
+        courseTitle: title,
+        parts: []
+      });
+
+      saveBigCoursesToStorage();
+      alert('Đã thêm môn học mới!');
+    }
+
+    function adminEditSubCourse(bigCourseId, courseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub) return;
+
+      const newTitle = prompt('Sửa Tên Môn Học:', sub.courseTitle);
+      if (newTitle !== null) {
+        sub.courseTitle = newTitle;
+        saveBigCoursesToStorage();
+        alert('Đã cập nhật tên môn học!');
+      }
+    }
+
+    function adminDeleteSubCourse(bigCourseId, courseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+
+      if (confirm('Bạn có chắc chắn muốn xóa môn học này?')) {
+        bc.subCourses = bc.subCourses.filter(s => s.courseId !== courseId);
+        saveBigCoursesToStorage();
+        alert('Đã xóa môn học!');
+      }
+    }
+
+    function adminAddPart(bigCourseId, courseId) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub) return;
+
+      const partTitle = prompt('Nhập Tên Phần Mới (VD: Phần 1: Cấu Trúc Dữ Liệu):');
+      if (!partTitle) return;
+
+      if (!sub.parts) sub.parts = [];
+      sub.parts.push({
+        partTitle: partTitle,
+        lessons: []
+      });
+
+      saveBigCoursesToStorage();
+      alert('Đã thêm phần mới!');
+    }
+
+    function adminEditPart(bigCourseId, courseId, partIdx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub || !sub.parts || !sub.parts[partIdx]) return;
+
+      const newTitle = prompt('Sửa Tên Phần:', sub.parts[partIdx].partTitle);
+      if (newTitle !== null) {
+        sub.parts[partIdx].partTitle = newTitle;
+        saveBigCoursesToStorage();
+        alert('Đã sửa tên phần!');
+      }
+    }
+
+    function adminDeletePart(bigCourseId, courseId, partIdx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub || !sub.parts || !sub.parts[partIdx]) return;
+
+      if (confirm('Bạn có chắc chắn muốn xóa phần này?')) {
+        sub.parts.splice(partIdx, 1);
+        saveBigCoursesToStorage();
+        alert('Đã xóa phần!');
+      }
+    }
+
+    function adminAddLesson(bigCourseId, courseId, partIdx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub || !sub.parts || !sub.parts[partIdx]) return;
+
+      const title = prompt('Nhập Tên Bài Học Mới (VD: Bài 1: Tổng quan):');
+      if (!title) return;
+
+      const vidUrl = prompt('Nhập Đường Dẫn Video (YouTube / Drive / M3U8 / Dailymotion):', '') || '';
+      const docName = prompt('Tên tài liệu đính kèm (nếu có, để trống nếu không):', '') || '';
+      const docUrl = docName ? (prompt('URL Tài liệu (Google Docs/Drive PDF):', '') || '') : '';
+
+      const lesId = 'les_' + Date.now();
+      const videos = vidUrl ? [{ title: 'Video 1', url: vidUrl }] : [];
+      const docs = (docName && docUrl) ? [{ docName: docName, docUrl: docUrl }] : [];
+
+      if (!sub.parts[partIdx].lessons) sub.parts[partIdx].lessons = [];
+      sub.parts[partIdx].lessons.push({
+        id: lesId,
+        title: title,
+        videos: videos,
+        documents: docs
+      });
+
+      let totalVids = 0;
+      bc.subCourses.forEach(s => (s.parts || []).forEach(p => (p.lessons || []).forEach(l => totalVids += (l.videos || []).length)));
+      bc.totalVideos = totalVids;
+
+      saveBigCoursesToStorage();
+      alert('Đã thêm bài học mới!');
+    }
+
+    function adminEditLesson(bigCourseId, courseId, partIdx, lesIdx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub || !sub.parts || !sub.parts[partIdx] || !sub.parts[partIdx].lessons[lesIdx]) return;
+
+      const les = sub.parts[partIdx].lessons[lesIdx];
+
+      const newTitle = prompt('Sửa Tên Bài Học:', les.title);
+      if (newTitle !== null) les.title = newTitle;
+
+      const firstVid = (les.videos && les.videos.length > 0) ? les.videos[0].url : '';
+      const newVidUrl = prompt('Sửa Đường Dẫn Video Bài Giảng 1:', firstVid);
+      if (newVidUrl !== null && newVidUrl.trim() !== '') {
+        if (!les.videos) les.videos = [];
+        if (les.videos.length > 0) les.videos[0].url = newVidUrl.trim();
+        else les.videos.push({ title: 'Video 1', url: newVidUrl.trim() });
+      }
+
+      const addVid2 = confirm('Bạn có muốn quản lý danh sách các Video trong bài học này không?');
+      if (addVid2) {
+        const vidCountPrompt = prompt('Nhập số lượng Video cho bài học này:', les.videos ? les.videos.length : 1);
+        const count = parseInt(vidCountPrompt);
+        if (!isNaN(count) && count > 0) {
+          les.videos = les.videos || [];
+          for (let i = 0; i < count; i++) {
+            const curTitle = les.videos[i] ? les.videos[i].title : `Video ${i+1}`;
+            const curUrl = les.videos[i] ? les.videos[i].url : '';
+            const vTitle = prompt(`Tiêu đề Video ${i+1}:`, curTitle) || `Video ${i+1}`;
+            const vUrl = prompt(`URL Video ${i+1}:`, curUrl) || '';
+            les.videos[i] = { title: vTitle, url: vUrl };
+          }
+        }
+      }
+
+      const manageDocs = confirm('Bạn có muốn quản lý Tài liệu đính kèm (Slide / PDF / Docs) cho bài học này?');
+      if (manageDocs) {
+        const docCountPrompt = prompt('Nhập số lượng tài liệu đính kèm:', les.documents ? les.documents.length : 0);
+        const dCount = parseInt(docCountPrompt);
+        if (!isNaN(dCount)) {
+          les.documents = [];
+          for (let i = 0; i < dCount; i++) {
+            const dName = prompt(`Tên Tài liệu ${i+1}:`, `Tài liệu ${i+1}`);
+            const dUrl = prompt(`URL Tài liệu ${i+1} (Google Drive/Docs preview):`, '');
+            if (dName && dUrl) les.documents.push({ docName: dName, docUrl: dUrl });
+          }
+        }
+      }
+
+      let totalVids = 0;
+      bc.subCourses.forEach(s => (s.parts || []).forEach(p => (p.lessons || []).forEach(l => totalVids += (l.videos || []).length)));
+      bc.totalVideos = totalVids;
+
+      saveBigCoursesToStorage();
+      alert('Đã cập nhật bài học!');
+    }
+
+    function adminDeleteLesson(bigCourseId, courseId, partIdx, lesIdx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const bc = bigCoursesData.find(b => b.bigCourseId === bigCourseId);
+      if (!bc || !bc.subCourses) return;
+      const sub = bc.subCourses.find(s => s.courseId === courseId);
+      if (!sub || !sub.parts || !sub.parts[partIdx] || !sub.parts[partIdx].lessons) return;
+
+      if (confirm('Bạn có chắc chắn muốn XÓA bài học này?')) {
+        sub.parts[partIdx].lessons.splice(lesIdx, 1);
+        saveBigCoursesToStorage();
+        alert('Đã xóa bài học!');
+      }
+    }
+
+    function activateCourseCode() {
+      const codeInput = document.getElementById('activationCodeInput').value.trim();
+      if (!codeInput) { alert('Vui lòng nhập mã kích hoạt!'); return; }
+      const foundCode = activationCodes.find(c => c.code === codeInput);
+      if (!foundCode) { alert('Mã kích hoạt không tồn tại!'); return; }
+      if (foundCode.isUsed) { alert(`Mã này đã được sử dụng bởi tài khoản: ${foundCode.usedBy}`); return; }
+
+      foundCode.isUsed = true;
+      foundCode.usedBy = currentUser.username;
+      saveCodesToStorage();
+      logUserActivity('Kích Hoạt Khóa Học', `Đã kích hoạt mã thành công: ${codeInput}`);
+      alert('KÍCH HOẠT THÀNH CÔNG! Bạn đã mở khóa toàn bộ các khóa học Master.');
+      document.getElementById('activationCodeInput').value = '';
+    }
+
+    // -------------------------------------------------------------
     // QUY TRÌNH PHÓNG LIVE TRỰC TUYẾN & CHIA SẺ MÀN HÌNH WEBRTC
     // -------------------------------------------------------------
-    
-    // BƯỚC 1: HIỂN THỊ CÁC KHÓA HỌC MÀ HỌC VIÊN ĐÃ THAM GIA
     function renderLiveCoursesUI() {
       const container = document.getElementById('liveCoursesGridContainer');
       if (!container) return;
@@ -1600,7 +2128,6 @@
       }
 
       bigCoursesData.forEach(bc => {
-        // Đếm số phòng đang live trong khóa
         let liveCount = 0;
         Object.values(liveRoomsData).forEach(r => {
           if (r.bigCourseId === bc.bigCourseId && r.status === 'live') liveCount++;
@@ -1625,7 +2152,6 @@
       });
     }
 
-    // BƯỚC 2: BẤM VÀO KHÓA HỌC ➔ HIỆN CÁC PHÒNG LIVE CỦA KHÓA ĐÓ
     function openLiveRoomsForCourse(bigCourseId) {
       selectedLiveBigCourseId = bigCourseId;
       document.getElementById('liveCoursesView').style.display = 'none';
@@ -1672,7 +2198,6 @@
       });
     }
 
-    // BƯỚC 3: TẠO PHÒNG LIVE MỚI (CHỈ ADMIN CÓ QUYỀN TẠO)
     function adminCreateLiveRoom() {
       if (!currentUser || currentUser.role !== 'admin') return;
 
@@ -1720,7 +2245,6 @@
       }
     }
 
-    // VÀO XEM VÀ CHIA SẺ MÀN HÌNH MÁY TÍNH / ĐIỆN THOẠI TRONG PHÒNG LIVE
     function joinLiveRoom(roomId) {
       const room = liveRoomsData[roomId];
       if (!room) return;
@@ -1747,13 +2271,11 @@
         joinStudentWebRTC(roomId);
       }
 
-      // Lắng nghe chat realtime của riêng phòng Live này
       db.ref(`liveChats/${roomId}`).on('value', (snap) => {
         renderLiveChatMessages(snap.val());
       });
     }
 
-    // ADMIN BẤM CHIA SẺ MÀN HÌNH WEB/APP/LAPTOP/ĐIỆN THOẠI
     async function adminStartScreenShare() {
       if (!currentLiveRoomId) return;
       try {
@@ -1764,7 +2286,6 @@
         videoElem.style.display = 'block';
         document.getElementById('liveVideoFallbackDiv').style.display = 'none';
 
-        // Ghi lại video buổi Live trên máy Admin
         recordedChunks = [];
         try { mediaRecorder = new MediaRecorder(localScreenStream, { mimeType: 'video/webm;codecs=vp8,opus' }); }
         catch(e) { mediaRecorder = new MediaRecorder(localScreenStream); }
@@ -1774,7 +2295,6 @@
 
         db.ref(`liveRooms/${currentLiveRoomId}`).update({ isScreenSharing: true, status: 'live' });
 
-        // Lắng nghe yêu cầu kết nối từ các Học viên
         db.ref(`liveSignaling/${currentLiveRoomId}/offers`).on('child_added', async (snapshot) => {
           const offerData = snapshot.val();
           const viewerId = snapshot.key;
@@ -1817,108 +2337,115 @@
     }
 
     function adminStopScreenShare() {
-      if (!currentLiveRoomId) return;
-
+      if (localScreenStream) {
+        localScreenStream.getTracks().forEach(track => track.stop());
+        localScreenStream = null;
+      }
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
         mediaRecorder.onstop = () => {
           const blob = new Blob(recordedChunks, { type: 'video/webm' });
           recordedLiveBlobUrl = URL.createObjectURL(blob);
-          const downloadBtn = document.getElementById('adminRecordDownloadBtn');
-          if (downloadBtn) downloadBtn.style.display = 'inline-block';
+          const btnDl = document.getElementById('adminRecordDownloadBtn');
+          if (btnDl) btnDl.style.display = 'inline-block';
         };
       }
+      document.getElementById('liveVideoPlayer').style.display = 'none';
+      document.getElementById('liveVideoFallbackDiv').style.display = 'flex';
+      document.getElementById('liveFallbackStatus').innerText = 'Đã kết thúc buổi Chia Sẻ Live.';
 
-      if (localScreenStream) {
-        localScreenStream.getTracks().forEach(track => track.stop());
-        localScreenStream = null;
+      if (currentLiveRoomId) {
+        db.ref(`liveRooms/${currentLiveRoomId}`).update({ isScreenSharing: false, status: 'ended' });
       }
-
-      Object.values(peerConnections).forEach(pc => pc.close());
-      peerConnections = {};
-
-      db.ref(`liveRooms/${currentLiveRoomId}`).update({ isScreenSharing: false, status: 'ended' });
-      db.ref(`liveSignaling/${currentLiveRoomId}`).remove();
 
       document.getElementById('btnStartShare').style.display = 'inline-block';
       document.getElementById('btnStopShare').style.display = 'none';
-      alert('Đã dừng chia sẻ màn hình! Admin có thể bấm TẢI VIDEO LIVE VỀ MÁY.');
+    }
+
+    function adminDownloadRecordedLive() {
+      if (!recordedLiveBlobUrl) { alert('Chưa có video ghi hình nào!'); return; }
+      const a = document.createElement('a');
+      a.href = recordedLiveBlobUrl;
+      a.download = `Live_Record_${Date.now()}.webm`;
+      a.click();
     }
 
     async function joinStudentWebRTC(roomId) {
-      const viewerId = currentUser.username + '_' + Math.random().toString(36).substr(2, 5);
-      studentPeerConnection = new RTCPeerConnection(rtcConfig);
+      const viewerId = currentUser ? currentUser.username : 'viewer_' + Date.now();
+      const pc = new RTCPeerConnection(rtcConfig);
+      studentPeerConnection = pc;
 
-      studentPeerConnection.ontrack = (event) => {
+      pc.ontrack = (event) => {
         const videoElem = document.getElementById('liveVideoPlayer');
-        videoElem.srcObject = event.streams[0];
-        videoElem.style.display = 'block';
-        document.getElementById('liveVideoFallbackDiv').style.display = 'none';
+        if (videoElem) {
+          videoElem.srcObject = event.streams[0];
+          videoElem.style.display = 'block';
+          document.getElementById('liveVideoFallbackDiv').style.display = 'none';
+        }
       };
 
-      studentPeerConnection.onicecandidate = (event) => {
+      pc.onicecandidate = (event) => {
         if (event.candidate) {
           db.ref(`liveSignaling/${roomId}/viewerCandidates/${viewerId}`).push(event.candidate.toJSON());
         }
       };
 
-      studentPeerConnection.addTransceiver('video', { direction: 'recvonly' });
-      studentPeerConnection.addTransceiver('audio', { direction: 'recvonly' });
+      db.ref(`liveSignaling/${roomId}/hostCandidates/${viewerId}`).on('child_added', snap => {
+        const cand = snap.val();
+        if (cand) pc.addIceCandidate(new RTCIceCandidate(cand)).catch(err => console.error(err));
+      });
 
-      const offer = await studentPeerConnection.createOffer();
-      await studentPeerConnection.setLocalDescription(offer);
+      const offer = await pc.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true });
+      await pc.setLocalDescription(offer);
 
-      db.ref(`liveSignaling/${roomId}/offers/${viewerId}`).set(offer.toJSON());
+      db.ref(`liveSignaling/${roomId}/offers/${viewerId}`).set({ offer: offer.toJSON(), username: viewerId });
 
       db.ref(`liveSignaling/${roomId}/answers/${viewerId}`).on('value', async (snap) => {
         const answer = snap.val();
-        if (answer && studentPeerConnection.signalingState !== 'stable') {
-          await studentPeerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        if (answer && !pc.currentRemoteDescription) {
+          await pc.setRemoteDescription(new RTCSessionDescription(answer));
         }
-      });
-
-      db.ref(`liveSignaling/${roomId}/hostCandidates/${viewerId}`).on('child_added', snap => {
-        const cand = snap.val();
-        if (cand) studentPeerConnection.addIceCandidate(new RTCIceCandidate(cand)).catch(err => console.error(err));
       });
     }
 
-    function adminDownloadRecordedLive() {
-      if (!currentUser || currentUser.role !== 'admin') return;
-      if (!recordedLiveBlobUrl) {
-        alert('Chưa có bản ghi video buổi Live!');
-        return;
+    function leaveLiveRoom() {
+      if (studentPeerConnection) {
+        studentPeerConnection.close();
+        studentPeerConnection = null;
       }
-      const a = document.createElement('a');
-      a.href = recordedLiveBlobUrl;
-      a.download = `Live_Record_${currentLiveRoomId || 'Session'}.webm`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      document.getElementById('activeLiveRoomContainer').style.display = 'none';
+      if (currentLiveRoomId) {
+        db.ref(`liveChats/${currentLiveRoomId}`).off();
+        currentLiveRoomId = null;
+      }
     }
 
     function sendLiveReaction(emoji) {
+      if (!currentLiveRoomId) return;
       const container = document.getElementById('floatingReactionsContainer');
-      if (!container) return;
       const span = document.createElement('span');
       span.className = 'floating-emoji';
       span.innerText = emoji;
-      span.style.right = (20 + Math.random() * 60) + 'px';
+      span.style.left = Math.floor(Math.random() * 60 + 20) + '%';
       container.appendChild(span);
-      setTimeout(() => { span.remove(); }, 2500);
-      logUserActivity('Cảm xúc Live', `Đã thả cảm xúc: ${emoji}`);
+      setTimeout(() => span.remove(), 2500);
+
+      logUserActivity('Thả Cảm Xúc Live', `Gửi emoji: ${emoji}`);
     }
 
     function sendLiveChatMessage() {
       const input = document.getElementById('liveChatInput');
-      const text = input.value.trim();
-      if (!text || !currentLiveRoomId) return;
-      
-      db.ref(`liveChats/${currentLiveRoomId}`).push({
-        name: currentUser.name,
-        text: text,
-        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-      });
+      const txt = input.value.trim();
+      if (!txt || !currentLiveRoomId) return;
+
+      const msg = {
+        sender: currentUser.name,
+        username: currentUser.username,
+        text: txt,
+        time: new Date().toLocaleTimeString('vi-VN')
+      };
+
+      db.ref(`liveChats/${currentLiveRoomId}`).push(msg);
       input.value = '';
     }
 
@@ -1928,88 +2455,137 @@
       box.innerHTML = '';
       if (!data) return;
 
-      Object.values(data).forEach(msg => {
+      Object.values(data).forEach(m => {
+        const isMine = currentUser && m.username === currentUser.username;
         box.innerHTML += `
-          <div style="margin-bottom:8px;">
-            <b style="color:var(--primary-bright);">${msg.name}:</b> <span style="color:#fff;">${msg.text}</span>
-            <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${msg.time}</span>
+          <div class="chat-message ${isMine ? 'mine' : 'others'}">
+            <div class="chat-author">${m.sender}</div>
+            <div>${m.text}</div>
+            <div class="chat-time">${m.time}</div>
           </div>
         `;
       });
       box.scrollTop = box.scrollHeight;
     }
 
-    function leaveLiveRoom() {
-      if (studentPeerConnection) {
-        studentPeerConnection.close();
-        studentPeerConnection = null;
-      }
-      document.getElementById('activeLiveRoomContainer').style.display = 'none';
-      logUserActivity('Rời Phòng Live', 'Học viên đã rời phòng Live.');
+    // -------------------------------------------------------------
+    // DIỄN ĐÀN CHAT REALTIME & QUẢN LÝ ADMIN USERS/CODES/LOGS
+    // -------------------------------------------------------------
+    function handleChatKeyPress(e) {
+      if (e.key === 'Enter') sendChatMessage();
     }
 
     function sendChatMessage() {
       const input = document.getElementById('chatMessageInput');
-      const text = input.value.trim();
-      if(!text) return;
+      const txt = input.value.trim();
+      if (!txt || !currentUser) return;
 
-      const messageObj = {
-        name: currentUser.name,
+      const msg = {
+        sender: currentUser.name,
+        username: currentUser.username,
         role: currentUser.role,
-        text: text,
-        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN')
+        text: txt,
+        time: new Date().toLocaleTimeString('vi-VN'),
+        timestamp: Date.now()
       };
 
-      db.ref('chatMessages').push(messageObj);
-      logUserActivity('Gửi Thảo Luận', `Đăng bài thảo luận: "${text}"`);
+      db.ref('chatMessages').push(msg);
       input.value = '';
     }
 
-    function handleChatKeyPress(e) { if(e.key === 'Enter') sendChatMessage(); }
-
     function renderChatMessages(data) {
       const box = document.getElementById('chatMessagesBox');
-      if(!box) return;
+      if (!box) return;
       box.innerHTML = '';
-      if(!data) {
-        box.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 20px;">Chưa có trao đổi nào. Hãy là người đầu tiên gửi thắc mắc!</div>';
+
+      if (!data) {
+        box.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Chưa có thảo luận nào. Hãy bắt đầu nhắn tin!</div>';
         return;
       }
-      Object.values(data).forEach(msg => {
-        const isMine = currentUser && msg.name === currentUser.name;
+
+      Object.values(data).forEach(m => {
+        const isMine = currentUser && m.username === currentUser.username;
         box.innerHTML += `
           <div class="chat-message ${isMine ? 'mine' : 'others'}">
-            <div class="chat-author">${msg.name} (${msg.role === 'admin' ? 'Admin / Giảng Viên' : 'Học Viên'})</div>
-            <div>${msg.text}</div>
-            <div class="chat-time">${msg.time}</div>
+            <div class="chat-author">${m.sender} ${m.role === 'admin' ? '🛡️ (Admin)' : ''}</div>
+            <div>${m.text}</div>
+            <div class="chat-time">${m.time}</div>
           </div>
         `;
       });
       box.scrollTop = box.scrollHeight;
     }
 
-    function renderAdminUsers() {
-      const tbody = document.getElementById('adminUsersTable');
-      if(!tbody) return;
-      tbody.innerHTML = '';
-      document.getElementById('totalUserCount').innerText = `${userAccounts.length} Người`;
+    function renderAdminCodes() {
+      const table = document.getElementById('adminCodesTable');
+      const countEl = document.getElementById('totalCodesCount');
+      if (!table) return;
+      table.innerHTML = '';
 
-      userAccounts.forEach(acc => {
-        const devs = acc.devices ? acc.devices.join(', ') : 'Chưa có';
-        tbody.innerHTML += `
+      if (countEl) countEl.innerText = `${activationCodes.length} Mã`;
+
+      activationCodes.forEach((c, idx) => {
+        table.innerHTML += `
+          <tr>
+            <td style="font-family:var(--font-mono); font-weight:700; color:var(--accent-cyan);">${c.code}</td>
+            <td><span class="status-badge ${c.isUsed ? 'badge-locked' : 'badge-active'}">${c.isUsed ? 'Đã kích hoạt' : 'Chưa sử dụng'}</span></td>
+            <td>${c.usedBy || '---'}</td>
+            <td>
+              <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteCode(${idx})">🗑️ Xóa</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function adminGenerateCode() {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const randNum = Math.floor(1000 + Math.random() * 9000);
+      const randNum2 = Math.floor(1000 + Math.random() * 9000);
+      const newCode = `VACT-${randNum}-${randNum2}`;
+
+      activationCodes.push({ code: newCode, isUsed: false, usedBy: "" });
+      saveCodesToStorage();
+      alert(`ĐÃ TẠO MÃ KÍCH HOẠT MỚI: ${newCode}`);
+    }
+
+    function adminDeleteCode(idx) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      if (confirm('Xóa mã kích hoạt này?')) {
+        activationCodes.splice(idx, 1);
+        saveCodesToStorage();
+      }
+    }
+
+    function renderAdminUsers() {
+      const table = document.getElementById('adminUsersTable');
+      const countEl = document.getElementById('totalUserCount');
+      const bigCountEl = document.getElementById('totalBigCoursesCount');
+      if (!table) return;
+      table.innerHTML = '';
+
+      if (countEl) countEl.innerText = `${userAccounts.length} Người`;
+      if (bigCountEl) bigCountEl.innerText = `${bigCoursesData.length} Khóa`;
+
+      userAccounts.forEach(u => {
+        const devList = (u.devices || []).join(', ') || 'Chưa đăng nhập';
+        table.innerHTML += `
           <tr>
             <td>
-              <b style="color:var(--primary-bright); cursor:pointer; text-decoration:underline;" onclick="openStudentLogs('${acc.username}', '${acc.name}')" title="Ấn để xem truy vết chi tiết">
-                🔍 ${acc.name}
-              </b>
+              <b style="color:var(--primary-bright); cursor:pointer; text-decoration:underline;" onclick="openAuditModal('${u.username}')">${u.name}</b>
             </td>
-            <td><code>${acc.username}</code></td>
-            <td><span class="status-badge ${acc.role==='admin'?'badge-warning':'badge-active'}">${acc.role.toUpperCase()}</span></td>
-            <td style="font-size:0.8rem; color:var(--text-muted);">${devs}</td>
-            <td>${acc.isLocked ? '<span class="status-badge badge-locked">Đã Khóa</span>' : '<span class="status-badge badge-active">Hoạt Động</span>'}</td>
+            <td><code>${u.username}</code></td>
+            <td><b>${u.role === 'admin' ? '🛡️ Admin' : '🎓 Học viên'}</b></td>
+            <td style="font-size:0.8rem; color:var(--text-muted);">${devList}</td>
             <td>
-              ${acc.isLocked ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminUnlockUser(${acc.id})">Mở Khóa</button>` : ''}
-              ${acc.username !== 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteUser(${acc.id})">Xóa</button>` : ''}
+              <span class="status-badge ${u.isLocked ? 'badge-locked' : 'badge-active'}">${u.isLocked ? '🔒 ĐÃ KHÓA' : '✅ ĐANG HOẠT ĐỘNG'}</span>
+            </td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="admin-btn-sm ${u.isLocked ? 'admin-btn-sm' : 'admin-btn-warning'}" onclick="adminToggleLockUser('${u.username}')">${u.isLocked ? '🔓 Mở khóa' : '🔒 Khóa'}</button>
+                <button class="admin-btn-sm" style="background:var(--accent-cyan); color:#000;" onclick="adminResetUserDevices('${u.username}')">🔄 Reset Device</button>
+                ${u.username !== 'admin' ? `<button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteUser('${u.username}')">🗑️ Xóa</button>` : ''}
+              </div>
             </td>
           </tr>
         `;
@@ -2017,496 +2593,132 @@
     }
 
     function adminCreateUser(isAdminRole) {
-      const name = prompt(`Nhập Tên ${isAdminRole ? 'Quản Trị Viên (Admin)' : 'Học Viên'}:`);
-      if(!name) return;
-      const username = prompt('Nhập Username:');
-      if(!username) return;
-      const password = prompt('Nhập Mật Khẩu:');
-      if(!password) return;
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const name = prompt(`Nhập Tên ${isAdminRole ? 'Admin' : 'Học Viên'}:`);
+      if (!name) return;
+      const uName = prompt('Nhập Username:');
+      if (!uName) return;
 
-      userAccounts.push({
-        id: Date.now(), name, username, password, role: isAdminRole ? 'admin' : 'user', devices: [], isLocked: false, sessionToken: ''
-      });
+      if (userAccounts.some(u => u.username === uName)) {
+        alert('Username đã tồn tại trên hệ thống!');
+        return;
+      }
+
+      const pwd = prompt('Nhập Mật khẩu (mặc định 123456):', '123456') || '123456';
+
+      const newUser = {
+        id: Date.now(),
+        name: name,
+        username: uName,
+        password: pwd,
+        role: isAdminRole ? 'admin' : 'user',
+        devices: [],
+        isLocked: false,
+        sessionToken: ''
+      };
+
+      userAccounts.push(newUser);
       saveUsersToStorage();
-      renderAdminUsers();
-      alert(`Tạo tài khoản ${isAdminRole ? 'Admin' : 'Học viên'} thành công!`);
+      alert(`ĐÃ TẠO TÀI KHOẢN ${isAdminRole ? 'ADMIN' : 'HỌC VIÊN'} THÀNH CÔNG!`);
     }
 
-    function adminUnlockUser(id) {
-      const acc = userAccounts.find(u => u.id === id);
-      if(acc) {
-        acc.isLocked = false;
-        acc.devices = [];
+    function adminToggleLockUser(username) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const u = userAccounts.find(acc => acc.username === username);
+      if (u) {
+        u.isLocked = !u.isLocked;
         saveUsersToStorage();
-        renderAdminUsers();
-        alert(`Đã mở khóa thiết bị cho tài khoản: ${acc.username}`);
+        alert(`Đã ${u.isLocked ? 'KHÓA' : 'MỞ KHÓA'} tài khoản ${username}!`);
       }
     }
 
-    function adminDeleteUser(id) {
-      if(confirm('Xóa tài khoản này?')) {
-        userAccounts = userAccounts.filter(u => u.id !== id);
+    function adminResetUserDevices(username) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      const u = userAccounts.find(acc => acc.username === username);
+      if (u) {
+        u.devices = [];
+        u.isLocked = false;
         saveUsersToStorage();
-        renderAdminUsers();
+        alert(`Đã xoá danh sách thiết bị và mở khoá cho ${username}!`);
       }
     }
 
-    function openStudentLogs(username, studentName) {
+    function adminDeleteUser(username) {
+      if (!currentUser || currentUser.role !== 'admin') return;
+      if (username === 'admin') { alert('Không thể xóa Admin tối cao!'); return; }
+      if (confirm(`Bạn có chắc muốn xóa tài khoản ${username}?`)) {
+        userAccounts = userAccounts.filter(u => u.username !== username);
+        saveUsersToStorage();
+        alert('Đã xóa tài khoản!');
+      }
+    }
+
+    function openAuditModal(username) {
+      if (!currentUser || currentUser.role !== 'admin') return;
       currentAuditStudentUsername = username;
-      document.getElementById('auditStudentTitle').innerText = `🔍 Nhật Ký Truy Vết: ${studentName}`;
-      document.getElementById('auditStudentSub').innerText = `Tài khoản: @${username} | Kiểm tra thời gian thực`;
-      document.getElementById('auditTrailModal').style.display = 'flex';
-      document.getElementById('auditDateFilter').value = '';
+      const u = userAccounts.find(acc => acc.username === username);
 
-      db.ref(`userLogs/${username}`).once('value', (snapshot) => {
-        const logsVal = snapshot.val();
-        currentAuditStudentLogs = [];
-        if (logsVal) {
-          currentAuditStudentLogs = Object.values(logsVal).sort((a,b) => b.timestamp - a.timestamp);
-        }
-        renderAuditLogsUI(currentAuditStudentLogs);
+      document.getElementById('auditTrailModal').style.display = 'flex';
+      document.getElementById('auditStudentTitle').innerText = `🔍 Nhật Ký Truy Vết: ${u ? u.name : username}`;
+      document.getElementById('auditStudentSub').innerText = `Tài khoản: ${username} | Quản lý lịch sử học tập & vi phạm`;
+
+      db.ref(`userLogs/${username}`).on('value', (snap) => {
+        const data = snap.val() || {};
+        currentAuditStudentLogs = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+        filterAuditLogsByDate();
       });
     }
 
-    function closeAuditModal() { document.getElementById('auditTrailModal').style.display = 'none'; }
+    function closeAuditModal() {
+      document.getElementById('auditTrailModal').style.display = 'none';
+      if (currentAuditStudentUsername) {
+        db.ref(`userLogs/${currentAuditStudentUsername}`).off();
+        currentAuditStudentUsername = null;
+      }
+    }
 
     function filterAuditLogsByDate() {
-      const selectedDate = document.getElementById('auditDateFilter').value;
-      if (!selectedDate) { renderAuditLogsUI(currentAuditStudentLogs); return; }
-      const filtered = currentAuditStudentLogs.filter(log => log.date === selectedDate);
-      renderAuditLogsUI(filtered);
+      const container = document.getElementById('auditTimelineContainer');
+      const dateFilter = document.getElementById('auditDateFilter').value;
+      const countEl = document.getElementById('auditTotalLogsCount');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let filtered = currentAuditStudentLogs;
+      if (dateFilter) {
+        filtered = currentAuditStudentLogs.filter(l => l.date === dateFilter);
+      }
+
+      if (countEl) countEl.innerText = `${filtered.length} ghi nhận`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Chưa có dữ liệu truy vết cho ngày được chọn.</div>';
+        return;
+      }
+
+      filtered.forEach(log => {
+        let itemClass = '';
+        if (log.action.includes('Cảnh Báo') || log.action.includes('VI PHẠM')) itemClass = 'tab-switch';
+        else if (log.action.includes('Thời Gian') || log.action.includes('Bài Học')) itemClass = 'watch-video';
+        else if (log.action.includes('Đăng Nhập')) itemClass = 'login-event';
+
+        container.innerHTML += `
+          <div class="timeline-item ${itemClass}">
+            <div>
+              <div style="font-weight:800; color:#fff;">[${log.action}] ${log.detail}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+                💻 Thiết bị: <b>${log.device}</b> | 🌐 IP: <code>${log.ip}</code>
+              </div>
+            </div>
+            <div class="timeline-time">${log.displayDate || ''} ${log.time}</div>
+          </div>
+        `;
+      });
     }
 
     function clearAuditDateFilter() {
       document.getElementById('auditDateFilter').value = '';
-      renderAuditLogsUI(currentAuditStudentLogs);
-    }
-
-    function renderAuditLogsUI(logsArray) {
-      const container = document.getElementById('auditTimelineContainer');
-      document.getElementById('auditTotalLogsCount').innerText = `${logsArray.length} ghi nhận`;
-      
-      if (logsArray.length === 0) {
-        container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px;">Chưa có lịch sử hoạt động nào.</div>';
-        return;
-      }
-
-      let html = '';
-      logsArray.forEach(log => {
-        let typeClass = '';
-        if (log.action.includes('Chuyển Tab') || log.action.includes('VI PHẠM')) typeClass = 'tab-switch';
-        else if (log.action.includes('Xem Bài Học') || log.action.includes('Thời Gian Học')) typeClass = 'watch-video';
-        else if (log.action.includes('Đăng Nhập')) typeClass = 'login-event';
-
-        html += `
-          <div class="timeline-item ${typeClass}">
-            <div>
-              <div style="font-weight:800; color:#fff; font-size:0.95rem;">${log.action}</div>
-              <div style="color:var(--primary-bright); margin-top:2px;">${log.detail}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
-                <span>🌐 IP: <b>${log.ip || 'Không rõ'}</b></span>
-                <span>💻 Thiết bị: <b>${log.device || 'Không rõ'}</b></span>
-              </div>
-            </div>
-            <div class="timeline-time">
-              📅 ${log.displayDate || log.date}<br>
-              ⏰ ${log.time}
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-    }
-
-    function activateCourseCode() {
-      const input = document.getElementById('activationCodeInput');
-      const codeVal = input.value.trim().toUpperCase();
-      if(!codeVal) { alert('Vui lòng nhập mã kích hoạt!'); return; }
-
-      const codeObj = activationCodes.find(c => c.code === codeVal);
-      if(!codeObj) { alert('Mã kích hoạt không hợp lệ!'); return; }
-      if(codeObj.isUsed) { alert(`Mã này đã được dùng bởi: ${codeObj.usedBy}`); return; }
-
-      codeObj.isUsed = true;
-      codeObj.usedBy = currentUser.username;
-      saveCodesToStorage();
-      logUserActivity('Kích Hoạt Mã', `Kích hoạt mã: ${codeVal}`);
-      alert('KÍCH HOẠT THÀNH CÔNG!');
-      input.value = '';
-      if(currentUser.role === 'admin') renderAdminCodes();
-    }
-
-    function renderAdminCodes() {
-      const tbody = document.getElementById('adminCodesTable');
-      if(!tbody) return;
-      tbody.innerHTML = '';
-      document.getElementById('totalCodesCount').innerText = `${activationCodes.length} Mã`;
-
-      activationCodes.forEach((c, idx) => {
-        tbody.innerHTML += `
-          <tr>
-            <td><code><b>${c.code}</b></code></td>
-            <td>${c.isUsed ? `<span class="status-badge badge-locked">Đã Dùng</span>` : '<span class="status-badge badge-active">Chưa Dùng</span>'}</td>
-            <td>${c.usedBy || 'Chưa có'}</td>
-            <td><button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteCode(${idx})">Xóa Mã</button></td>
-          </tr>
-        `;
-      });
-    }
-
-    function adminGenerateCode() {
-      const randomCode = 'VACT-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
-      activationCodes.push({ code: randomCode, isUsed: false, usedBy: "" });
-      saveCodesToStorage();
-      renderAdminCodes();
-    }
-
-    function adminDeleteCode(idx) {
-      if(confirm('Xóa mã này?')) {
-        activationCodes.splice(idx, 1);
-        saveCodesToStorage();
-        renderAdminCodes();
-      }
-    }
-
-    // -------------------------------------------------------------
-    // RENDER UI KHÓA HỌC MASTER (BỔ SUNG KHÓA NHỎ THỜI KHÓA BIỂU)
-    // -------------------------------------------------------------
-    function openBigCourseDetail(bigCourseId) {
-      selectedBigCourseId = bigCourseId;
-      renderCoursesUI();
-    }
-
-    function goBackToBigCourses() {
-      selectedBigCourseId = null;
-      document.getElementById('mediaPlayerContainer').style.display = 'none';
-      renderCoursesUI();
-    }
-
-    function renderCoursesUI() {
-      const isAdmin = currentUser && currentUser.role === 'admin';
-      const bigContainer = document.getElementById('bigCoursesContainer');
-      const bigCoursesView = document.getElementById('bigCoursesView');
-      const bigCourseDetailView = document.getElementById('bigCourseDetailView');
-      const detailTitle = document.getElementById('detailBigCourseTitle');
-
-      document.getElementById('totalBigCoursesCount').innerText = `${bigCoursesData.length} Khóa`;
-
-      if (!selectedBigCourseId) {
-        bigCoursesView.style.display = 'block';
-        bigCourseDetailView.style.display = 'none';
-        document.getElementById('courseSectionTitle').innerText = "Danh Sách Khóa Học Master";
-
-        bigContainer.innerHTML = '';
-        if (bigCoursesData.length === 0) {
-          bigContainer.innerHTML = '<div style="color:var(--text-muted);">Chưa có khóa học nào.</div>';
-          return;
-        }
-
-        let gridHTML = '';
-        bigCoursesData.forEach((bc, originalIndex) => {
-          let totalCount = 0;
-          if (bc.subCourses) {
-            bc.subCourses.forEach(sc => {
-              if (sc.parts) {
-                sc.parts.forEach(pt => {
-                  if (pt.lessons) totalCount += pt.lessons.length;
-                });
-              }
-            });
-          }
-
-          const target = bc.targetAudience || "Mọi đối tượng";
-          const price = bc.price || "Miễn phí";
-          const imgSrc = bc.imgUrl || DEFAULT_FALLBACK_IMAGE;
-
-          gridHTML += `
-            <div class="big-course-card" onclick="openBigCourseDetail('${bc.bigCourseId}')">
-              <div class="card-thumb-box">
-                <img src="${imgSrc}" onerror="this.onerror=null; this.src=DEFAULT_FALLBACK_IMAGE;" alt="${bc.bigCourseTitle}">
-              </div>
-              <div class="card-body">
-                <div class="card-title">${bc.bigCourseTitle}</div>
-                
-                <div class="card-progress-text">
-                  <span>Tiến độ bài học</span>
-                  <span>Đã kích hoạt</span>
-                </div>
-                <div class="card-progress-bar-bg">
-                  <div class="card-progress-bar-fill" style="width: 100%;"></div>
-                </div>
-
-                <div class="card-tags">
-                  <span class="tag-target">🎯 ${target}</span>
-                  <span class="tag-video">🎬 ${totalCount} bài giảng</span>
-                </div>
-
-                ${isAdmin ? `
-                  <div style="margin-top: 6px; margin-bottom: 10px; display: flex; gap: 6px;" onclick="event.stopPropagation();">
-                    <button class="admin-btn-sm admin-btn-warning" onclick="adminEditBigCourse(${originalIndex})">Sửa Card</button>
-                    <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteBigCourse(${originalIndex})">Xóa Khóa Lớn</button>
-                  </div>
-                ` : ''}
-
-                <div class="card-footer-price">${price}</div>
-              </div>
-            </div>
-          `;
-        });
-
-        bigContainer.innerHTML = gridHTML;
-        return;
-      }
-
-      // HIỂN THỊ CHI TIẾT KHÓA LỚN
-      bigCoursesView.style.display = 'none';
-      bigCourseDetailView.style.display = 'block';
-
-      const bigIdx = bigCoursesData.findIndex(b => b.bigCourseId === selectedBigCourseId);
-      if (bigIdx === -1) {
-        selectedBigCourseId = null;
-        renderCoursesUI();
-        return;
-      }
-
-      const currentBig = bigCoursesData[bigIdx];
-      detailTitle.innerText = currentBig.bigCourseTitle;
-      document.getElementById('courseSectionTitle').innerText = currentBig.bigCourseTitle;
-
-      const container = document.getElementById('subCoursesTreeContainer');
-      let subCoursesHTML = '';
-
-      if (isAdmin) {
-        subCoursesHTML += `
-          <div class="admin-action-bar" style="background: var(--bg-panel); padding: 14px; border-radius: 14px; margin-bottom: 20px;">
-            <span style="font-weight:800; font-size: 0.85rem; color: var(--primary-bright);">QUẢN TRỊ KHÓA LỚN NÀY:</span>
-            <button class="admin-btn-sm" onclick="adminAddSubCourse(${bigIdx})">+ Thêm Khóa Nhỏ Mới</button>
-          </div>
-        `;
-      }
-
-      // LUÔN BỔ SUNG KHÓA NHỎ "THỜI KHÓA BIỂU" Ở VỊ TRÍ ĐẦU TIÊN
-      const schedUrl = currentBig.scheduleUrl || "https://docs.google.com/document/d/1v2w3x4y5z6a7b8c9/preview";
-      const safeSchedUrl = schedUrl.replace(/'/g, "\\'");
-      subCoursesHTML += `
-        <div class="course-card-box schedule-box">
-          <div class="course-header">
-            <span style="color: var(--accent-cyan);">📅 THỜI KHÓA BIỂU & LỊCH HỌC KHÓA HỌC</span>
-            <div style="display:flex; gap:8px; align-items:center;">
-              ${isAdmin ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminEditScheduleLink(${bigIdx})">⚙️ Sửa Link TKB</button>` : ''}
-              <button class="ctrl-btn" style="background: var(--primary);" onclick="showDocSideBySide('Thời khóa biểu', '${safeSchedUrl}')">👁️ Xem TKB</button>
-              <a href="${schedUrl}" target="_blank" download class="ctrl-btn" style="background: var(--accent-green);">📥 Tải về / Mở Link</a>
-            </div>
-          </div>
-        </div>
-      `;
-
-      if (currentBig.subCourses && currentBig.subCourses.length > 0) {
-        currentBig.subCourses.forEach((subC, subIdx) => {
-          let partsHTML = '';
-          if (subC.parts && subC.parts.length > 0) {
-            subC.parts.forEach((part, partIdx) => {
-              let lessonsHTML = '';
-              if (part.lessons && part.lessons.length > 0) {
-                part.lessons.forEach((les, lesIdx) => {
-                  const lesId = les.id || `les_${subIdx}_${partIdx}_${lesIdx}`;
-                  const prog = userProgressData[lesId] || { progressPct: 0 };
-                  const safeTitle = les.title.replace(/'/g, "\\'");
-                  
-                  // Chuẩn hóa mảng video
-                  let vidsArray = [];
-                  if (Array.isArray(les.videos)) vidsArray = les.videos;
-                  else if (les.videoUrl) vidsArray = [{ title: 'Video bài giảng chính', url: les.videoUrl }];
-                  
-                  const vidsJson = JSON.stringify(vidsArray).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                  const docsJson = JSON.stringify(les.documents || []).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                  lessonsHTML += `
-                    <div class="lesson-item" onclick="playLesson('${safeTitle}', ${vidsJson}, ${docsJson}, '${lesId}')">
-                      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                        <span style="color:var(--primary-bright);">▶</span>
-                        <span><b>${les.title}</b></span>
-                        <span style="font-size:0.75rem; color:var(--text-muted);">(${vidsArray.length} video, ${(les.documents||[]).length} tài liệu)</span>
-                        ${prog.progressPct > 0 ? `<span style="font-size:0.75rem; background:rgba(16,185,129,0.2); color:#34d399; padding:2px 8px; border-radius:10px; font-weight:700;">Đã học ${prog.progressPct}%</span>` : ''}
-                      </div>
-                      <div style="display:flex; gap:6px; align-items:center;" onclick="event.stopPropagation();">
-                        ${isAdmin ? `
-                          <button class="admin-btn-sm admin-btn-warning" onclick="adminEditLesson(${bigIdx}, ${subIdx}, ${partIdx}, ${lesIdx})">Sửa Bài</button>
-                          <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteLesson(${bigIdx}, ${subIdx}, ${partIdx}, ${lesIdx})">Xóa</button>
-                        ` : ''}
-                        <span class="ctrl-btn" style="font-size:0.78rem; padding:4px 10px;">Học Ngay</span>
-                      </div>
-                    </div>
-                  `;
-                });
-              } else {
-                lessonsHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:6px 0;">Chưa có bài học trong phần này.</div>';
-              }
-
-              partsHTML += `
-                <div class="part-header-box" onclick="toggleElement('lessons_${bigIdx}_${subIdx}_${partIdx}')">
-                  <span>📂 ${part.partTitle}</span>
-                  <div style="display:flex; gap:6px;">
-                    ${isAdmin ? `<button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson(${bigIdx}, ${subIdx}, ${partIdx})">+ Thêm Bài Học</button>` : ''}
-                    <span>▼</span>
-                  </div>
-                </div>
-                <div class="lessons-list" id="lessons_${bigIdx}_${subIdx}_${partIdx}">
-                  ${lessonsHTML}
-                </div>
-              `;
-            });
-          }
-
-          subCoursesHTML += `
-            <div class="course-card-box">
-              <div class="course-header" onclick="toggleElement('parts_${bigIdx}_${subIdx}')">
-                <span>📘 ${subC.courseTitle}</span>
-                <div style="display:flex; gap:6px;">
-                  ${isAdmin ? `<button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart(${bigIdx}, ${subIdx})">+ Thêm Phần</button>` : ''}
-                  <span>▼</span>
-                </div>
-              </div>
-              <div class="parts-container" id="parts_${bigIdx}_${subIdx}">
-                ${partsHTML}
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      container.innerHTML = subCoursesHTML;
-    }
-
-    function toggleElement(id) {
-      const el = document.getElementById(id);
-      if(el) {
-        if(el.classList.contains('open')) el.classList.remove('open');
-        else el.classList.add('open');
-      }
-    }
-
-    // CRUD ADMIN CHO KHÓA HỌC & BÀI HỌC VỚI NHIỀU VIDEO/TÀI LIỆU
-    function adminEditScheduleLink(bigIdx) {
-      const currentUrl = bigCoursesData[bigIdx].scheduleUrl || '';
-      const newUrl = prompt('Nhập Link Thời Khóa Biểu (Google Drive, Doc, Facebook, Youtube hoặc Link nhúng Embed):', currentUrl);
-      if (newUrl !== null) {
-        bigCoursesData[bigIdx].scheduleUrl = newUrl;
-        saveBigCoursesToStorage();
-        renderCoursesUI();
-        alert('Đã cập nhật link Thời khóa biểu thành công!');
-      }
-    }
-
-    function adminAddBigCourse() {
-      const title = prompt('Tên Khóa Lớn Mới:'); if (!title) return;
-      const sched = prompt('Link Thời Khoá Biểu (Drive/Doc/Embed):', 'https://docs.google.com/document/d/1v2w3x4y5z6a7b8c9/preview');
-      bigCoursesData.push({
-        bigCourseId: 'VACT_BIG_' + Date.now(),
-        bigCourseTitle: title,
-        targetAudience: 'Mọi đối tượng',
-        totalVideos: 0,
-        price: 'Miễn Phí',
-        scheduleUrl: sched || '',
-        subCourses: []
-      });
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminEditBigCourse(idx) {
-      const bc = bigCoursesData[idx];
-      const title = prompt('Sửa tên Khóa Lớn:', bc.bigCourseTitle);
-      if (!title) return;
-      const price = prompt('Giá khóa học:', bc.price || 'Miễn Phí');
-      const scheduleUrl = prompt('Link Thời khoá biểu:', bc.scheduleUrl || '');
-      bc.bigCourseTitle = title;
-      bc.price = price;
-      bc.scheduleUrl = scheduleUrl;
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminDeleteBigCourse(idx) {
-      if (confirm('Xóa toàn bộ Khóa Học Lớn này?')) {
-        bigCoursesData.splice(idx, 1);
-        saveBigCoursesToStorage();
-        renderCoursesUI();
-      }
-    }
-
-    function adminAddSubCourse(bigIdx) {
-      const title = prompt('Tên Khóa Nhỏ Mới:'); if (!title) return;
-      if (!bigCoursesData[bigIdx].subCourses) bigCoursesData[bigIdx].subCourses = [];
-      bigCoursesData[bigIdx].subCourses.push({ courseId: Date.now(), courseTitle: title, parts: [] });
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminAddPart(bigIdx, subIdx) {
-      const title = prompt('Tên Phần Mới:'); if (!title) return;
-      if (!bigCoursesData[bigIdx].subCourses[subIdx].parts) bigCoursesData[bigIdx].subCourses[subIdx].parts = [];
-      bigCoursesData[bigIdx].subCourses[subIdx].parts.push({ partTitle: title, lessons: [] });
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminAddLesson(bigIdx, subIdx, partIdx) {
-      const title = prompt('Tên Bài Học Mới:'); if (!title) return;
-      const videoUrl = prompt('Link Video / Mã Nhúng YouTube (<iframe...):'); if (!videoUrl) return;
-      const docName = prompt('Tên Tài Liệu Đính Kèm (Để trống nếu không có):', '');
-      const docUrl = docName ? prompt('Link File Tài Liệu (Google Docs / Drive):', '') : '';
-
-      const newLesson = {
-        id: 'les_' + Date.now(),
-        title: title,
-        videos: [{ title: 'Video chính', url: videoUrl }],
-        documents: docName ? [{ docName: docName, docUrl: docUrl }] : []
-      };
-
-      if (!bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons) {
-        bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons = [];
-      }
-      bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons.push(newLesson);
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminEditLesson(bigIdx, subIdx, partIdx, lesIdx) {
-      const les = bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons[lesIdx];
-      const newTitle = prompt('Sửa Tên Bài Học:', les.title);
-      if (!newTitle) return;
-      les.title = newTitle;
-
-      if (confirm('Bạn có muốn thêm 1 Video mới cho Bài học này không?')) {
-        const vidTitle = prompt('Tên Video Bài Giảng:', 'Video bổ sung');
-        const vidUrl = prompt('Link Video / Mã nhúng iframe YouTube:');
-        if (vidUrl) {
-          if (!les.videos) les.videos = [];
-          les.videos.push({ title: vidTitle || 'Video bổ sung', url: vidUrl });
-        }
-      }
-
-      if (confirm('Bạn có muốn thêm 1 File Tài liệu mới cho Bài học này không?')) {
-        const dName = prompt('Tên Tài Liệu Mới:');
-        const dUrl = dName ? prompt('Link File Tài liệu (Docs/Drive):') : '';
-        if (dName && dUrl) {
-          if (!les.documents) les.documents = [];
-          les.documents.push({ docName: dName, docUrl: dUrl });
-        }
-      }
-
-      saveBigCoursesToStorage();
-      renderCoursesUI();
-    }
-
-    function adminDeleteLesson(bigIdx, subIdx, partIdx, lesIdx) {
-      if (confirm('Xóa bài học này?')) {
-        bigCoursesData[bigIdx].subCourses[subIdx].parts[partIdx].lessons.splice(lesIdx, 1);
-        saveBigCoursesToStorage();
-        renderCoursesUI();
-      }
+      filterAuditLogsByDate();
     }
   </script>
 </body>
