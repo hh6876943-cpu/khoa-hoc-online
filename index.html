@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HỆ THỐNG ĐÀO TẠO MASTER - NỀN TẢNG HỌC TRỰC TUYẾN BẢO MẬT</title>
+  <title>HỆ THỐNG ĐÀO TẠO MASTER - NỀN TẢNG HỌC TRỰC TUYẾN BẢO MẬT CAO</title>
   
   <link id="manifestLink" rel="manifest">
-  <meta name="theme-color" content="#7048e8">
+  <meta name="theme-color" content="#6366f1">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,21 +18,21 @@
 
   <style>
     :root {
-      --bg-dark: #07090f;
-      --bg-panel: #0e121d;
-      --bg-card: #141927;
-      --bg-hover: #1f2538;
-      --bg-sidebar-left: #5f3dc4;
-      --primary: #7048e8;
-      --primary-bright: #845ef7;
-      --accent-cyan: #00f2fe;
-      --accent-green: #20c997;
-      --danger: #ff6b6b;
-      --warning: #fcc419;
-      --text-main: #f8f9fa;
-      --text-muted: #909296;
-      --border: rgba(255, 255, 255, 0.08);
-      --glass-bg: rgba(20, 25, 39, 0.85);
+      --bg-dark: #030712;
+      --bg-panel: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --bg-sidebar-left: #4f46e5;
+      --primary: #6366f1;
+      --primary-bright: #818cf8;
+      --accent-cyan: #38bdf8;
+      --accent-green: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+      --glass-bg: rgba(15, 23, 42, 0.85);
       --font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
@@ -43,15 +43,13 @@
       color: var(--text-main); 
       min-height: 100vh; 
       overflow-x: hidden;
-      user-select: none;
-      -webkit-user-select: none;
     }
 
     #devtoolsWarning {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(7, 9, 15, 0.99);
+      background: rgba(3, 7, 18, 0.98);
       z-index: 999999;
       flex-direction: column;
       justify-content: center;
@@ -63,192 +61,191 @@
 
     #loginScreen {
       display: flex; justify-content: center; align-items: center; min-height: 100vh;
-      background: radial-gradient(circle at 50% 30%, #201342 0%, #07090f 100%);
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #030712 100%);
       position: relative;
     }
     .login-card {
       background: var(--glass-bg); 
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(132, 94, 247, 0.35);
-      padding: 44px 36px; border-radius: 24px; width: 100%; max-width: 440px; 
-      box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 35px rgba(112, 72, 232, 0.25);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      padding: 48px 40px; border-radius: 28px; width: 100%; max-width: 460px; 
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
     }
-    .login-card h2 { text-align: center; color: var(--accent-cyan); margin-bottom: 8px; font-weight: 800; font-size: 1.9rem; }
-    .login-subtitle { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
-    .form-group { margin-bottom: 20px; }
+    .login-card h2 { text-align: center; color: var(--accent-cyan); margin-bottom: 8px; font-weight: 800; font-size: 2rem; }
+    .login-subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
+    .form-group { margin-bottom: 22px; }
     .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border);
-      background: rgba(7, 9, 15, 0.85); color: #fff; outline: none; font-family: var(--font-family);
-      transition: 0.2s;
+      width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(3, 7, 18, 0.8); color: #fff; outline: none; font-family: var(--font-family);
+      transition: all 0.3s ease;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
       border-color: var(--primary-bright);
-      box-shadow: 0 0 14px rgba(132, 94, 247, 0.4);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
     }
     .btn-submit {
       width: 100%; padding: 14px; background: linear-gradient(135deg, var(--bg-sidebar-left) 0%, var(--primary-bright) 100%); 
-      color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; 
-      font-family: var(--font-family); transition: all 0.3s ease; box-shadow: 0 8px 22px rgba(112, 72, 232, 0.4);
+      color: #fff; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; 
+      font-family: var(--font-family); transition: all 0.3s ease; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5);
     }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(132, 94, 247, 0.6); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(129, 140, 248, 0.7); }
 
     #appScreen { display: none; height: 100vh; }
     .app-container { display: flex; height: 100vh; overflow: hidden; }
 
     .icon-sidebar {
-      width: 76px; background: #080a12; border-right: 1px solid var(--border);
+      width: 80px; background: #0b0f19; border-right: 1px solid var(--border);
       display: flex; flex-direction: column; align-items: center; padding: 24px 0; justify-content: space-between; flex-shrink: 0; z-index: 20;
     }
-    .icon-group { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+    .icon-group { display: flex; flex-direction: column; gap: 18px; align-items: center; }
     .nav-icon {
       font-size: 1.4rem; color: var(--text-muted); cursor: pointer; transition: 0.25s;
-      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px;
+      width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 16px;
       position: relative;
     }
-    .nav-icon:hover, .nav-icon.active { color: #fff; background: var(--primary); box-shadow: 0 0 18px rgba(112, 72, 232, 0.6); }
+    .nav-icon:hover, .nav-icon.active { color: #fff; background: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
 
     .sub-sidebar {
-      width: 270px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
-      padding: 24px 18px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; overflow-y: auto;
+      width: 280px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
+      padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; overflow-y: auto;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
     }
     .sub-sidebar.collapsed { width: 0; padding: 24px 0; overflow: hidden; border-right: none; }
-    .sub-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .sub-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .sub-sidebar-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; }
     
     .toggle-sidebar-btn {
       background: var(--bg-card); color: var(--primary-bright); border: 1px solid var(--border);
-      width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex;
+      width: 32px; height: 32px; border-radius: 10px; cursor: pointer; display: flex;
       align-items: center; justify-content: center; font-size: 0.85rem; transition: 0.2s; flex-shrink: 0;
     }
     .toggle-sidebar-btn:hover { background: var(--primary); color: #fff; }
 
     .sub-nav-btn {
-      padding: 12px 16px; border-radius: 12px; color: var(--text-muted); background: transparent; border: none;
-      text-align: left; font-size: 0.9rem; cursor: pointer; font-family: var(--font-family); transition: 0.2s; font-weight: 600; white-space: nowrap;
-      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px; border-radius: 14px; color: var(--text-muted); background: transparent; border: none;
+      text-align: left; font-size: 0.92rem; cursor: pointer; font-family: var(--font-family); transition: 0.2s; font-weight: 600; white-space: nowrap;
+      display: flex; align-items: center; gap: 12px;
     }
-    .sub-nav-btn:hover, .sub-nav-btn.active { background: var(--bg-card); color: #fff; border: 1px solid var(--border); }
+    .sub-nav-btn:hover, .sub-nav-btn.active { background: var(--bg-card); color: #fff; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
-    .main-content { flex-grow: 1; padding: 32px; overflow-y: auto; background-color: var(--bg-dark); }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 15px; }
-    .page-title { font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .main-content { flex-grow: 1; padding: 36px; overflow-y: auto; background-color: var(--bg-dark); }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
+    .page-title { font-size: 1.85rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 24px; }
-    .stat-card { background: var(--bg-panel); border-radius: 20px; padding: 24px; border: 1px solid var(--border); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .stat-big-num { font-size: 2.2rem; font-weight: 800; color: #fff; margin: 10px 0; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 28px; }
+    .stat-card { background: var(--bg-panel); border-radius: 24px; padding: 28px; border: 1px solid var(--border); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .stat-big-num { font-size: 2.5rem; font-weight: 800; color: #fff; margin: 12px 0; }
 
-    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; overflow-x: auto; display: block; }
-    .data-table th, .data-table td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 0.88rem; white-space: nowrap; }
-    .data-table th { color: var(--text-muted); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 12px; overflow-x: auto; display: block; }
+    .data-table th, .data-table td { text-align: left; padding: 16px 18px; border-bottom: 1px solid var(--border); font-size: 0.9rem; white-space: nowrap; }
+    .data-table th { color: var(--text-muted); font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; }
 
-    .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
-    .badge-active { background: rgba(32, 201, 151, 0.2); color: var(--accent-green); }
-    .badge-locked { background: rgba(255, 107, 107, 0.2); color: var(--danger); }
-    .badge-warning { background: rgba(252, 196, 25, 0.2); color: var(--warning); }
+    .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+    .badge-active { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+    .badge-locked { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
 
-    .big-course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; margin-top: 16px; }
+    .big-course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; margin-top: 20px; }
     .big-course-card {
-      background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); overflow: hidden;
-      display: flex; flex-direction: column; transition: all 0.3s ease; cursor: pointer; position: relative;
+      background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); overflow: hidden;
+      display: flex; flex-direction: column; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative;
     }
-    .big-course-card:hover { transform: translateY(-6px); box-shadow: 0 16px 35px rgba(0,0,0,0.6); border-color: var(--primary-bright); }
-    .card-thumb-box { width: 100%; height: 170px; background: #121624; position: relative; overflow: hidden; }
-    .card-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
-    .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-    .card-title { font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 12px; min-height: 48px; }
-    .card-progress-text { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .card-progress-bar-bg { width: 100%; height: 7px; background: rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+    .big-course-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-color: var(--primary-bright); }
+    .card-thumb-box { width: 100%; height: 190px; background: #111827; position: relative; overflow: hidden; }
+    .card-thumb-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .big-course-card:hover .card-thumb-box img { transform: scale(1.05); }
+    .card-body { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-title { font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 14px; min-height: 50px; }
+    .card-progress-text { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .card-progress-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 18px; overflow: hidden; }
     .card-progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--accent-cyan) 100%); border-radius: 10px; transition: width 0.4s ease; }
 
-    .card-tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-    .tag-target { background: rgba(32, 201, 151, 0.15); color: var(--accent-green); border: 1px solid rgba(32, 201, 151, 0.3); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
-    .tag-video { background: rgba(132, 94, 247, 0.15); color: var(--primary-bright); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
-    .card-footer-price { margin-top: auto; text-align: right; font-weight: 800; font-size: 1.15rem; color: var(--accent-cyan); border-top: 1px dashed var(--border); padding-top: 12px; }
+    .card-tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+    .tag-target { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
+    .tag-video { background: rgba(99, 102, 241, 0.15); color: var(--primary-bright); padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
+    .card-footer-price { margin-top: auto; text-align: right; font-weight: 800; font-size: 1.25rem; color: var(--accent-cyan); border-top: 1px dashed var(--border); padding-top: 16px; }
 
-    .course-card-box { background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 18px; }
-    .course-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 1.1rem; font-weight: 700; color: #fff; }
-    .parts-container { display: none; margin-top: 16px; padding-left: 14px; border-left: 2px solid var(--primary); }
+    .course-card-box { background: var(--bg-card); border-radius: 20px; padding: 24px; border: 1px solid var(--border); margin-bottom: 20px; }
+    .course-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 1.15rem; font-weight: 700; color: #fff; }
+    .parts-container { display: none; margin-top: 18px; padding-left: 16px; border-left: 3px solid var(--primary); }
     .parts-container.open { display: block; }
 
     .part-header-box {
-      background: var(--bg-dark); border-radius: 12px; padding: 14px 18px; border: 1px solid var(--border);
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 10px; margin-top: 10px; font-size: 0.95rem;
+      background: var(--bg-dark); border-radius: 14px; padding: 16px 20px; border: 1px solid var(--border);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 12px; margin-top: 12px; font-size: 0.98rem;
     }
     .part-header-box:hover { background: var(--bg-hover); }
 
-    .lessons-list { display: none; padding: 12px 16px; background: #0a0d16; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
+    .lessons-list { display: none; padding: 14px 18px; background: #090d16; border-radius: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
     .lessons-list.open { display: block; }
     
     .lesson-item {
-      padding: 12px 16px; background: var(--bg-card); border-radius: 10px; margin-bottom: 8px;
-      display: flex; justify-content: space-between; align-items: center; transition: 0.2s; font-size: 0.9rem; cursor: pointer; border: 1px solid transparent; flex-wrap: wrap; gap: 8px;
+      padding: 14px 18px; background: var(--bg-card); border-radius: 12px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; transition: 0.2s; font-size: 0.92rem; cursor: pointer; border: 1px solid transparent; flex-wrap: wrap; gap: 10px;
     }
     .lesson-item:hover { background: var(--bg-hover); border-color: var(--primary-bright); }
 
     .admin-btn-sm {
-      background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 8px;
-      font-size: 0.78rem; font-weight: 700; cursor: pointer; margin-left: 6px; transition: 0.2s;
+      background: var(--primary); color: #fff; border: none; padding: 7px 14px; border-radius: 10px;
+      font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-left: 6px; transition: 0.2s;
     }
     .admin-btn-sm:hover { opacity: 0.85; }
     .admin-btn-warning { background: var(--warning); color: #000; }
     .admin-btn-danger { background: var(--danger); }
-    .admin-action-bar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .admin-action-bar { margin-bottom: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
-    /* MEDIA PLAYER & CÂN ĐỐI CHIA MÀN HÌNH */
+    /* MEDIA PLAYER & CHIA MÀN HÌNH */
     .media-player-container {
-      background: var(--bg-panel); border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--primary-bright);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      background: var(--bg-panel); border-radius: 24px; padding: 28px; margin-bottom: 28px; border: 1px solid var(--primary-bright);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
     }
-    .lesson-view-layout { display: grid; grid-template-columns: 1fr; gap: 24px; transition: all 0.3s ease; }
+    .lesson-view-layout { display: grid; grid-template-columns: 1fr; gap: 28px; transition: all 0.3s ease; }
     .lesson-view-layout.split-screen { grid-template-columns: 1fr 1fr; align-items: stretch; }
     
     .media-column { width: 100%; display: flex; flex-direction: column; }
     .docs-column { width: 100%; display: flex; flex-direction: column; }
 
     .media-wrapper { 
-      position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 18px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.8);
     }
     .media-wrapper video, .media-wrapper iframe, .media-wrapper div#ytPlayerDiv { 
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
     }
 
-    /* LỚP PHỦ TOÀN BỘ MÀN HÌNH VIDEO (BẢO MẬT & TRÊN CÙNG) */
     .video-guard-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 45; background: transparent; cursor: pointer;
     }
 
     .watermark-overlay {
       position: absolute; top: 15%; left: 10%; pointer-events: none; z-index: 40;
-      color: rgba(255, 255, 255, 0.28); font-size: 1rem; font-weight: 800; letter-spacing: 1.5px;
-      text-shadow: 0 0 6px rgba(0,0,0,0.8);
+      color: rgba(255, 255, 255, 0.32); font-size: 1.05rem; font-weight: 800; letter-spacing: 1.5px;
+      text-shadow: 0 0 8px rgba(0,0,0,0.9);
       animation: watermarkFloat 14s infinite ease-in-out alternate;
     }
     @keyframes watermarkFloat {
       0% { top: 10%; left: 10%; opacity: 0.3; }
-      25% { top: 70%; left: 20%; opacity: 0.5; }
-      50% { top: 30%; left: 65%; opacity: 0.2; }
-      75% { top: 75%; left: 60%; opacity: 0.45; }
+      25% { top: 70%; left: 20%; opacity: 0.55; }
+      50% { top: 30%; left: 65%; opacity: 0.25; }
+      75% { top: 75%; left: 60%; opacity: 0.5; }
       100% { top: 15%; left: 10%; opacity: 0.3; }
     }
 
-    /* CUSTOM CONTROLS ĐẶT LÊN TRÊN LỚP PHỦ (Z-INDEX 50) */
     .custom-video-controls {
       position: absolute; bottom: 0; left: 0; width: 100%;
-      background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0));
-      padding: 14px 18px; display: flex; align-items: center; gap: 10px; z-index: 50; pointer-events: auto; flex-wrap: wrap;
+      background: linear-gradient(to top, rgba(3,7,18,0.98), rgba(3,7,18,0));
+      padding: 16px 20px; display: flex; align-items: center; gap: 12px; z-index: 50; pointer-events: auto; flex-wrap: wrap;
     }
     .ctrl-btn {
-      background: rgba(255,255,255,0.12); color: #fff; border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px;
-      font-size: 0.8rem; cursor: pointer; font-family: var(--font-family); font-weight: 600; transition: 0.2s;
+      background: rgba(255,255,255,0.12); color: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 10px;
+      font-size: 0.82rem; cursor: pointer; font-family: var(--font-family); font-weight: 600; transition: 0.2s;
     }
     .ctrl-btn:hover { background: var(--primary); }
     .progress-container { flex-grow: 1; display: flex; align-items: center; cursor: pointer; padding: 6px 0; min-width: 100px; }
     .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.25); border-radius: 4px; position: relative; }
     .progress-fill { width: 0%; height: 100%; background: var(--accent-cyan); border-radius: 4px; }
-    .volume-bar { width: 70px; accent-color: var(--accent-cyan); cursor: pointer; }
-    .quality-select, .speed-select { background: rgba(0,0,0,0.7); color: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.78rem; font-family: var(--font-family); }
+    .volume-bar { width: 75px; accent-color: var(--accent-cyan); cursor: pointer; }
+    .quality-select, .speed-select { background: rgba(3,7,18,0.85); color: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; font-family: var(--font-family); }
 
     /* CHAT & LIVE STREAM STYLES */
     .chat-container {
@@ -259,35 +256,34 @@
     .chat-message { max-width: 80%; padding: 12px 18px; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; }
     .chat-message.mine { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
     .chat-message.others { align-self: flex-start; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-    .chat-time { font-size: 0.65rem; color: rgba(255,255,255,0.6); text-align: right; margin-top: 4px; }
 
     .chat-input-area { padding: 16px; background: var(--bg-dark); border-top: 1px solid var(--border); display: flex; gap: 10px; }
-    .chat-input-area input { flex-grow: 1; padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-panel); color: #fff; outline: none; font-family: var(--font-family); }
+    .chat-input-area input { flex-grow: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-panel); color: #fff; outline: none; font-family: var(--font-family); }
 
     .resume-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 9999;
+      background: rgba(3,7,18,0.8); backdrop-filter: blur(10px); z-index: 9999;
       justify-content: center; align-items: center; padding: 20px;
     }
     .modal-box {
-      background: var(--bg-panel); border: 1px solid var(--primary-bright); border-radius: 24px; padding: 32px; width: 90%; max-width: 480px; text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      background: var(--bg-panel); border: 1px solid var(--primary-bright); border-radius: 28px; padding: 36px; width: 90%; max-width: 520px; text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
     }
-    .modal-box h3 { color: var(--accent-cyan); margin-bottom: 12px; font-size: 1.3rem; }
-    .modal-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; }
+    .modal-box h3 { color: var(--accent-cyan); margin-bottom: 14px; font-size: 1.4rem; }
+    .modal-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px; }
     .modal-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    .live-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-    .live-card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 20px; }
-    .live-badge { display: inline-block; background: var(--danger); color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; animation: pulse 1.5s infinite; }
+    .live-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+    .live-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); padding: 24px; }
+    .live-badge { display: inline-block; background: var(--danger); color: #fff; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
     @media (max-width: 768px) {
       .app-container { flex-direction: column-reverse; }
-      .icon-sidebar { width: 100%; height: 60px; flex-direction: row; padding: 0 16px; }
+      .icon-sidebar { width: 100%; height: 64px; flex-direction: row; padding: 0 16px; }
       .icon-group { flex-direction: row; gap: 12px; }
-      .sub-sidebar { width: 100%; height: auto; max-height: 180px; }
-      .main-content { padding: 16px; }
+      .sub-sidebar { width: 100%; height: auto; max-height: 190px; }
+      .main-content { padding: 18px; }
       .lesson-view-layout.split-screen { grid-template-columns: 1fr; }
     }
   </style>
@@ -295,18 +291,31 @@
 <body>
 
   <div id="devtoolsWarning">
-    <h1>⚠️ CẢNH BÁO BẢO MẬT</h1>
+    <h1>⚠️ CẢNH BÁO BẢO MẬT HỆ THỐNG</h1>
     <p>Phát hiện thao tác kiểm tra mã nguồn (DevTools / F12 / Chuột phải)!</p>
-    <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Vui lòng đóng công cụ lập trình để tiếp tục học tập.</p>
+    <p style="margin-top: 12px; font-size: 0.92rem; color: var(--text-muted);">Vui lòng đóng công cụ lập trình để tiếp tục học tập.</p>
   </div>
 
   <div class="resume-modal" id="resumeModal">
     <div class="modal-box">
-      <h3>📱 ĐỒNG BỘ ĐA THIẾT BỊ</h3>
+      <h3>📱 ĐỒNG BỘ ĐA THIẾT BỊ THÔNG MINH</h3>
       <p id="resumeModalText">Bạn đã xem bài giảng từ thiết bị khác. Bạn có muốn tiếp tục xem không?</p>
       <div class="modal-actions">
-        <button class="btn-submit" style="width: auto; padding: 10px 24px;" onclick="confirmResumePlayback(true)">Đồng ý Tiếp tục</button>
-        <button class="ctrl-btn" style="padding: 10px 20px;" onclick="confirmResumePlayback(false)">Bỏ qua</button>
+        <button class="btn-submit" style="width: auto; padding: 12px 28px;" onclick="confirmResumePlayback(true)">Đồng ý Tiếp tục</button>
+        <button class="ctrl-btn" style="padding: 12px 22px;" onclick="confirmResumePlayback(false)">Bỏ qua</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL THỜI KHÓA BIỂU MỞ NGAY TRÊN WEB -->
+  <div class="resume-modal" id="scheduleModal" style="display: none;">
+    <div class="modal-box" style="max-width: 800px; width: 95%; height: 85vh; text-align: left; display: flex; flex-direction: column; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 id="scheduleModalTitle" style="color: var(--accent-cyan); margin: 0;">📅 Lịch & Thời Khóa Biểu Học Tập</h3>
+        <button class="ctrl-btn" style="background: var(--danger); padding: 6px 14px;" onclick="closeScheduleModal()">✕ Đóng</button>
+      </div>
+      <div style="flex-grow: 1; width: 100%; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);">
+        <iframe id="scheduleIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
       </div>
     </div>
   </div>
@@ -314,24 +323,15 @@
   <div id="loginScreen">
     <div class="login-card">
       <h2>🎓 STUDY MASTER</h2>
-      <div class="login-subtitle">Nền Tảng Học Trực Tuyến Nâng Cao</div>
+      <div class="login-subtitle">Nền Tảng Đào Tạo & Luyện Thi Trực Tuyến Cao Cấp</div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản học viên / Admin</label>
-          <input type="text" id="username" placeholder="Nhập tài khoản" required>
+          <input type="text" id="username" placeholder="Nhập tài khoản của bạn" required>
         </div>
         <div class="form-group">
           <label>Mật khẩu</label>
           <input type="password" id="password" placeholder="Nhập mật khẩu" required>
-        </div>
-        <div class="form-group">
-          <label>Mã Thiết Bị / Máy Đang Sử Dụng</label>
-          <select id="deviceSelect">
-            <option value="Device_PC_1">Máy Tính Đội Nguồn (PC-1)</option>
-            <option value="Device_PC_2">Máy Tính Bàn (PC-2)</option>
-            <option value="Device_Laptop_Personal">Laptop Cá Nhân</option>
-            <option value="Device_Mobile_Phone">Điện Thoại Di Động</option>
-          </select>
         </div>
         <button type="submit" class="btn-submit">🚀 Đăng Nhập Hệ Thống</button>
       </form>
@@ -347,7 +347,6 @@
           <div class="nav-icon" onclick="switchMainTab('courses')" title="Khóa Học Master">📚</div>
           <div class="nav-icon" onclick="switchMainTab('live')" title="Phòng Live Stream">🔴</div>
           <div class="nav-icon" onclick="switchMainTab('exam')" title="Thi Thử VACT & IRT">📝</div>
-          <div class="nav-icon" onclick="switchMainTab('notes')" title="Sổ Tay Ghi Chú">📔</div>
           <div class="nav-icon" id="adminNavIcon" onclick="switchMainTab('dashboard')" title="Quản Lý (Admin)" style="display: none;">📊</div>
         </div>
         <div class="icon-group">
@@ -365,7 +364,6 @@
         <button class="sub-nav-btn" id="btnSubCourses" onclick="switchTab('all-courses')">📖 Tất Cả Khóa Học</button>
         <button class="sub-nav-btn" id="btnSubLive" onclick="switchTab('live-view')">🔴 Phòng Live Stream</button>
         <button class="sub-nav-btn" id="btnSubExam" onclick="switchTab('exam-view')">📝 Thi Thử VACT (IRT)</button>
-        <button class="sub-nav-btn" id="btnSubNotes" onclick="switchTab('notes-view')">📔 Sổ Tay Ghi Chú</button>
         <button class="sub-nav-btn" id="btnSubDashboard" onclick="switchTab('dashboard-view')" style="display: none;">⚙️ Bảng Điều Khiển Admin</button>
       </div>
 
@@ -375,42 +373,42 @@
           <div class="page-header">
             <div>
               <span class="page-title">Trang Chủ & Tổng Quan Học Tập</span>
-              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Cập nhật tiến độ học tập thực tế, lịch theo thời gian thực và thông báo hệ thống.</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Cập nhật tiến độ học tập thực tế, lịch theo thời gian thực và thông báo khóa học từ Admin.</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div id="userAvatarBox" style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="promptChangeAvatar()" title="Đổi Avatar">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div id="userAvatarBox" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="promptChangeAvatar()" title="Đổi Avatar">
                 <span id="userAvatarText">H</span>
               </div>
               <div>
-                <div style="font-weight: 700; font-size: 0.95rem;" id="homeUserName">Học viên</div>
-                <button class="ctrl-btn" style="padding: 2px 8px; font-size: 0.72rem; margin-top: 4px;" onclick="promptChangePassword()">🔑 Đổi Mật Khẩu</button>
+                <div style="font-weight: 700; font-size: 1rem;" id="homeUserName">Học viên</div>
+                <button class="ctrl-btn" style="padding: 3px 10px; font-size: 0.75rem; margin-top: 4px;" onclick="promptChangePassword()">🔑 Đổi Mật Khẩu</button>
               </div>
             </div>
           </div>
 
-          <div class="stat-card" style="margin-bottom: 24px; border-color: var(--accent-cyan); background: linear-gradient(135deg, rgba(0,242,254,0.08) 0%, rgba(112,72,232,0.08) 100%);">
-            <h3 style="color: var(--accent-cyan); margin-bottom: 8px;">🔔 Thông Báo Đẩy & Cập Nhật Hệ Thống</h3>
-            <div id="homeNotificationText" style="font-size: 0.92rem; color: var(--text-main);">Đang tải thông báo từ Admin...</div>
+          <div class="stat-card" style="margin-bottom: 28px; border-color: var(--accent-cyan); background: linear-gradient(135deg, rgba(56,189,248,0.1) 0%, rgba(99,102,241,0.1) 100%);">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">🔔 Thông Báo Đẩy & Cập Nhật Khóa Học</h3>
+            <div id="homeNotificationText" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.5;">Đang tải thông báo từ Admin...</div>
           </div>
 
           <div class="stats-grid">
             <div class="stat-card">
-              <h3>Tiến Độ Học Tập Thực</h3>
+              <h3>Tiến Độ Học Tập Thực Tế</h3>
               <div class="stat-big-num" id="homeRealProgressNum">0%</div>
-              <div class="card-progress-bar-bg" style="margin-top: 10px;">
+              <div class="card-progress-bar-bg" style="margin-top: 12px;">
                 <div class="card-progress-bar-fill" id="homeProgressBarFill" style="width: 0%;"></div>
               </div>
             </div>
 
             <div class="stat-card">
-              <h3>Lịch Theo Thời Gian Thực</h3>
-              <div id="homeRealtimeClock" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-green); margin: 10px 0;">00:00:00</div>
-              <div style="color: var(--text-muted); font-size: 0.85rem;" id="homeRealtimeDate">Thứ Hai, 01/01/2026</div>
+              <h3>Thời Gian Thực</h3>
+              <div id="homeRealtimeClock" style="font-size: 2rem; font-weight: 800; color: var(--accent-green); margin: 12px 0;">00:00:00</div>
+              <div style="color: var(--text-muted); font-size: 0.88rem;" id="homeRealtimeDate">Thứ Hai, 01/01/2026</div>
             </div>
 
             <div class="stat-card">
               <h3>Truy Cập Nhanh Tính Năng</h3>
-              <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+              <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                 <button class="ctrl-btn" style="background: var(--primary);" onclick="switchMainTab('courses')">📚 Vào Khóa Học</button>
                 <button class="ctrl-btn" style="background: var(--danger);" onclick="switchMainTab('live')">🔴 Xem Live</button>
                 <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700;" onclick="switchMainTab('exam')">📝 Thi Thử VACT</button>
@@ -419,9 +417,9 @@
           </div>
 
           <div class="stat-card">
-            <h3 style="margin-bottom: 14px;">🎯 Lộ Trình Ôn Thi & Đề Xuất Dành Riêng Cho Bạn</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
-              Hệ thống tích hợp công nghệ AI phân tích năng lực học sinh qua từng bài kiểm tra IRT và video bài giảng đã xem. Vui lòng hoàn thành đầy đủ các chuyên đề trong Khóa học Master và tham gia thi thử định kỳ để đạt kết quả tối đa trong kỳ thi sắp tới.
+            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">🎯 Lộ Trình Ôn Thi Chuyên Sâu & Đề Xuất</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+              Hệ thống tích hợp trí tuệ nhân tạo phân tích năng lực học sinh qua từng bài kiểm tra IRT và video bài giảng đã xem. Vui lòng hoàn thành đầy đủ các chuyên đề trong Khóa học Master và tham gia thi thử định kỳ để đạt kết quả tối đa.
             </p>
           </div>
         </section>
@@ -435,8 +433,8 @@
           </div>
 
           <div class="admin-action-bar" id="adminCoursesBar" style="display: none;">
-            <button class="admin-btn-sm" style="padding: 10px 16px;" onclick="adminAddBigCourse()">+ Thêm Khóa Học Lớn Mới</button>
-            <button class="admin-btn-sm admin-btn-warning" style="padding: 10px 16px;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Mặc Định</button>
+            <button class="admin-btn-sm" style="padding: 10px 18px;" onclick="adminAddBigCourse()">+ Thêm Khóa Học Lớn Mới</button>
+            <button class="admin-btn-sm admin-btn-warning" style="padding: 10px 18px;" onclick="resetCoursesToDefault()">🔄 Reset Khóa Mặc Định</button>
           </div>
 
           <div id="bigCoursesView">
@@ -444,20 +442,20 @@
           </div>
 
           <div id="bigCourseDetailView" style="display: none;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
               <div style="display: flex; align-items: center; gap: 14px;">
                 <button class="ctrl-btn" onclick="goBackToBigCourses()">⬅ Quay lại danh sách</button>
                 <h3 id="detailBigCourseTitle" style="color: var(--accent-cyan);"></h3>
               </div>
-              <div id="scheduleButtonBox" style="display: flex; gap: 8px; align-items: center;"></div>
+              <div id="scheduleButtonBox" style="display: flex; gap: 10px; align-items: center;"></div>
             </div>
 
             <div class="media-player-container" id="mediaPlayerContainer" style="display: none;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                 <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <button class="ctrl-btn" style="background: var(--primary);" onclick="toggleDocSideBySide(true)">📄 Chia Màn Hình Xem Tài Liệu</button>
-                  <span style="font-size: 0.85rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đang học (0%)</span>
+                  <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đang học (0%)</span>
                 </div>
               </div>
               
@@ -506,19 +504,19 @@
                 </div>
 
                 <div class="docs-column" id="docsColumn" style="display: none;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">📄 Chia màn hình học tập & tài liệu:</span>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Chia màn hình học tập & tài liệu:</span>
                     <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng xem tài liệu</button>
                   </div>
-                  <div style="flex-grow: 1; height: 100%; min-height: 460px; position: relative;">
-                    <iframe id="docSideFrame" src="" style="width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 12px; background: #fff;"></iframe>
+                  <div style="flex-grow: 1; height: 100%; min-height: 480px; position: relative;">
+                    <iframe id="docSideFrame" src="" style="width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 14px; background: #fff;"></iframe>
                   </div>
                 </div>
               </div>
 
-              <div id="lessonDocsContainer" style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px; display: none;">
-                <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;">📁 Danh sách tài liệu bài học này (Cho phép xem & Tải về):</h4>
-                <div id="lessonDocsList" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+              <div id="lessonDocsContainer" style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; display: none;">
+                <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh sách tài liệu bài học này (Cho phép xem & Tải về):</h4>
+                <div id="lessonDocsList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
               </div>
             </div>
 
@@ -530,10 +528,10 @@
           <div class="page-header">
             <div>
               <span class="page-title">Phòng Live Stream Trực Tiếp</span>
-              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Admin live thì toàn bộ học sinh đều thấy được. Chia tỉ lệ màn hình live lớn và khung chat gọn gàng bên cạnh.</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Đồng bộ đa tài khoản thời gian thực. Khung live lớn và khung chat trực tuyến bên cạnh.</p>
             </div>
             <div id="adminLiveControls" style="display: none;">
-              <button class="btn-submit" style="width: auto; padding: 10px 20px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
+              <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
             </div>
           </div>
 
@@ -541,10 +539,10 @@
             <div style="color: var(--text-muted);">Đang tải thông tin các phòng live...</div>
           </div>
 
-          <div id="activeLiveViewer" style="display: none; margin-top: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream</h3>
-              <div style="display: flex; gap: 10px;">
+              <div style="display: flex; gap: 12px;">
                 <button class="ctrl-btn" style="background: var(--primary);" onclick="copyLiveRoomLink()">🔗 Sao Chép Link Phòng Live</button>
                 <button class="ctrl-btn" style="background: var(--danger);" onclick="leaveLiveRoom()">Thoát Phòng Live</button>
               </div>
@@ -552,22 +550,22 @@
             
             <div class="lesson-view-layout split-screen">
               <div class="media-column" style="flex: 2;">
-                <div class="media-wrapper" style="height: 100%; min-height: 480px; padding-top: 0;">
+                <div class="media-wrapper" style="height: 100%; min-height: 500px; padding-top: 0;">
                   <video id="liveVideoPlayer" autoplay playsinline style="width:100%; height:100%; object-fit: cover; background:#000; position: absolute; top:0; left:0;"></video>
                 </div>
-                <div id="adminBroadcastingBar" style="display: none; margin-top: 10px; gap: 10px; flex-wrap: wrap;">
+                <div id="adminBroadcastingBar" style="display: none; margin-top: 12px; gap: 12px; flex-wrap: wrap;">
                   <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình Live</button>
                   <button class="ctrl-btn" style="background: var(--danger);" onclick="adminEndLiveStream()">🔴 Kết Thúc Phòng Live</button>
                 </div>
               </div>
               <div class="docs-column" style="flex: 1;">
                 <div class="chat-container">
-                  <div style="padding: 12px 16px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.85rem; color: var(--accent-cyan);">💬 Khung Trò Chuyện Live</div>
+                  <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan);">💬 Khung Trò Chuyện Trực Tuyến</div>
                   <div class="chat-messages" id="liveChatMessagesBox">
-                    <div style="color: var(--text-muted); text-align: center;">Trò chuyện phòng live...</div>
+                    <div style="color: var(--text-muted); text-align: center;">Đang kết nối khung chat...</div>
                   </div>
                   <div class="chat-input-area">
-                    <input type="text" id="liveChatMessageInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()">
+                    <input type="text" id="liveChatMessageInput" placeholder="Nhập tin nhắn trò chuyện..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()">
                     <button class="ctrl-btn" style="background: var(--primary);" onclick="sendLiveChatMessage()">Gửi</button>
                   </div>
                 </div>
@@ -580,40 +578,39 @@
           <div class="page-header">
             <div>
               <span class="page-title">Thi Thử VACT & Chấm Điểm IRT</span>
-              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Quy chế nghiêm ngặt: Bắt buộc mở toàn màn hình và không được chuyển tab.</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quy chế nghiêm ngặt: Bắt buộc mở toàn màn hình và không được rời màn hình thi.</p>
             </div>
             <div id="adminExamControls" style="display: none;">
-              <button class="btn-submit" style="width: auto; padding: 10px 20px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử Mới</button>
+              <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử Mới</button>
               <button class="ctrl-btn" style="background: var(--warning); color:#000; font-weight:700;" onclick="adminViewAllStudentExams()">📋 Xem Điểm & Bài Làm Học Sinh</button>
             </div>
           </div>
 
           <div id="examListView">
-            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">Danh Sách Bài Thi Thử Khả Dụng</h3>
+            <h3 style="margin-bottom: 16px; color: var(--accent-cyan);">Danh Sách Bài Thi Thử Khả Dụng</h3>
             <div id="examListContainer" class="big-course-grid"></div>
           </div>
 
           <div id="examRoomView" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--bg-panel); padding: 16px 20px; border-radius: 16px; border: 1px solid var(--danger);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--bg-panel); padding: 18px 24px; border-radius: 18px; border: 1px solid var(--danger);">
               <h3 id="examRoomTitle" style="color: var(--danger);">Bài Thi VACT</h3>
-              <div style="font-weight: 800; font-size: 1.1rem; color: var(--warning);" id="examTimerDisplay">⏱ 45:00</div>
+              <div style="font-weight: 800; font-size: 1.2rem; color: var(--warning);" id="examTimerDisplay">⏱ 45:00</div>
             </div>
-            <div id="examSourceDocBox" style="margin-bottom: 20px;"></div>
-            <div id="examQuestionsContainer" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px;"></div>
-            <button class="btn-submit" style="padding: 16px;" onclick="submitExam()">Nộp Bài Thi & Chấm Điểm IRT</button>
+            <div id="examSourceDocBox" style="margin-bottom: 24px;"></div>
+            <div id="examQuestionsContainer" style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 28px;"></div>
+            <button class="btn-submit" style="padding: 16px; font-size: 1.05rem;" onclick="submitExam()">Nộp Bài Thi & Chấm Điểm IRT</button>
           </div>
 
           <div id="examResultReviewView" style="display: none;">
-            <div style="background: var(--bg-panel); border-radius: 20px; padding: 28px; border: 1px solid var(--accent-green); margin-bottom: 20px; text-align: center;">
-              <h3 style="color: var(--accent-green); font-size: 1.8rem; margin-bottom: 8px;">🎉 KẾT QUẢ THI THỬ VACT (IRT)</h3>
+            <div style="background: var(--bg-panel); border-radius: 24px; padding: 32px; border: 1px solid var(--accent-green); margin-bottom: 24px; text-align: center;">
+              <h3 style="color: var(--accent-green); font-size: 2rem; margin-bottom: 10px;">🎉 KẾT QUẢ THI THỬ VACT (IRT)</h3>
               <div class="stat-big-num" id="resultScoreDisplay" style="color: var(--accent-cyan);">Điểm: 0.0</div>
-              <p style="color: var(--text-muted); font-size: 0.95rem;" id="resultDetailText">Đã hoàn thành bài kiểm tra năng lực.</p>
-              <div style="margin-top: 14px; font-weight: 700; color: var(--warning);" id="resultTimeUsedText">⏱ Thời gian làm bài: 0 phút</div>
+              <p style="color: var(--text-muted); font-size: 1rem;" id="resultDetailText">Đã hoàn thành bài kiểm tra năng lực.</p>
+              <div style="margin-top: 16px; font-weight: 700; color: var(--warning);" id="resultTimeUsedText">⏱ Thời gian làm bài: 0 phút</div>
             </div>
 
-            <!-- BẢNG XẾP HẠNG BÀI THI -->
-            <div class="stat-card" style="margin-bottom: 24px;">
-              <h3 style="color: var(--accent-cyan); margin-bottom: 12px;">🏆 Bảng Xếp Hạng Bài Thi Này</h3>
+            <div class="stat-card" style="margin-bottom: 28px;">
+              <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">🏆 Bảng Xếp Hạng Bài Thi Này</h3>
               <table class="data-table">
                 <thead>
                   <tr>
@@ -627,13 +624,13 @@
               </table>
             </div>
 
-            <h3 style="margin-bottom: 14px;">📝 Xem Lại Chi Tiết Bài Làm (Đúng / Sai & Đáp Án)</h3>
-            <div id="examReviewContainer" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px;"></div>
+            <h3 style="margin-bottom: 16px;">📝 Xem Lại Chi Tiết Bài Làm (Đúng / Sai & Đáp Án)</h3>
+            <div id="examReviewContainer" style="display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px;"></div>
             <button class="ctrl-btn" onclick="backToExamList()">⬅ Quay Lại Danh Sách Thi</button>
           </div>
 
           <div id="adminExamResultsView" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
               <h3 style="color: var(--accent-cyan);">📊 Tổng Hợp Điểm & Bài Làm Của Học Sinh</h3>
               <button class="ctrl-btn" onclick="document.getElementById('adminExamResultsView').style.display='none'; document.getElementById('examListView').style.display='block';">Quay lại</button>
             </div>
@@ -652,30 +649,6 @@
           </div>
         </section>
 
-        <!-- SECTION 2.6: SỔ TAY GHI CHÚ RIÊNG TƯ -->
-        <section id="notesTab" style="display: none;">
-          <div class="page-header">
-            <div>
-              <span class="page-title">Sổ Tay Ghi Chú Cá Nhân</span>
-              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Ghi chú thông tin học tập của riêng bạn. Chỉ duy nhất bạn có thể nhìn thấy nội dung này.</p>
-            </div>
-          </div>
-
-          <div class="stat-card" style="margin-bottom: 20px;">
-            <h3 style="color: var(--accent-cyan); margin-bottom: 12px;">✏️ Thêm Ghi Chú Mới</h3>
-            <div class="form-group">
-              <input type="text" id="noteTitleInput" placeholder="Tiêu đề ghi chú (VD: Công thức Toán, Từ vựng Tiếng Anh...)">
-            </div>
-            <div class="form-group">
-              <textarea id="noteContentInput" rows="4" placeholder="Nhập nội dung chi tiết ghi chú của bạn..."></textarea>
-            </div>
-            <button class="btn-submit" style="width: auto; padding: 12px 24px;" onclick="savePersonalNote()">💾 Lưu Ghi Chú</button>
-          </div>
-
-          <h3 style="margin-bottom: 14px;">📚 Danh Sách Ghi Chú Của Tôi</h3>
-          <div id="personalNotesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
-        </section>
-
         <section id="dashboardTab" style="display: none;">
           <div class="page-header">
             <div>
@@ -687,51 +660,53 @@
             <div class="stat-card">
               <h3>Học Viên Đang Online</h3>
               <div class="stat-big-num" id="onlineUserCount" style="color: var(--accent-green);">0 Online</div>
-              <div style="color: var(--text-muted); font-size: 0.85rem;">Cập nhật theo thời gian thực</div>
+              <div style="color: var(--text-muted); font-size: 0.88rem;">Cập nhật theo thời gian thực</div>
             </div>
 
             <div class="stat-card">
               <h3>Tài Khoản Nghi Vấn Bất Thường</h3>
               <div class="stat-big-num" id="suspiciousUserCount" style="color: var(--danger);">0 Tài Khoản</div>
-              <div style="color: var(--text-muted); font-size: 0.85rem;">Đăng nhập xa / Đổi quá 3 thiết bị</div>
+              <div style="color: var(--text-muted); font-size: 0.88rem;">Đăng nhập vượt thiết bị</div>
             </div>
 
             <div class="stat-card">
               <h3>Quản Lý Thông Báo Hệ Thống</h3>
-              <button class="btn-submit" style="margin-top: 10px; padding: 8px 14px;" onclick="adminUpdateNotification()">📢 Đổi Thông Báo Đẩy</button>
+              <button class="btn-submit" style="margin-top: 12px; padding: 10px 16px;" onclick="adminUpdateNotification()">📢 Đổi Thông Báo Đẩy</button>
             </div>
           </div>
 
-          <div class="stat-card" style="margin-bottom: 24px;">
-            <h3 style="color: var(--warning); margin-bottom: 12px;">🚨 Danh Sách Truy Cập Bất Thường & Vị Trí Xa Nhanh</h3>
+          <div class="stat-card" style="margin-bottom: 28px;">
+            <h3 style="color: var(--warning); margin-bottom: 14px;">🚨 Danh Sách Truy Cập Bất Thường & Thiết Bị</h3>
             <table class="data-table">
               <thead>
                 <tr>
                   <th>Tài Khoản</th>
                   <th>Thời Gian</th>
+                  <th>Địa Chỉ IP</th>
+                  <th>Thiết Bị</th>
                   <th>Lý Do Cảnh Báo</th>
                   <th>Hành Động Admin</th>
                 </tr>
               </thead>
               <tbody id="adminSuspiciousTable">
-                <tr><td colspan="4" style="color: var(--text-muted);">Không có cảnh báo bất thường.</td></tr>
+                <tr><td colspan="6" style="color: var(--text-muted);">Không có cảnh báo bất thường.</td></tr>
               </tbody>
             </table>
           </div>
 
           <div class="stat-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-              <h3>👥 Danh Sách Toàn Bộ Học Viên & Nhật Ký Hoạt Động (Click-Tracking Logs)</h3>
-              <div style="display: flex; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+              <h3>👥 Danh Sách Học Viên & Nhật Ký Hoạt Động (Click-Tracking Logs)</h3>
+              <div style="display: flex; gap: 10px;">
                 <button class="ctrl-btn" style="background: var(--primary);" onclick="adminCreateUser()">+ Tạo Tài Khoản Học Viên / Sub-Admin</button>
                 <button class="ctrl-btn" style="background: var(--warning); color: #000; font-weight: 700;" onclick="resetUsersToDefault()">🔄 Reset User Mặc Định</button>
               </div>
             </div>
             
-            <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--bg-dark); padding: 12px; border-radius: 12px;">
-              <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">📅 Lọc Lịch Sử Thao Tác Theo Ngày:</span>
-              <input type="date" id="filterDateLog" style="padding: 6px 10px; border-radius: 8px; background: var(--bg-panel); color:#fff; border:1px solid var(--border);" onchange="filterActivityLogsByDate()">
-              <button class="ctrl-btn" style="padding: 6px 12px;" onclick="document.getElementById('filterDateLog').value=''; filterActivityLogsByDate();">Tất Cả Ngày</button>
+            <div style="margin-bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; background: var(--bg-dark); padding: 16px; border-radius: 14px;">
+              <span style="font-size: 0.88rem; color: var(--text-muted); font-weight: 700;">📅 Lọc Lịch Sử Thao Tác Theo Ngày:</span>
+              <input type="date" id="filterDateLog" style="padding: 8px 12px; border-radius: 10px; background: var(--bg-panel); color:#fff; border:1px solid var(--border);" onchange="filterActivityLogsByDate()">
+              <button class="ctrl-btn" style="padding: 8px 14px;" onclick="document.getElementById('filterDateLog').value=''; filterActivityLogsByDate();">Tất Cả Ngày</button>
             </div>
 
             <table class="data-table">
@@ -741,7 +716,7 @@
                   <th>Tài Khoản</th>
                   <th>Mật Khẩu</th>
                   <th>Vai Trò</th>
-                  <th>Số Máy Đã Dùng</th>
+                  <th>IP Gần Nhất</th>
                   <th>Trạng Thái</th>
                   <th>Thao Tác Admin</th>
                 </tr>
@@ -749,9 +724,9 @@
               <tbody id="adminUsersTable"></tbody>
             </table>
 
-            <div id="studentActivityLogBox" style="margin-top: 24px; padding: 20px; background: var(--bg-dark); border-radius: 16px; display: none; border: 1px solid var(--border);">
-              <h4 style="color: var(--accent-cyan); margin-bottom: 10px;" id="logHeaderTitle">Lịch Sử Thao Tác & Click Chuột Học Viên</h4>
-              <ul id="activityLogList" style="list-style: none; font-size: 0.85rem; color: var(--text-muted); max-height: 220px; overflow-y: auto;"></ul>
+            <div id="studentActivityLogBox" style="margin-top: 28px; padding: 24px; background: var(--bg-dark); border-radius: 18px; display: none; border: 1px solid var(--border);">
+              <h4 style="color: var(--accent-cyan); margin-bottom: 12px;" id="logHeaderTitle">Lịch Sử Thao Tác & Hoạt Động Học Viên</h4>
+              <ul id="activityLogList" style="list-style: none; font-size: 0.88rem; color: var(--text-muted); max-height: 240px; overflow-y: auto;"></ul>
             </div>
           </div>
         </section>
@@ -760,10 +735,10 @@
     </div>
   </div>
 
-  <!-- MODAL TẠO BÀI THI NÂNG CAO (ABCD TICK) -->
+  <!-- MODAL TẠO BÀI THI THỬ MỚI (TÍCH HỢP ĐỀ GGS, DRIVE, PDF & Ô ĐIỂM CỘNG/TRỪ) -->
   <div class="resume-modal" id="adminExamModal" style="display: none;">
-    <div class="modal-box" style="max-width: 650px; text-align: left; max-height: 90vh; overflow-y: auto;">
-      <h3 style="text-align: center; color: var(--accent-cyan); margin-bottom: 16px;">📝 TẠO BÀI THI THỬ MỚI</h3>
+    <div class="modal-box" style="max-width: 720px; text-align: left; max-height: 90vh; overflow-y: auto;">
+      <h3 style="text-align: center; color: var(--accent-cyan); margin-bottom: 18px;">📝 TẠO BÀI THI THỬ MỚI</h3>
       <div class="form-group">
         <label>Tiêu đề bài thi</label>
         <input type="text" id="modalExamTitle" placeholder="Nhập tên đề thi thử...">
@@ -773,7 +748,7 @@
         <input type="number" id="modalExamDuration" value="30">
       </div>
       <div class="form-group">
-        <label>Link đề thi tham khảo (Google Drive, Docs, PDF)</label>
+        <label>Link đề thi tham khảo (Google Drive, PDF, Google Docs)</label>
         <input type="text" id="modalExamLink" placeholder="https://docs.google.com/document/d/.../preview">
       </div>
       <div class="form-group">
@@ -781,11 +756,11 @@
         <input type="number" id="modalExamNumQ" value="5" min="1" max="50" onchange="generateExamBuilderInputs(this.value)">
       </div>
       
-      <div id="examBuilderQuestionsContainer" style="margin-bottom: 20px;"></div>
+      <div id="examBuilderQuestionsContainer" style="margin-bottom: 24px;"></div>
 
       <div class="modal-actions">
         <button class="btn-submit" onclick="saveAdminCreatedExam()">💾 Lưu Đề Thi Mới</button>
-        <button class="ctrl-btn" style="padding: 12px 20px;" onclick="document.getElementById('adminExamModal').style.display='none'">Hủy Bỏ</button>
+        <button class="ctrl-btn" style="padding: 12px 22px;" onclick="document.getElementById('adminExamModal').style.display='none'">Hủy Bỏ</button>
       </div>
     </div>
   </div>
@@ -806,7 +781,14 @@
     }
     const db = firebase.database();
 
-    const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='100%' height='100%' fill='%23141927'/><circle cx='300' cy='140' r='60' fill='%237048e8' opacity='0.25'/><text x='50%' y='48%' fill='%23845ef7' font-family='sans-serif' font-size='48' text-anchor='middle' dominant-baseline='middle'>📚</text><text x='50%' y='70%' fill='%23909296' font-family='sans-serif' font-size='18' font-weight='700' text-anchor='middle'>HỆ THỐNG MASTER TRỰC TUYẾN</text></svg>";
+    const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='100%' height='100%' fill='%231e293b'/><circle cx='300' cy='140' r='60' fill='%236366f1' opacity='0.25'/><text x='50%' y='48%' fill='%23818cf8' font-family='sans-serif' font-size='48' text-anchor='middle' dominant-baseline='middle'>📚</text><text x='50%' y='70%' fill='%2394a3b8' font-family='sans-serif' font-size='18' font-weight='700' text-anchor='middle'>HỆ THỐNG MASTER TRỰC TUYẾN</text></svg>";
+
+    // Auto-detect client IP
+    let clientIP = 'Đang xác định IP...';
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => { clientIP = data.ip; })
+      .catch(() => { clientIP = '127.0.0.1 (Local)'; });
 
     document.addEventListener('contextmenu', e => {
       if (currentUser && currentUser.role === 'admin') return;
@@ -871,9 +853,8 @@
     ];
 
     const defaultUserAccounts = [
-      { id: 1, name: "Administrator Hưng", username: "admin", password: "hhh@123456", role: "admin", devices: [], isLocked: false, avatar: "H" },
-      { id: 2, name: "Admin Phụ", username: "subadmin", password: "123456", role: "admin", devices: [], isLocked: false, avatar: "S" },
-      { id: 3, name: "Học Viên Nguyễn Văn A", username: "user1", password: "123456", role: "user", devices: [], isLocked: false, avatar: "N" }
+      { id: 1, name: "Administrator Hưng", username: "admin", password: "hhh@123456", role: "admin", devices: [], isLocked: false, avatar: "H", lastIP: "127.0.0.1" },
+      { id: 2, name: "Học Viên Nguyễn Văn A", username: "user1", password: "123456", role: "user", devices: [], isLocked: false, avatar: "N", lastIP: "127.0.0.1" }
     ];
 
     const defaultExamsData = [
@@ -883,8 +864,8 @@
         durationMinutes: 30,
         linkDe: "https://docs.google.com/document/d/1v2w3x4y5z6a7b8c9/preview",
         questions: [
-          { qId: 1, text: "Cho hàm số f(x) = x^3 - 3x. Giá trị cực đại của hàm số là:", options: ["2", "-2", "0", "1"], correct: 0, difficulty: 0.5 },
-          { qId: 2, text: "Nghiệm của phương trình log2(x - 1) = 3 là:", options: ["x = 7", "x = 8", "x = 9", "x = 10"], correct: 2, difficulty: 0.3 }
+          { qId: 1, text: "Cho hàm số f(x) = x^3 - 3x. Giá trị cực đại của hàm số là:", options: ["2", "-2", "0", "1"], correct: 0, pointsCorrect: 1.0, pointsIncorrect: -0.25 },
+          { qId: 2, text: "Nghiệm của phương trình log2(x - 1) = 3 là:", options: ["x = 7", "x = 8", "x = 9", "x = 10"], correct: 2, pointsCorrect: 1.0, pointsIncorrect: -0.25 }
         ]
       }
     ];
@@ -903,6 +884,7 @@
     let examTimerInterval = null;
     let examStartTime = 0;
 
+    // Realtime activity logger
     document.addEventListener('click', (e) => {
       if (!currentUser || currentUser.role === 'admin') return;
       const targetText = e.target.innerText || e.target.tagName;
@@ -911,7 +893,7 @@
       const logItem = {
         date: dateStr,
         timeString: now.toLocaleTimeString('vi-VN'),
-        log: `${now.toLocaleTimeString('vi-VN')} - Click: [${e.target.tagName}] ${targetText.substring(0, 30)}`
+        log: `${now.toLocaleTimeString('vi-VN')} - Thao tác: [${e.target.tagName}] ${targetText.substring(0, 35)}`
       };
       db.ref(`activityLogs/${currentUser.username}`).push(logItem);
     });
@@ -971,11 +953,22 @@
       renderLiveRooms(snapshot.val());
     });
 
+    function getDeviceType() {
+      const ua = navigator.userAgent;
+      if (/android/i.test(ua)) return 'Android Mobile';
+      if (/iPad|iPhone|iPod/.test(ua)) return 'iOS Device';
+      if (/Win/.test(ua)) return 'Windows PC';
+      if (/Mac/.test(ua)) return 'Macintosh';
+      if (/Linux/.test(ua)) return 'Linux';
+      return 'Web Browser';
+    }
+
     function handleLogin(e) {
       e.preventDefault();
       const uVal = document.getElementById('username').value.trim();
       const pVal = document.getElementById('password').value.trim();
-      const deviceVal = document.getElementById('deviceSelect').value;
+      const detectedDevice = getDeviceType();
+      const detectedIP = clientIP;
 
       const user = userAccounts.find(acc => acc.username === uVal && acc.password === pVal);
 
@@ -986,30 +979,33 @@
 
       if (user.role !== 'admin' || user.username !== 'admin') {
         if (user.isLocked) {
-          alert('Tài khoản này đã bị KHÓA do vi phạm vượt quá số thiết bị hoặc truy cập bất thường!');
+          alert('Tài khoản này đã bị KHÓA do vi phạm truy cập bất thường!');
           return;
         }
 
         if (!user.devices) user.devices = [];
-        if (!user.devices.includes(deviceVal)) {
+        if (!user.devices.includes(detectedDevice)) {
           if (user.devices.length >= 3) {
             user.isLocked = true;
             saveUsersToStorage();
             db.ref('suspiciousLogins').push({
               username: user.username,
               time: new Date().toLocaleString('vi-VN'),
-              reason: `Vượt quá tối đa 3 thiết bị (${user.devices.join(', ')} -> ${deviceVal})`
+              ip: detectedIP,
+              device: detectedDevice,
+              reason: `Vượt quá giới hạn thiết bị (${user.devices.join(', ')} -> ${detectedDevice})`
             });
-            alert(`CẢNH BÁO BẢO MẬT: Đăng nhập bị từ chối! Tài khoản đã vượt quá tối đa 3 thiết bị cho phép và bị tự động KHÓA.`);
+            alert(`CẢNH BÁO BẢO MẬT: Đăng nhập bị từ chối! Tài khoản đã vượt quá số thiết bị cho phép và bị tự động KHÓA.`);
             return;
           } else {
-            user.devices.push(deviceVal);
+            user.devices.push(detectedDevice);
             saveUsersToStorage();
           }
         }
       }
 
       user.lastLoginTime = Date.now();
+      user.lastIP = detectedIP;
       currentSessionId = 'SESSION_' + Math.random().toString(36).substr(2, 9);
       user.activeSessionId = currentSessionId;
       user.isOnline = true;
@@ -1021,11 +1017,10 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appScreen').style.display = 'block';
 
-      document.getElementById('userWelcomeText').innerHTML = `Xin chào: <b>${user.name}</b> (${user.username === 'admin' ? 'Admin Chính' : user.role === 'admin' ? 'Admin Phụ' : 'Học Viên'})`;
+      document.getElementById('userWelcomeText').innerHTML = `Xin chào: <b>${user.name}</b> (${user.role === 'admin' ? 'Quản Trị Viên' : 'Học Viên'})`;
       document.getElementById('homeUserName').innerText = user.name;
       document.getElementById('userAvatarText').innerText = user.avatar || user.name.charAt(0).toUpperCase();
 
-      // Kiểm tra quyền truy cập bảng điều khiển admin (chỉ admin chính username 'admin' mới được dùng bảng điều khiển)
       if (currentUser.username === 'admin') {
         document.getElementById('adminNavIcon').style.display = 'flex';
         document.getElementById('btnSubDashboard').style.display = 'flex';
@@ -1041,14 +1036,13 @@
       }
 
       listenSingleSession();
-      document.getElementById('watermarkText').innerText = `${currentUser.name} | ${currentUser.username} | SYSTEM SECURED`;
+      document.getElementById('watermarkText').innerText = `${currentUser.name} | ${currentUser.username} | IP: ${detectedIP}`;
 
       renderCoursesUI();
       updateRealtimeClock();
       setInterval(updateRealtimeClock, 1000);
       calculateUserRealProgress();
       checkResumePlaybackPrompt();
-      renderPersonalNotes();
 
       const urlParams = new URLSearchParams(window.location.search);
       const liveIdFromUrl = urlParams.get('liveId');
@@ -1215,7 +1209,7 @@
       wrapper.innerHTML = `
         <div id="ytPlayerDiv"></div>
         <div class="video-guard-overlay" onclick="alert('Bảo mật khóa học: Không thể chuyển hướng hoặc click trực tiếp ra trang ngoài!')"></div>
-        <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">${currentUser.name} | ${currentUser.username}</span></div>
+        <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">${currentUser.name} | ${currentUser.username} | IP: ${currentUser.lastIP || '127.0.0.1'}</span></div>
         <div class="custom-video-controls" id="customControls">
           <button class="ctrl-btn" id="btnPlayPause" onclick="customPlayPause()">▶ Phát</button>
           <button class="ctrl-btn" onclick="customSeek(-10)">⏮ -10s</button>
@@ -1262,7 +1256,7 @@
         docsContainer.style.display = 'block';
         docs.forEach(d => {
           docsList.innerHTML += `
-            <div style="display:flex; gap:6px;">
+            <div style="display:flex; gap:8px;">
               <button class="ctrl-btn" style="background: var(--bg-hover);" onclick="showDocSideBySide('${d.docUrl}')">📄 Xem: ${d.docName}</button>
               <a href="${d.docUrl}" target="_blank" download class="ctrl-btn" style="background: var(--accent-green); text-decoration:none; color:#000; font-weight:700;">📥 Tải về</a>
             </div>
@@ -1341,6 +1335,18 @@
       }
     }
 
+    // THỜI KHÓA BIỂU MỞ NGAY TRÊN WEB KHÔNG CHUYỂN HƯỚNG
+    function openScheduleModal(url) {
+      if (!url) { alert('Chưa cập nhật link thời khóa biểu!'); return; }
+      document.getElementById('scheduleIframe').src = url.replace('/view', '/preview');
+      document.getElementById('scheduleModal').style.display = 'flex';
+    }
+    function closeScheduleModal() {
+      document.getElementById('scheduleModal').style.display = 'none';
+      document.getElementById('scheduleIframe').src = '';
+    }
+
+    // PHÒNG LIVE STREAM ĐỒNG BỘ
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -1353,8 +1359,8 @@
         container.innerHTML += `
           <div class="live-card">
             <span class="live-badge">🔴 LIVE TRỰC TIẾP</span>
-            <h4 style="margin: 10px 0; color: #fff;">${room.title}</h4>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">Giảng viên: ${room.host}</p>
+            <h4 style="margin: 12px 0; color: #fff;">${room.title}</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên: ${room.host}</p>
             <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host}')">Tham Gia Xem Live ➔</button>
           </div>
         `;
@@ -1407,7 +1413,7 @@
     }
 
     function adminEndLiveStream() {
-      if (confirm('Kết thúc phòng Live Stream? Toàn bộ lịch sử chat và stream sẽ bị XÓA để tiết kiệm Firebase!')) {
+      if (confirm('Kết thúc phòng Live Stream? Toàn bộ lịch sử chat và stream sẽ bị XÓA!')) {
         if (localMediaStream) localMediaStream.getTracks().forEach(track => track.stop());
         db.ref(`liveRooms/${activeLiveRoomId}`).remove();
         leaveLiveRoom();
@@ -1438,14 +1444,15 @@
       if (!data) return;
       Object.values(data).forEach(msg => {
         box.innerHTML += `
-          <div style="margin-bottom: 8px; font-size: 0.85rem;">
-            <b style="color: var(--accent-cyan);">${msg.sender}:</b> ${msg.text} <span style="font-size:0.65rem; color:var(--text-muted);">${msg.time}</span>
+          <div style="margin-bottom: 10px; font-size: 0.9rem;">
+            <b style="color: var(--accent-cyan);">${msg.sender}:</b> ${msg.text} <span style="font-size:0.7rem; color:var(--text-muted);">${msg.time}</span>
           </div>
         `;
       });
       box.scrollTop = box.scrollHeight;
     }
 
+    // THI THỬ & CHẤM ĐIỂM THEO Ô ĐIỂM CỘNG / TRỪ MỚI
     function renderExamList() {
       const container = document.getElementById('examListContainer');
       if (!container) return;
@@ -1459,9 +1466,9 @@
           <div class="big-course-card">
             <div class="card-body">
               <div class="card-title">${ex.title}</div>
-              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">⏱ Thời gian: ${ex.durationMinutes} phút | 📝 ${ex.questions.length} câu hỏi</p>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">⏱ Thời gian: ${ex.durationMinutes} phút | 📝 ${ex.questions.length} câu hỏi</p>
               <button class="btn-submit" onclick="startExam('${ex.examId}')">Vào Thi Ngay ➔</button>
-              ${currentUser && currentUser.role === 'admin' ? `<button class="admin-btn-sm admin-btn-danger" style="margin-top:8px;" onclick="adminDeleteExam(${idx})">Xóa Đề Thi</button>` : ''}
+              ${currentUser && currentUser.role === 'admin' ? `<button class="admin-btn-sm admin-btn-danger" style="margin-top:10px;" onclick="adminDeleteExam(${idx})">Xóa Đề Thi</button>` : ''}
             </div>
           </div>
         `;
@@ -1479,23 +1486,30 @@
       numQ = parseInt(numQ) || 5;
       for(let i=0; i<numQ; i++) {
         html += `
-          <div class="stat-card" style="margin-bottom: 12px; padding: 16px;">
-            <h4 style="color: var(--accent-cyan); margin-bottom: 8px;">Câu hỏi số ${i+1}</h4>
-            <div class="form-group" style="margin-bottom: 10px;">
+          <div class="stat-card" style="margin-bottom: 16px; padding: 20px;">
+            <h4 style="color: var(--accent-cyan); margin-bottom: 10px;">Câu hỏi số ${i+1}</h4>
+            <div class="form-group" style="margin-bottom: 12px;">
               <input type="text" id="builder_q_text_${i}" placeholder="Nhập nội dung câu hỏi ${i+1}...">
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-              <input type="text" id="builder_q_${i}_opt_0" placeholder="Đáp án A" style="padding:8px; border-radius:8px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
-              <input type="text" id="builder_q_${i}_opt_1" placeholder="Đáp án B" style="padding:8px; border-radius:8px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
-              <input type="text" id="builder_q_${i}_opt_2" placeholder="Đáp án C" style="padding:8px; border-radius:8px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
-              <input type="text" id="builder_q_${i}_opt_3" placeholder="Đáp án D" style="padding:8px; border-radius:8px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+              <input type="text" id="builder_q_${i}_opt_0" placeholder="Đáp án A" style="padding:10px; border-radius:10px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
+              <input type="text" id="builder_q_${i}_opt_1" placeholder="Đáp án B" style="padding:10px; border-radius:10px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
+              <input type="text" id="builder_q_${i}_opt_2" placeholder="Đáp án C" style="padding:10px; border-radius:10px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
+              <input type="text" id="builder_q_${i}_opt_3" placeholder="Đáp án D" style="padding:10px; border-radius:10px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);">
             </div>
-            <div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 700;">
-              Tick vào ô đáp án ĐÚNG (ABCD): 
-              <label style="margin-left: 10px;"><input type="radio" name="builder_correct_${i}" value="0" checked> A</label>
-              <label style="margin-left: 10px;"><input type="radio" name="builder_correct_${i}" value="1"> B</label>
-              <label style="margin-left: 10px;"><input type="radio" name="builder_correct_${i}" value="2"> C</label>
-              <label style="margin-left: 10px;"><input type="radio" name="builder_correct_${i}" value="3"> D</label>
+            
+            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+              <div style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;">
+                Đáp án đúng (ABCD): 
+                <label style="margin-left: 8px;"><input type="radio" name="builder_correct_${i}" value="0" checked> A</label>
+                <label style="margin-left: 8px;"><input type="radio" name="builder_correct_${i}" value="1"> B</label>
+                <label style="margin-left: 8px;"><input type="radio" name="builder_correct_${i}" value="2"> C</label>
+                <label style="margin-left: 8px;"><input type="radio" name="builder_correct_${i}" value="3"> D</label>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center; font-size: 0.85rem;">
+                <label>Đúng cộng: <input type="number" id="builder_plus_${i}" value="1.0" step="0.25" style="width: 70px; padding: 4px; background:var(--bg-dark); color:#fff; border:1px solid var(--border); border-radius:6px;"></label>
+                <label>Sai trừ: <input type="number" id="builder_minus_${i}" value="0.25" step="0.25" style="width: 70px; padding: 4px; background:var(--bg-dark); color:#fff; border:1px solid var(--border); border-radius:6px;"></label>
+              </div>
             </div>
           </div>
         `;
@@ -1518,6 +1532,8 @@
         const optB = document.getElementById(`builder_q_${i}_opt_1`).value.trim() || 'Ý B';
         const optC = document.getElementById(`builder_q_${i}_opt_2`).value.trim() || 'Ý C';
         const optD = document.getElementById(`builder_q_${i}_opt_3`).value.trim() || 'Ý D';
+        const pointsCorrect = parseFloat(document.getElementById(`builder_plus_${i}`).value) || 1.0;
+        const pointsIncorrect = parseFloat(document.getElementById(`builder_minus_${i}`).value) || 0.25;
 
         let correct = 0;
         const radios = document.getElementsByName(`builder_correct_${i}`);
@@ -1528,7 +1544,8 @@
           text,
           options: [optA, optB, optC, optD],
           correct,
-          difficulty: 0.5
+          pointsCorrect,
+          pointsIncorrect
         });
       }
 
@@ -1562,10 +1579,10 @@
       const docBox = document.getElementById('examSourceDocBox');
       if (ex.linkDe) {
         docBox.innerHTML = `
-          <div style="background: var(--bg-card); padding: 14px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
-            <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">📄 Đề thi gốc (Google Drive / Docs / PDF):</span>
-            <div style="margin-top: 10px; height: 350px;">
-              <iframe src="${ex.linkDe.replace('/view', '/preview')}" style="width:100%; height:100%; border:none; border-radius:8px; background:#fff;"></iframe>
+          <div style="background: var(--bg-card); padding: 18px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px;">
+            <span style="font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);">📄 Đề thi gốc (Google Drive / Docs / PDF):</span>
+            <div style="margin-top: 12px; height: 400px;">
+              <iframe src="${ex.linkDe.replace('/view', '/preview')}" style="width:100%; height:100%; border:none; border-radius:12px; background:#fff;"></iframe>
             </div>
           </div>
         `;
@@ -1578,14 +1595,17 @@
         let optsHTML = '';
         q.options.forEach((opt, optIdx) => {
           optsHTML += `
-            <label style="display: block; padding: 10px 14px; background: var(--bg-card); border-radius: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid var(--border);">
-              <input type="radio" name="q_${q.qId}" value="${optIdx}" style="margin-right: 10px;"> ${opt}
+            <label style="display: block; padding: 12px 16px; background: var(--bg-card); border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid var(--border);">
+              <input type="radio" name="q_${q.qId}" value="${optIdx}" style="margin-right: 12px;"> ${opt}
             </label>
           `;
         });
         qHTML += `
           <div class="stat-card">
-            <h4 style="margin-bottom: 12px; color: #fff;">Câu ${qIdx + 1}: ${q.text}</h4>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h4 style="color: #fff;">Câu ${qIdx + 1}: ${q.text}</h4>
+              <span style="font-size:0.75rem; color:var(--accent-green); background:rgba(16,185,129,0.1); padding:4px 10px; border-radius:6px;">Đúng (+${q.pointsCorrect || 1}) | Sai (-${q.pointsIncorrect || 0.25})</span>
+            </div>
             ${optsHTML}
           </div>
         `;
@@ -1620,6 +1640,7 @@
 
       if (!currentExamObj) return;
       let totalCorrect = 0;
+      let finalScore = 0;
       let userAnswers = {};
 
       currentExamObj.questions.forEach(q => {
@@ -1629,16 +1650,15 @@
           if (r.checked) { selected = parseInt(r.value); break; }
         }
         userAnswers[q.qId] = selected;
-        if (selected === q.correct) totalCorrect++;
-      });
-
-      let irtScore = 0;
-      currentExamObj.questions.forEach(q => {
-        if (userAnswers[q.qId] === q.correct) {
-          irtScore += (1 + (q.difficulty || 0.5)) * 250;
+        if (selected === q.correct) {
+          totalCorrect++;
+          finalScore += (q.pointsCorrect !== undefined ? q.pointsCorrect : 1.0);
+        } else if (selected !== -1) {
+          finalScore -= (q.pointsIncorrect !== undefined ? q.pointsIncorrect : 0.25);
         }
       });
-      irtScore = Math.round(irtScore);
+
+      finalScore = Math.max(0, parseFloat(finalScore.toFixed(2)));
       const timeSpentMinutes = Math.round((Date.now() - examStartTime) / 60000);
 
       const resultObj = {
@@ -1646,7 +1666,7 @@
         name: currentUser.name,
         examTitle: currentExamObj.title,
         examId: currentExamObj.examId,
-        irtScore,
+        irtScore: finalScore,
         totalCorrect,
         totalQuestions: currentExamObj.questions.length,
         timeSpentMinutes: Math.max(1, timeSpentMinutes),
@@ -1657,7 +1677,7 @@
 
       document.getElementById('examRoomView').style.display = 'none';
       document.getElementById('examResultReviewView').style.display = 'block';
-      document.getElementById('resultScoreDisplay').innerText = `Điểm IRT: ${irtScore} / 1000`;
+      document.getElementById('resultScoreDisplay').innerText = `Điểm Tổng: ${finalScore} Điểm`;
       document.getElementById('resultDetailText').innerText = `Bạn đã trả lời đúng ${totalCorrect} / ${currentExamObj.questions.length} câu hỏi.`;
       document.getElementById('resultTimeUsedText').innerText = `⏱ Thời gian làm bài: ${Math.max(1, timeSpentMinutes)} phút`;
 
@@ -1669,11 +1689,11 @@
         const isCorrect = userChoice === q.correct;
         reviewHTML += `
           <div class="stat-card" style="border-color: ${isCorrect ? 'var(--accent-green)' : 'var(--danger)'};">
-            <h4 style="margin-bottom: 8px;">Câu ${idx + 1}: ${q.text}</h4>
-            <p style="font-size: 0.88rem; color: ${isCorrect ? 'var(--accent-green)' : 'var(--danger)'};">
+            <h4 style="margin-bottom: 10px;">Câu ${idx + 1}: ${q.text}</h4>
+            <p style="font-size: 0.9rem; color: ${isCorrect ? 'var(--accent-green)' : 'var(--danger)'};">
               Lựa chọn của bạn: ${userChoice !== -1 ? q.options[userChoice] : 'Không chọn'} ${isCorrect ? '✓ Đúng' : '✗ Sai'}
             </p>
-            <p style="font-size: 0.88rem; color: var(--accent-cyan); margin-top: 4px;">Đáp án chuẩn: ${q.options[q.correct]}</p>
+            <p style="font-size: 0.9rem; color: var(--accent-cyan); margin-top: 6px;">Đáp án chuẩn: ${q.options[q.correct]}</p>
           </div>
         `;
       });
@@ -1753,56 +1773,7 @@
       });
     }
 
-    // SỔ TAY GHI CHÚ CÁ NHÂN (RIÊNG TƯ)
-    function savePersonalNote() {
-      if (!currentUser) return;
-      const title = document.getElementById('noteTitleInput').value.trim();
-      const content = document.getElementById('noteContentInput').value.trim();
-      if (!title || !content) { alert('Vui lòng nhập đầy đủ tiêu đề và nội dung ghi chú!'); return; }
-
-      const noteId = 'NOTE_' + Date.now();
-      db.ref(`personalNotes/${currentUser.username}/${noteId}`).set({
-        title, content, time: new Date().toLocaleString('vi-VN')
-      });
-      document.getElementById('noteTitleInput').value = '';
-      document.getElementById('noteContentInput').value = '';
-      alert('Đã lưu ghi chú cá nhân thành công!');
-      renderPersonalNotes();
-    }
-
-    function renderPersonalNotes() {
-      if (!currentUser) return;
-      const container = document.getElementById('personalNotesContainer');
-      if (!container) return;
-      container.innerHTML = 'Đang tải ghi chú...';
-
-      db.ref(`personalNotes/${currentUser.username}`).once('value', (snapshot) => {
-        container.innerHTML = '';
-        const notes = snapshot.val();
-        if (!notes) {
-          container.innerHTML = '<div style="color: var(--text-muted);">Bạn chưa có ghi chú nào. Hãy tạo ghi chú mới ở trên.</div>';
-          return;
-        }
-        Object.entries(notes).forEach(([noteId, note]) => {
-          container.innerHTML += `
-            <div class="stat-card" style="position: relative;">
-              <h4 style="color: var(--accent-cyan); margin-bottom: 8px;">${note.title}</h4>
-              <p style="font-size: 0.88rem; color: var(--text-main); white-space: pre-wrap; margin-bottom: 12px; line-height: 1.4;">${note.content}</p>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 10px;">🕒 ${note.time}</div>
-              <button class="admin-btn-sm admin-btn-danger" onclick="deletePersonalNote('${noteId}')">Xóa Ghi Chú</button>
-            </div>
-          `;
-        });
-      });
-    }
-
-    function deletePersonalNote(noteId) {
-      if (confirm('Xóa ghi chú này?')) {
-        db.ref(`personalNotes/${currentUser.username}/${noteId}`).remove();
-        renderPersonalNotes();
-      }
-    }
-
+    // BẢNG ĐIỀU KHIỂN ADMIN & LỌC HOẠT ĐỘNG THEO NGÀY
     function renderAdminDashboardStats() {
       const onlineCount = userAccounts.filter(u => u.isOnline).length;
       const lockedCount = userAccounts.filter(u => u.isLocked).length;
@@ -1819,7 +1790,7 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       if (!data) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color: var(--text-muted);">Không có cảnh báo truy cập bất thường nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="color: var(--text-muted);">Không có cảnh báo truy cập bất thường nào.</td></tr>';
         return;
       }
       Object.entries(data).forEach(([id, item]) => {
@@ -1827,6 +1798,8 @@
           <tr>
             <td><b>${item.username}</b></td>
             <td>${item.time}</td>
+            <td><code>${item.ip || 'N/A'}</code></td>
+            <td>${item.device || 'N/A'}</td>
             <td style="color: var(--danger); font-weight:600;">${item.reason}</td>
             <td><button class="admin-btn-sm admin-btn-danger" onclick="db.ref('suspiciousLogins/${id}').remove()">Xóa Cảnh Báo</button></td>
           </tr>
@@ -1840,15 +1813,14 @@
       tbody.innerHTML = '';
 
       userAccounts.forEach(acc => {
-        const devs = acc.devices ? acc.devices.join(', ') : 'Chưa có';
-        const roleName = acc.username === 'admin' ? 'Admin Chính' : acc.role === 'admin' ? 'Admin Phụ' : 'Học Viên';
+        const roleName = acc.username === 'admin' ? 'Quản Trị Viên' : 'Học Viên';
         tbody.innerHTML += `
           <tr>
             <td style="cursor:pointer; color:var(--accent-cyan);" onclick="viewStudentActivityLogs('${acc.username}')"><b>${acc.name} 🔍</b></td>
             <td><code>${acc.username}</code></td>
-            <td><code style="background: rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${acc.password}</code></td>
+            <td><code style="background: rgba(255,255,255,0.1); padding:3px 8px; border-radius:6px;">${acc.password}</code></td>
             <td><span class="status-badge" style="background: ${acc.role==='admin'?'var(--primary)':'var(--bg-hover)'};">${roleName}</span></td>
-            <td style="font-size:0.8rem; color:var(--text-muted);">${devs}</td>
+            <td><code>${acc.lastIP || '127.0.0.1'}</code></td>
             <td>${acc.isLocked ? '<span class="status-badge badge-locked">Đã Khóa</span>' : acc.isOnline ? '<span class="status-badge badge-active">Online</span>' : '<span class="status-badge">Offline</span>'}</td>
             <td>
               ${acc.isLocked ? `<button class="admin-btn-sm admin-btn-warning" onclick="adminUnlockUser(${acc.id})">Mở Khóa</button>` : ''}
@@ -1863,7 +1835,7 @@
     function viewStudentActivityLogs(username) {
       currentSelectedLogUser = username;
       document.getElementById('studentActivityLogBox').style.display = 'block';
-      document.getElementById('logHeaderTitle').innerText = `Lịch Sử Thao Tác & Click Chuột Của: ${username}`;
+      document.getElementById('logHeaderTitle').innerText = `Lịch Sử Thao Tác & Hoạt Động Của: ${username}`;
       filterActivityLogsByDate();
     }
 
@@ -1896,7 +1868,7 @@
             return;
           }
 
-          list.innerHTML += `<li style="padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">${logText}</li>`;
+          list.innerHTML += `<li style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">${logText}</li>`;
           count++;
         });
         if (count === 0) {
@@ -1925,14 +1897,14 @@
     }
 
     function adminCreateUser() {
-      const name = prompt('Nhập Tên Học Viên / Admin Phụ:'); if(!name) return;
+      const name = prompt('Nhập Tên Học Viên / Sub-Admin:'); if(!name) return;
       const username = prompt('Nhập Tài Khoản (Username):'); if(!username) return;
       const password = prompt('Nhập Mật Khẩu:'); if(!password) return;
-      const isSubAdmin = confirm('Tạo tài khoản này có quyền Admin (quản lý khóa học, tạo đề thi, live stream)?\nLưu ý: Admin phụ KHÔNG được dùng bảng điều khiển admin quản lý user.');
+      const isSubAdmin = confirm('Cấp quyền Admin cho tài khoản này?');
 
       userAccounts.push({
         id: Date.now(), name, username, password,
-        role: isSubAdmin ? 'admin' : 'user', devices: [], isLocked: false, avatar: name.charAt(0).toUpperCase()
+        role: isSubAdmin ? 'admin' : 'user', devices: [], isLocked: false, avatar: name.charAt(0).toUpperCase(), lastIP: '127.0.0.1'
       });
       saveUsersToStorage();
       renderAdminUsers();
@@ -1953,8 +1925,8 @@
         short_name: "StudyMaster",
         start_url: ".",
         display: "standalone",
-        background_color: "#07090f",
-        theme_color: "#7048e8",
+        background_color: "#030712",
+        theme_color: "#6366f1",
         icons: [{ src: DEFAULT_FALLBACK_IMAGE, sizes: "192x192", type: "image/svg+xml" }]
       };
       const manifestStr = JSON.stringify(manifestObj);
@@ -1968,7 +1940,7 @@
         Notification.requestPermission().then(permission => {
           if (permission === "granted") {
             new Notification("STUDY MASTER PWA", {
-              body: "Đã bật thông báo đẩy thành công! Bạn sẽ nhận thông báo bài học mới và nhắc nhở lịch học.",
+              body: "Đã bật thông báo đẩy thành công! Bạn sẽ nhận thông báo bài học mới và lịch học.",
               icon: DEFAULT_FALLBACK_IMAGE
             });
           }
@@ -1994,7 +1966,6 @@
       document.getElementById('coursesTab').style.display = 'none';
       document.getElementById('liveTab').style.display = 'none';
       document.getElementById('examTab').style.display = 'none';
-      document.getElementById('notesTab').style.display = 'none';
       document.getElementById('dashboardTab').style.display = 'none';
 
       if (tab === 'home') {
@@ -2015,14 +1986,9 @@
         document.getElementById('btnSubExam').classList.add('active');
         document.getElementById('examTab').style.display = 'block';
         renderExamList();
-      } else if (tab === 'notes') {
-        document.querySelectorAll('.nav-icon')[4].classList.add('active');
-        document.getElementById('btnSubNotes').classList.add('active');
-        document.getElementById('notesTab').style.display = 'block';
-        renderPersonalNotes();
       } else if (tab === 'dashboard') {
         if (currentUser && currentUser.username !== 'admin') {
-          alert('Tài khoản Admin phụ không có quyền truy cập bảng điều khiển quản lý user!');
+          alert('Tài khoản không có quyền truy cập bảng điều khiển quản lý!');
           switchMainTab('home');
           return;
         }
@@ -2038,7 +2004,6 @@
       else if (subTab === 'all-courses') switchMainTab('courses');
       else if (subTab === 'live-view') switchMainTab('live');
       else if (subTab === 'exam-view') switchMainTab('exam');
-      else if (subTab === 'notes-view') switchMainTab('notes');
       else if (subTab === 'dashboard-view') switchMainTab('dashboard');
     }
 
@@ -2095,7 +2060,7 @@
                 <div class="card-title">${bc.bigCourseTitle}</div>
                 
                 <div class="card-progress-text">
-                  <span>Tiến trình mở bài</span>
+                  <span>Tiến trình hoàn thành</span>
                   <span>100%</span>
                 </div>
                 <div class="card-progress-bar-bg">
@@ -2108,7 +2073,7 @@
                 </div>
 
                 ${isAdmin ? `
-                  <div style="margin-top: 6px; margin-bottom: 10px; display: flex; gap: 6px;" onclick="event.stopPropagation();">
+                  <div style="margin-top: 8px; margin-bottom: 12px; display: flex; gap: 8px;" onclick="event.stopPropagation();">
                     <button class="admin-btn-sm admin-btn-warning" onclick="adminEditBigCourse(${originalIndex})">Sửa Card</button>
                     <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteBigCourse(${originalIndex})">Xóa Khóa Lớn</button>
                   </div>
@@ -2137,7 +2102,7 @@
       const schedBox = document.getElementById('scheduleButtonBox');
       let schedHTML = '';
       if (currentBig.scheduleUrl) {
-        schedHTML += `<a href="${currentBig.scheduleUrl}" target="_blank" class="ctrl-btn" style="background: var(--accent-green); text-decoration:none; color:#000; font-weight:700;">📅 Xem Thời Khóa Biểu</a>`;
+        schedHTML += `<button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700;" onclick="openScheduleModal('${currentBig.scheduleUrl}')">📅 Xem Thời Khóa Biểu</button>`;
       }
       if (isAdmin) {
         schedHTML += ` <button class="admin-btn-sm admin-btn-warning" onclick="adminEditSchedule(${bigIdx})">Sửa TKB</button>`;
@@ -2149,8 +2114,8 @@
 
       if (isAdmin) {
         subCoursesHTML += `
-          <div class="admin-action-bar" style="background: var(--bg-panel); padding: 14px; border-radius: 14px; margin-bottom: 20px;">
-            <span style="font-weight:800; font-size: 0.85rem; color: var(--accent-cyan);">QUẢN TRỊ KHÓA HỌC LỚN NÀY:</span>
+          <div class="admin-action-bar" style="background: var(--bg-panel); padding: 16px; border-radius: 16px; margin-bottom: 24px;">
+            <span style="font-weight:800; font-size: 0.9rem; color: var(--accent-cyan);">QUẢN TRỊ KHÓA HỌC LỚN NÀY:</span>
             <button class="admin-btn-sm" onclick="adminAddSubCourse(${bigIdx})">+ Thêm Khóa Nhỏ Mới</button>
           </div>
         `;
@@ -2170,28 +2135,28 @@
 
                   lessonsHTML += `
                     <div class="lesson-item" onclick="playMediaContent('${safeTitle}', '${safeUrl}', ${docsJson})">
-                      <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="display:flex; align-items:center; gap:12px;">
                         <span style="color:var(--accent-cyan);">▶</span>
                         <span><b>${les.title}</b></span>
-                        ${les.documents && les.documents.length > 0 ? `<span style="font-size:0.75rem; background:rgba(255,255,255,0.08); padding:2px 8px; border-radius:6px; color:var(--text-muted);">📄 ${les.documents.length} tài liệu</span>` : ''}
+                        ${les.documents && les.documents.length > 0 ? `<span style="font-size:0.78rem; background:rgba(255,255,255,0.08); padding:3px 10px; border-radius:8px; color:var(--text-muted);">📄 ${les.documents.length} tài liệu</span>` : ''}
                       </div>
-                      <div style="display:flex; gap:6px; align-items:center;" onclick="event.stopPropagation();">
+                      <div style="display:flex; gap:8px; align-items:center;" onclick="event.stopPropagation();">
                         ${isAdmin ? `
                           <button class="admin-btn-sm admin-btn-warning" onclick="adminEditLesson(${bigIdx},${subIdx}, ${partIdx},${lesIdx})">Sửa Video</button>
-                          <button class="admin-btn-sm" style="background:#0984e3;" onclick="adminEditLessonDocs(${bigIdx},${subIdx}, ${partIdx},${lesIdx})">+ Tải Tài Liệu</button>
+                          <button class="admin-btn-sm" style="background:#3b82f6;" onclick="adminEditLessonDocs(${bigIdx},${subIdx}, ${partIdx},${lesIdx})">+ Tải Tài Liệu</button>
                           <button class="admin-btn-sm admin-btn-danger" onclick="adminDeleteLesson(${bigIdx},${subIdx}, ${partIdx},${lesIdx})">Xóa</button>
                         ` : ''}
-                        <span class="ctrl-btn" style="font-size:0.75rem; padding:4px 10px;">Vào Học Bài</span>
+                        <span class="ctrl-btn" style="font-size:0.78rem; padding:6px 12px;">Vào Học Bài</span>
                       </div>
                     </div>
                   `;
                 });
-              } else { lessonsHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:6px 0;">Chưa có bài học nào.</div>'; }
+              } else { lessonsHTML = '<div style="color:var(--text-muted); font-size:0.88rem; padding:8px 0;">Chưa có bài học nào.</div>'; }
 
               partsHTML += `
                 <div class="part-header-box" onclick="toggleElement('lessons_${bigIdx}_${subIdx}_${partIdx}')">
                   <span>📂 ${part.partTitle}</span>
-                  <div style="display:flex; gap:6px;">
+                  <div style="display:flex; gap:8px;">
                     ${isAdmin ? `
                       <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddLesson(${bigIdx}, ${subIdx},${partIdx})">+ Thêm Bài Học</button>
                       <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditPart(${bigIdx}, ${subIdx},${partIdx})">Sửa</button>
@@ -2203,13 +2168,13 @@
                 <div class="lessons-list" id="lessons_${bigIdx}_${subIdx}_${partIdx}">${lessonsHTML}</div>
               `;
             });
-          } else { partsHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:8px;">Chưa tạo phần học nào.</div>'; }
+          } else { partsHTML = '<div style="color:var(--text-muted); font-size:0.88rem; padding:10px;">Chưa tạo phần học nào.</div>'; }
 
           subCoursesHTML += `
             <div class="course-card-box">
               <div class="course-header" onclick="toggleElement('parts_${bigIdx}_${subIdx}')">
                 <span>📘 ${subC.courseTitle}</span>
-                <div style="display:flex; gap:6px;">
+                <div style="display:flex; gap:8px;">
                   ${isAdmin ? `
                     <button class="admin-btn-sm" onclick="event.stopPropagation(); adminAddPart(${bigIdx},${subIdx})">+ Thêm Phần</button>
                     <button class="admin-btn-sm admin-btn-warning" onclick="event.stopPropagation(); adminEditSubCourse(${bigIdx},${subIdx})">Sửa</button>
@@ -2222,7 +2187,7 @@
             </div>
           `;
         });
-      } else { subCoursesHTML += '<div style="color:var(--text-muted); font-size:0.9rem; padding: 20px; text-align: center;">Chưa có khóa học thành phần nào.</div>'; }
+      } else { subCoursesHTML += '<div style="color:var(--text-muted); font-size:0.92rem; padding: 24px; text-align: center;">Chưa có khóa học thành phần nào.</div>'; }
 
       container.innerHTML = subCoursesHTML;
     }
@@ -2247,6 +2212,7 @@
         targetAudience, totalVideos: 0, price, scheduleUrl, imgUrl, subCourses: []
       });
       saveBigCoursesToStorage(); renderCoursesUI();
+      db.ref('systemNotification').set(`📢 Khóa học mới "${title}" vừa được khai giảng!`);
     }
 
     function adminEditBigCourse(bigIdx) {
@@ -2270,7 +2236,7 @@
       if (url !== null) {
         bigCoursesData[bigIdx].scheduleUrl = url.trim();
         saveBigCoursesToStorage(); renderCoursesUI();
-        db.ref('systemNotification').set(`📢 Thời khóa biểu của khóa học "${bigCoursesData[bigIdx].bigCourseTitle}" vừa được cập nhật bởi Admin!`);
+        db.ref('systemNotification').set(`📢 Thời khóa biểu của khóa học "${bigCoursesData[bigIdx].bigCourseTitle}" vừa được cập nhật!`);
       }
     }
 
