@@ -298,10 +298,10 @@
 
   <div class="resume-modal" id="resumeModal">
     <div class="modal-box">
-      <h3>📱 ĐỒNG BỘ ĐA THIẾT BỊ THÔNG MINH</h3>
+      <h3>📱 LỊCH SỬ HỌC TẬP GẦN ĐÂY</h3>
       <p id="resumeModalText">Bạn đã xem bài giảng từ thiết bị khác. Bạn có muốn tiếp tục xem không?</p>
       <div class="modal-actions">
-        <button class="btn-submit" style="width: auto; padding: 12px 28px;" onclick="confirmResumePlayback(true)">Đồng ý Tiếp tục</button>
+        <button class="btn-submit" style="width: auto; padding: 12px 28px;" onclick="confirmResumePlayback(true)">Đồng ý </button>
         <button class="ctrl-btn" style="padding: 12px 22px;" onclick="confirmResumePlayback(false)">Bỏ qua</button>
       </div>
     </div>
@@ -311,7 +311,7 @@
   <div class="resume-modal" id="scheduleModal" style="display: none;">
     <div class="modal-box" style="max-width: 800px; width: 95%; height: 85vh; text-align: left; display: flex; flex-direction: column; padding: 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 id="scheduleModalTitle" style="color: var(--accent-cyan); margin: 0;">📅 Lịch & Thời Khóa Biểu Học Tập</h3>
+        <h3 id="scheduleModalTitle" style="color: var(--accent-cyan); margin: 0;">📅 THỜI KHÓA BIỂU KHÓA HỌC </h3>
         <button class="ctrl-btn" style="background: var(--danger); padding: 6px 14px;" onclick="closeScheduleModal()">✕ Đóng</button>
       </div>
       <div style="flex-grow: 1; width: 100%; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);">
@@ -322,8 +322,8 @@
 
   <div id="loginScreen">
     <div class="login-card">
-      <h2>🎓 STUDY MASTER</h2>
-      <div class="login-subtitle">Nền Tảng Đào Tạo & Luyện Thi Trực Tuyến Cao Cấp</div>
+      <h2>🎓 HỆ THỐNG ĐÀO TẠO </h2>
+      <div class="login-subtitle">Nền Tảng Khóa Học Trực Tuyến</div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản học viên / Admin</label>
@@ -346,11 +346,11 @@
           <div class="nav-icon active" onclick="switchMainTab('home')" title="Trang Chủ Dashboard">🏠</div>
           <div class="nav-icon" onclick="switchMainTab('courses')" title="Khóa Học Master">📚</div>
           <div class="nav-icon" onclick="switchMainTab('live')" title="Phòng Live Stream">🔴</div>
-          <div class="nav-icon" onclick="switchMainTab('exam')" title="Thi Thử VACT & IRT">📝</div>
+          <div class="nav-icon" onclick="switchMainTab('exam')" title="PHÒNG THI THỬ">📝</div>
           <div class="nav-icon" id="adminNavIcon" onclick="switchMainTab('dashboard')" title="Quản Lý (Admin)" style="display: none;">📊</div>
         </div>
         <div class="icon-group">
-          <div class="nav-icon" onclick="requestNotificationPermission()" title="Bật Thông Báo PWA">🔔</div>
+          <div class="nav-icon" onclick="requestNotificationPermission()" title="Bật Thông Báo ">🔔</div>
           <div class="nav-icon" onclick="handleLogout()" title="Đăng Xuất">🚪</div>
         </div>
       </div>
@@ -363,7 +363,7 @@
         <button class="sub-nav-btn active" id="btnSubHome" onclick="switchTab('home-view')">🏠 Trang Chủ & Tiến Độ</button>
         <button class="sub-nav-btn" id="btnSubCourses" onclick="switchTab('all-courses')">📖 Tất Cả Khóa Học</button>
         <button class="sub-nav-btn" id="btnSubLive" onclick="switchTab('live-view')">🔴 Phòng Live Stream</button>
-        <button class="sub-nav-btn" id="btnSubExam" onclick="switchTab('exam-view')">📝 Thi Thử VACT (IRT)</button>
+        <button class="sub-nav-btn" id="btnSubExam" onclick="switchTab('exam-view')">📝 PHÒNG THI THỬ </button>
         <button class="sub-nav-btn" id="btnSubDashboard" onclick="switchTab('dashboard-view')" style="display: none;">⚙️ Bảng Điều Khiển Admin</button>
       </div>
 
@@ -373,7 +373,7 @@
           <div class="page-header">
             <div>
               <span class="page-title">Trang Chủ & Tổng Quan Học Tập</span>
-              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Cập nhật tiến độ học tập thực tế, lịch theo thời gian thực và thông báo khóa học từ Admin.</p>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Thông báo tiến độ học tập, về khóa học và cập nhật mới nhất từ Admin.</p>
             </div>
             <div style="display: flex; align-items: center; gap: 14px;">
               <div id="userAvatarBox" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="promptChangeAvatar()" title="Đổi Avatar">
@@ -393,7 +393,7 @@
 
           <div class="stats-grid">
             <div class="stat-card">
-              <h3>Tiến Độ Học Tập Thực Tế</h3>
+              <h3>Tiến Độ Học Tập </h3>
               <div class="stat-big-num" id="homeRealProgressNum">0%</div>
               <div class="card-progress-bar-bg" style="margin-top: 12px;">
                 <div class="card-progress-bar-fill" id="homeProgressBarFill" style="width: 0%;"></div>
@@ -411,15 +411,15 @@
               <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                 <button class="ctrl-btn" style="background: var(--primary);" onclick="switchMainTab('courses')">📚 Vào Khóa Học</button>
                 <button class="ctrl-btn" style="background: var(--danger);" onclick="switchMainTab('live')">🔴 Xem Live</button>
-                <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700;" onclick="switchMainTab('exam')">📝 Thi Thử VACT</button>
+                <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700;" onclick="switchMainTab('exam')">📝 Phòng Thi Thử</button>
               </div>
             </div>
           </div>
 
           <div class="stat-card">
-            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">🎯 ĐÔI LỜI TÂM SỰ GỬI ĐẾN CÁC EM HỌC SINH </h3>
+            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">🎯 ĐÔI LỜI TÂM SỰ GỬI ĐẾN CÁC BẠN </h3>
             <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
-              Gửi các bạn,
+              Gửi các bạn.
 Thực sự thì những ngày này, đứa nào trong chúng ta cũng mệt. Cái mệt không chỉ vì giải hoài không xong một câu logic VACT hay mỏi mắt vì gõ đề, mà là cái mệt của sự mơ hồ. Nhiều lúc ngồi trước bàn học lúc 1 giờ sáng, tự dưng thấy trống rỗng rồi tự hỏi: “Rốt cuộc mình đang cố gắng vì cái gì? Liệu có đi đến đâu không?”
 Chúng ta hay giấu sự sợ hãi đó sau mấy câu nói đùa “chắc tạch quá”, nhưng sâu bên trong, ai cũng đang gánh một nỗi áp lực rất thật: sợ làm bố mẹ thất vọng, sợ thua kém bạn bè, và sợ chính bản thân mình vô dụng.
 Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lại ngồi vào bàn. Sự thật là chẳng có phép màu nào cả, chỉ có sự lỳ lợm của chúng ta qua từng ngày. Kỳ thi VACT sắp tới sẽ khó, cạnh tranh sẽ gắt, nhưng nó cũng chỉ là một kỳ thi. Nó không đánh giá được hết con người bạn, cũng chẳng thể quyết định cả cuộc đời bạn đúng hay sai.
@@ -431,7 +431,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         <section id="coursesTab" style="display: none;">
           <div class="page-header">
             <div>
-              <span class="page-title" id="courseSectionTitle">Danh Sách Khóa Học Master</span>
+              <span class="page-title" id="courseSectionTitle">DANH SÁCH KHÓA HỌC ĐANG THAM GIA </span>
             </div>
             <div style="font-size: 0.9rem; color: var(--text-muted);" id="userWelcomeText"></div>
           </div>
@@ -448,7 +448,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           <div id="bigCourseDetailView" style="display: none;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
               <div style="display: flex; align-items: center; gap: 14px;">
-                <button class="ctrl-btn" onclick="goBackToBigCourses()">⬅ Quay lại danh sách</button>
+                <button class="ctrl-btn" onclick="goBackToBigCourses()">⬅ Quay lại </button>
                 <h3 id="detailBigCourseTitle" style="color: var(--accent-cyan);"></h3>
               </div>
               <div id="scheduleButtonBox" style="display: flex; gap: 10px; align-items: center;"></div>
@@ -458,7 +458,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                 <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                  <button class="ctrl-btn" style="background: var(--primary);" onclick="toggleDocSideBySide(true)">📄 Chia Màn Hình Xem Tài Liệu</button>
+                  <button class="ctrl-btn" style="background: var(--primary);" onclick="toggleDocSideBySide(true)">📄 Hướng dẫn khung xem tài liệu </button>
                   <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đang học (0%)</span>
                 </div>
               </div>
@@ -468,14 +468,14 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
                   <div class="media-wrapper" id="mediaWrapper">
                     <div id="ytPlayerDiv"></div>
                     
-                    <div class="video-guard-overlay" onclick="alert('Bảo mật khóa học: Không thể chuyển hướng hoặc click trực tiếp ra trang ngoài!')"></div>
+                    <div class="video-guard-overlay" onclick="alert('Vùng trống - Không thể chuyển hướng sang trang khác')"></div>
 
                     <div class="watermark-overlay" id="watermarkOverlay">
                       <span id="watermarkText">STUDENT WATERMARK</span>
                     </div>
 
                     <div class="custom-video-controls" id="customControls">
-                      <button class="ctrl-btn" id="btnPlayPause" onclick="customPlayPause()">▶ Phát</button>
+                      <button class="ctrl-btn" id="btnPlayPause" onclick="customPlayPause()"> ▶ </button>
                       <button class="ctrl-btn" onclick="customSeek(-10)">⏮ -10s</button>
                       <button class="ctrl-btn" onclick="customSeek(10)">+10s ⏭</button>
                       
@@ -490,27 +490,27 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
                       <select class="speed-select" onchange="customSpeed(this.value)">
                         <option value="0.5">0.5x</option>
                         <option value="0.75">0.75x</option>
-                        <option value="1.0" selected>1.0x Chuẩn</option>
+                        <option value="1.0" selected>1.0x </option>
                         <option value="1.25">1.25x</option>
                         <option value="1.5">1.5x</option>
-                        <option value="2.0">2.0x Nhanh</option>
+                        <option value="2.0">2.0x </option>
                       </select>
 
                       <select class="quality-select" onchange="customQuality(this.value)">
-                        <option value="hd1080" selected>1080p Full HD</option>
-                        <option value="hd720">720p HD</option>
-                        <option value="medium">480p SD</option>
+                        <option value="hd1080" selected>1080p </option>
+                        <option value="hd720">720p </option>
+                        <option value="medium">480p </option>
                       </select>
 
-                      <button class="ctrl-btn" onclick="customToggleFullscreen()">⛶ Phóng to</button>
+                      <button class="ctrl-btn" onclick="customToggleFullscreen()"> ⛶ </button>
                     </div>
                   </div>
                 </div>
 
                 <div class="docs-column" id="docsColumn" style="display: none;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Chia màn hình học tập & tài liệu:</span>
-                    <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng xem tài liệu</button>
+                    <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Tài liệu đính kèm:</span>
+                    <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng </button>
                   </div>
                   <div style="flex-grow: 1; height: 100%; min-height: 480px; position: relative;">
                     <iframe id="docSideFrame" src="" style="width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 14px; background: #fff;"></iframe>
@@ -519,7 +519,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
               </div>
 
               <div id="lessonDocsContainer" style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; display: none;">
-                <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh sách tài liệu bài học này (Cho phép xem & Tải về):</h4>
+                <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh mục tài liệu đính kèm bài học:</h4>
                 <div id="lessonDocsList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
               </div>
             </div>
@@ -531,8 +531,8 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         <section id="liveTab" style="display: none;">
           <div class="page-header">
             <div>
-              <span class="page-title">Phòng Live Stream Trực Tiếp</span>
-              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Đồng bộ đa tài khoản thời gian thực. Khung live lớn và khung chat trực tuyến bên cạnh.</p>
+              <span class="page-title">PHÒNG LIVE TRỰC TUYẾN CỦA KHÓA HỌC </span>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Khi có phòng live, các bạn nhớ tham gia học tập đầy đủ!</p>
             </div>
             <div id="adminLiveControls" style="display: none;">
               <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
@@ -581,8 +581,10 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         <section id="examTab" style="display: none;">
           <div class="page-header">
             <div>
-              <span class="page-title">Thi Thử VACT & Chấm Điểm IRT</span>
-              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quy chế nghiêm ngặt: Bắt buộc mở toàn màn hình và không được rời màn hình thi.</p>
+              <span class="page-title">PHÒNG THI THỬ KHÓA HỌC TRỰC TUYẾN</span>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quy định khi làm bài kiểm tra: Khi đã ấn nút làm bài sẽ bắt đầu bài kiểm tra thì sẽ tính thời gian. 
+                Khi làm đề thì sẽ bật tính năng chống gian lận: toàn màn hình, chống chuyển tab, chuyển ứng dụng. Lưu ý: khi vi phạm 1 trong các điều đó sẽ bị đánh giá là 0 điểm. 
+                Có thể tải đề về in ra và làm trước bằng cách vào "KHÓA THỰC CHIẾN ĐỀ THI THỬ ĐGNL VACT (ĐỢT 1)" tìm bài giảng và tải tài liệu về sau đó lên nhập đáp án ở phòng thi thử. Sau khi hoàn thành bài kiểm tra, máy tính sẽ tự động chấm điểm theo phương thức IRT (của ĐHQG HCM); sau đó sẽ công bố điểm lên bảng xếp hạng. </p>
             </div>
             <div id="adminExamControls" style="display: none;">
               <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử Mới</button>
@@ -591,30 +593,30 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           </div>
 
           <div id="examListView">
-            <h3 style="margin-bottom: 16px; color: var(--accent-cyan);">Danh Sách Bài Thi Thử Khả Dụng</h3>
+            <h3 style="margin-bottom: 16px; color: var(--accent-cyan);">Danh Sách Bài Thi Khả Dụng - Đang hoạt động </h3>
             <div id="examListContainer" class="big-course-grid"></div>
           </div>
 
           <div id="examRoomView" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--bg-panel); padding: 18px 24px; border-radius: 18px; border: 1px solid var(--danger);">
-              <h3 id="examRoomTitle" style="color: var(--danger);">Bài Thi VACT</h3>
+              <h3 id="examRoomTitle" style="color: var(--danger);">BÀI THI THỬ</h3>
               <div style="font-weight: 800; font-size: 1.2rem; color: var(--warning);" id="examTimerDisplay">⏱ 45:00</div>
             </div>
             <div id="examSourceDocBox" style="margin-bottom: 24px;"></div>
             <div id="examQuestionsContainer" style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 28px;"></div>
-            <button class="btn-submit" style="padding: 16px; font-size: 1.05rem;" onclick="submitExam()">Nộp Bài Thi & Chấm Điểm IRT</button>
+            <button class="btn-submit" style="padding: 16px; font-size: 1.05rem;" onclick="submitExam()">NỘP BÀI VÀ CHẤM ĐIỂM </button>
           </div>
 
           <div id="examResultReviewView" style="display: none;">
             <div style="background: var(--bg-panel); border-radius: 24px; padding: 32px; border: 1px solid var(--accent-green); margin-bottom: 24px; text-align: center;">
-              <h3 style="color: var(--accent-green); font-size: 2rem; margin-bottom: 10px;">🎉 KẾT QUẢ THI THỬ VACT (IRT)</h3>
+              <h3 style="color: var(--accent-green); font-size: 2rem; margin-bottom: 10px;">🎉 KẾT QUẢ THI THỬ </h3>
               <div class="stat-big-num" id="resultScoreDisplay" style="color: var(--accent-cyan);">Điểm: 0.0</div>
               <p style="color: var(--text-muted); font-size: 1rem;" id="resultDetailText">Đã hoàn thành bài kiểm tra năng lực.</p>
               <div style="margin-top: 16px; font-weight: 700; color: var(--warning);" id="resultTimeUsedText">⏱ Thời gian làm bài: 0 phút</div>
             </div>
 
             <div class="stat-card" style="margin-bottom: 28px;">
-              <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">🏆 Bảng Xếp Hạng Bài Thi Này</h3>
+              <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">🏆 Bảng Xếp Hạng Bài Thi </h3>
               <table class="data-table">
                 <thead>
                   <tr>
