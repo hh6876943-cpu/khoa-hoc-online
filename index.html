@@ -537,7 +537,7 @@
           </div>
         </section>
 
-        <!-- NÂNG CẤP PHÒNG LIVE STUDIO & EMBED ĐA PHƯƠNG TIỆN -->
+        <!-- PHÒNG LIVE STUDIO & TƯƠNG TÁC (ĐÃ KHẮC PHỤC LỖI HIỂN THỊ MÀN HÌNH CHO HỌC SINH) -->
         <section id="liveTab" style="display: none;">
           <div class="page-header">
             <div>
@@ -566,7 +566,8 @@
               <!-- Left: Video Stream & Embedded Docs Modal Viewer -->
               <div class="media-column" style="flex: 2;">
                 <div class="media-wrapper" style="height: 100%; min-height: 520px; padding-top: 0; position: relative; background: #000;">
-                  <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0;"></video>
+                  <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0; z-index: 2;"></video>
+                  <div id="liveStreamIframeWrapper" style="position: absolute; inset: 0; z-index: 3; display: none;"></div>
                   
                   <div id="liveVideoPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #030712; color: var(--text-muted); gap: 12px; z-index: 5;">
                     <i class="fa-solid fa-satellite-dish fa-3x" style="color: var(--primary-bright);"></i>
@@ -584,8 +585,9 @@
                 </div>
 
                 <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; gap: 12px; flex-wrap: wrap;">
-                  <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình (1080p)</button>
-                  <button class="ctrl-btn" style="background: var(--primary);" onclick="adminOpenAttachDocModal()">📄 Chèn Link / Tài Liệu (YouTube, Drive, PDF)</button>
+                  <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình (WebRTC)</button>
+                  <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700;" onclick="adminBroadcastStreamUrlPrompt()">🌐 Phát Link YouTube / Stream URL</button>
+                  <button class="ctrl-btn" style="background: var(--primary);" onclick="adminOpenAttachDocModal()">📄 Chèn Link / Tài Liệu</button>
                   <button class="ctrl-btn" style="background: var(--danger);" onclick="adminEndLiveStream()">🔴 Kết Thúc & Xuất MP4</button>
                 </div>
               </div>
@@ -939,6 +941,16 @@
     let currentExamObj = null;
     let examTimerInterval = null;
     let examStartTime = 0;
+
+    // WebRTC Peer Connections for Live Stream Broadcasting
+    let peerConnections = {};
+    let studentPeerConnection = null;
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
 
     document.addEventListener('click', (e) => {
       if (!currentUser || currentUser.role === 'admin') return;
@@ -1400,7 +1412,7 @@
       document.getElementById('scheduleIframe').src = '';
     }
 
-    // --- STUDIO LIVE & EMBEDDED DOCS / 1080P RECORDING ---
+    // --- STUDIO LIVE & WEBRTC SIGNALING & STREAM BROADCASTING ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -1441,6 +1453,8 @@
         document.getElementById('adminBroadcastingBar').style.display = 'flex';
       } else {
         document.getElementById('adminBroadcastingBar').style.display = 'none';
+        // Student joins: initiate WebRTC viewer connection or watch stream URL
+        initStudentWebRTC(roomId);
       }
 
       // Listen chat
@@ -1457,13 +1471,48 @@
       db.ref(`liveRooms/${roomId}/attachedDocs`).on('value', (snapshot) => {
         renderPinnedDocs(snapshot.val());
       });
+
+      // Listen Stream URL broadcasts
+      db.ref(`liveRooms/${roomId}/streamUrl`).on('value', (snapshot) => {
+        const sUrl = snapshot.val();
+        handleRemoteStreamUrl(sUrl);
+      });
     }
 
-    function copyLiveRoomLink() {
+    function handleRemoteStreamUrl(url) {
+      const iframeWrapper = document.getElementById('liveStreamIframeWrapper');
+      const videoElem = document.getElementById('liveVideoPlayer');
+      const placeholder = document.getElementById('liveVideoPlaceholder');
+      if (!iframeWrapper) return;
+
+      if (url) {
+        placeholder.style.display = 'none';
+        videoElem.style.display = 'none';
+        let embedUrl = url;
+        const ytId = extractYouTubeId(url);
+        if (ytId) {
+          embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&controls=1`;
+        }
+        iframeWrapper.style.display = 'block';
+        iframeWrapper.innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:100%; border:none;" allow="autoplay; fullscreen"></iframe>`;
+      } else {
+        iframeWrapper.style.display = 'none';
+        iframeWrapper.innerHTML = '';
+        videoElem.style.display = 'block';
+      }
+    }
+
+    function adminBroadcastStreamUrlPrompt() {
       if (!activeLiveRoomId) return;
-      const link = window.location.origin + window.location.pathname + `?liveId=${activeLiveRoomId}`;
-      navigator.clipboard.writeText(link);
-      alert(`Đã sao chép đường dẫn liên kết duy nhất của phòng live:\n${link}`);
+      const url = prompt('Dán Link YouTube Live hoặc Link Video Stream (MP4/HLS) vào đây:');
+      if (url !== null) {
+        db.ref(`liveRooms/${activeLiveRoomId}/streamUrl`).set(url.trim());
+        if (url.trim()) {
+          alert('Đã phát sóng link stream thành công cho toàn bộ học sinh trong phòng!');
+        } else {
+          alert('Đã tắt phát link stream URL.');
+        }
+      }
     }
 
     async function adminStartScreenShare() {
@@ -1477,6 +1526,40 @@
         videoElem.muted = true;
         document.getElementById('liveVideoPlaceholder').style.display = 'none';
 
+        // Clear streamUrl if any
+        db.ref(`liveRooms/${activeLiveRoomId}/streamUrl`).set('');
+
+        // Listen for students offering connections
+        db.ref(`liveRooms/${activeLiveRoomId}/offers`).on('child_added', async (snapshot) => {
+          const data = snapshot.val();
+          const studentId = snapshot.key;
+          if (!data || !localMediaStream) return;
+
+          const pc = new RTCPeerConnection(rtcConfig);
+          peerConnections[studentId] = pc;
+
+          localMediaStream.getTracks().forEach(track => pc.addTrack(track, localMediaStream));
+
+          pc.onicecandidate = (event) => {
+            if (event.candidate) {
+              db.ref(`liveRooms/${activeLiveRoomId}/adminCandidates/${studentId}`).push(event.candidate.toJSON());
+            }
+          };
+
+          await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+
+          db.ref(`liveRooms/${activeLiveRoomId}/answers/${studentId}`).set({ answer: answer });
+
+          db.ref(`liveRooms/${activeLiveRoomId}/studentCandidates/${studentId}`).on('child_added', (candSnap) => {
+            const cand = candSnap.val();
+            if (cand) {
+              pc.addIceCandidate(new RTCIceCandidate(cand)).catch(e => console.error(e));
+            }
+          });
+        });
+
         recordedChunks = [];
         const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm';
         mediaRecorder = new MediaRecorder(localMediaStream, { 
@@ -1486,10 +1569,55 @@
         mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
         mediaRecorder.start(1000);
 
-        alert('Đã chia sẻ màn hình 1080p thành công!');
+        alert('Đã bắt đầu chia sẻ màn hình 1080p WebRTC thành công!');
         localMediaStream.getVideoTracks()[0].onended = () => { adminEndLiveStream(); };
       } catch (err) {
         alert('Lỗi chia sẻ màn hình: ' + err.message);
+      }
+    }
+
+    async function initStudentWebRTC(roomId) {
+      const studentId = currentUser.username.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      try {
+        studentPeerConnection = new RTCPeerConnection(rtcConfig);
+
+        studentPeerConnection.ontrack = (event) => {
+          const videoElem = document.getElementById('liveVideoPlayer');
+          videoElem.srcObject = event.streams[0];
+          videoElem.play().catch(err => console.log("Autoplay blocked:", err));
+          document.getElementById('liveVideoPlaceholder').style.display = 'none';
+        };
+
+        studentPeerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            db.ref(`liveRooms/${roomId}/studentCandidates/${studentId}`).push(event.candidate.toJSON());
+          }
+        };
+
+        // Create offer to admin
+        const offer = await studentPeerConnection.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true });
+        await studentPeerConnection.setLocalDescription(offer);
+
+        db.ref(`liveRooms/${roomId}/offers/${studentId}`).set({ offer: offer });
+
+        // Listen for admin answer
+        db.ref(`liveRooms/${roomId}/answers/${studentId}`).on('value', async (snapshot) => {
+          const data = snapshot.val();
+          if (data && data.answer && studentPeerConnection && !studentPeerConnection.remoteDescription) {
+            await studentPeerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+          }
+        });
+
+        // Listen for admin ICE candidates
+        db.ref(`liveRooms/${roomId}/adminCandidates/${studentId}`).on('child_added', (candSnap) => {
+          const cand = candSnap.val();
+          if (cand && studentPeerConnection) {
+            studentPeerConnection.addIceCandidate(new RTCIceCandidate(cand)).catch(e => console.error(e));
+          }
+        });
+      } catch (err) {
+        console.error("WebRTC student connection error:", err);
       }
     }
 
@@ -1578,6 +1706,8 @@
 
     function finalizeRoomCleanup() {
       if (localMediaStream) localMediaStream.getTracks().forEach(track => track.stop());
+      Object.values(peerConnections).forEach(pc => pc.close());
+      peerConnections = {};
       if (activeLiveRoomId) {
         db.ref(`liveRooms/${activeLiveRoomId}`).remove();
       }
@@ -1590,9 +1720,22 @@
         db.ref(`liveRooms/${activeLiveRoomId}/chat`).off();
         db.ref(`liveRooms/${activeLiveRoomId}/reactions`).off();
         db.ref(`liveRooms/${activeLiveRoomId}/attachedDocs`).off();
+        db.ref(`liveRooms/${activeLiveRoomId}/streamUrl`).off();
+        if (currentUser && currentUser.role !== 'admin') {
+          const studentId = currentUser.username.replace(/[^a-zA-Z0-9]/g, '_');
+          db.ref(`liveRooms/${activeLiveRoomId}/offers/${studentId}`).remove();
+          db.ref(`liveRooms/${activeLiveRoomId}/answers/${studentId}`).remove();
+        }
+      }
+      if (studentPeerConnection) {
+        studentPeerConnection.close();
+        studentPeerConnection = null;
       }
       activeLiveRoomId = null;
       document.getElementById('activeLiveViewer').style.display = 'none';
+      document.getElementById('liveStreamIframeWrapper').style.display = 'none';
+      document.getElementById('liveStreamIframeWrapper').innerHTML = '';
+      document.getElementById('liveVideoPlaceholder').style.display = 'flex';
       closeEmbeddedDoc();
     }
 
