@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HỆ THỐNG ĐÀO TẠO MASTER - NỀN TẢNG HỌC TRỰC TUYẾN BẢO MẬT CAO</title>
+  <title>HỆ THỐNG ĐÀO TẠO MASTER STUDIO - NỀN TẢNG HỌC TRỰC TUYẾN BẢO MẬT CAO</title>
   
   <link id="manifestLink" rel="manifest">
   <meta name="theme-color" content="#6366f1">
@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -32,7 +33,7 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --border: rgba(255, 255, 255, 0.1);
-      --glass-bg: rgba(15, 23, 42, 0.85);
+      --glass-bg: rgba(15, 23, 42, 0.9);
       --font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
@@ -247,15 +248,26 @@
     .volume-bar { width: 75px; accent-color: var(--accent-cyan); cursor: pointer; }
     .quality-select, .speed-select { background: rgba(3,7,18,0.85); color: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; font-family: var(--font-family); }
 
-    /* CHAT & LIVE STREAM STYLES */
+    /* STUDIO LIVE & REACTIONS */
+    @keyframes floatUp {
+      0% { transform: translateY(0px) scale(0.8); opacity: 1; }
+      100% { transform: translateY(-350px) scale(1.3); opacity: 0; }
+    }
+    .floating-reaction {
+      position: absolute;
+      bottom: 20px;
+      animation: floatUp 2.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      pointer-events: none;
+      font-size: 32px;
+      z-index: 60;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
     .chat-container {
       background: var(--bg-panel); border-radius: 20px; border: 1px solid var(--border);
       height: 100%; min-height: 520px; display: flex; flex-direction: column; overflow: hidden;
     }
     .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-    .chat-message { max-width: 80%; padding: 12px 18px; border-radius: 16px; font-size: 0.9rem; line-height: 1.4; }
-    .chat-message.mine { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
-    .chat-message.others { align-self: flex-start; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
 
     .chat-input-area { padding: 16px; background: var(--bg-dark); border-top: 1px solid var(--border); display: flex; gap: 10px; }
     .chat-input-area input { flex-grow: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-panel); color: #fff; outline: none; font-family: var(--font-family); }
@@ -301,7 +313,7 @@
       <h3>📱 LỊCH SỬ HỌC TẬP GẦN ĐÂY</h3>
       <p id="resumeModalText">Bạn đã xem bài giảng từ thiết bị khác. Bạn có muốn tiếp tục xem không?</p>
       <div class="modal-actions">
-        <button class="btn-submit" style="width: auto; padding: 12px 28px;" onclick="confirmResumePlayback(true)">Đồng ý </button>
+        <button class="btn-submit" style="width: auto; padding: 12px 28px;" onclick="confirmResumePlayback(true)">Đồng ý</button>
         <button class="ctrl-btn" style="padding: 12px 22px;" onclick="confirmResumePlayback(false)">Bỏ qua</button>
       </div>
     </div>
@@ -311,7 +323,7 @@
   <div class="resume-modal" id="scheduleModal" style="display: none;">
     <div class="modal-box" style="max-width: 800px; width: 95%; height: 85vh; text-align: left; display: flex; flex-direction: column; padding: 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 id="scheduleModalTitle" style="color: var(--accent-cyan); margin: 0;">📅 THỜI KHÓA BIỂU KHÓA HỌC </h3>
+        <h3 id="scheduleModalTitle" style="color: var(--accent-cyan); margin: 0;">📅 THỜI KHÓA BIỂU KHÓA HỌC</h3>
         <button class="ctrl-btn" style="background: var(--danger); padding: 6px 14px;" onclick="closeScheduleModal()">✕ Đóng</button>
       </div>
       <div style="flex-grow: 1; width: 100%; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);">
@@ -322,8 +334,8 @@
 
   <div id="loginScreen">
     <div class="login-card">
-      <h2>🎓 HỆ THỐNG ĐÀO TẠO </h2>
-      <div class="login-subtitle">Nền Tảng Khóa Học Trực Tuyến</div>
+      <h2>🎓 HỆ THỐNG ĐÀO TẠO</h2>
+      <div class="login-subtitle">Nền Tảng Khóa Học Trực Tuyến & Studio Live 1080p</div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản học viên / Admin</label>
@@ -345,12 +357,12 @@
         <div class="icon-group">
           <div class="nav-icon active" onclick="switchMainTab('home')" title="Trang Chủ Dashboard">🏠</div>
           <div class="nav-icon" onclick="switchMainTab('courses')" title="Khóa Học Master">📚</div>
-          <div class="nav-icon" onclick="switchMainTab('live')" title="Phòng Live Stream">🔴</div>
+          <div class="nav-icon" onclick="switchMainTab('live')" title="Phòng Live Stream Studio">🔴</div>
           <div class="nav-icon" onclick="switchMainTab('exam')" title="PHÒNG THI THỬ">📝</div>
           <div class="nav-icon" id="adminNavIcon" onclick="switchMainTab('dashboard')" title="Quản Lý (Admin)" style="display: none;">📊</div>
         </div>
         <div class="icon-group">
-          <div class="nav-icon" onclick="requestNotificationPermission()" title="Bật Thông Báo ">🔔</div>
+          <div class="nav-icon" onclick="requestNotificationPermission()" title="Bật Thông Báo">🔔</div>
           <div class="nav-icon" onclick="handleLogout()" title="Đăng Xuất">🚪</div>
         </div>
       </div>
@@ -363,7 +375,7 @@
         <button class="sub-nav-btn active" id="btnSubHome" onclick="switchTab('home-view')">🏠 Trang Chủ & Tiến Độ</button>
         <button class="sub-nav-btn" id="btnSubCourses" onclick="switchTab('all-courses')">📖 Tất Cả Khóa Học</button>
         <button class="sub-nav-btn" id="btnSubLive" onclick="switchTab('live-view')">🔴 Phòng Live Stream</button>
-        <button class="sub-nav-btn" id="btnSubExam" onclick="switchTab('exam-view')">📝 Phòng Thi Thử </button>
+        <button class="sub-nav-btn" id="btnSubExam" onclick="switchTab('exam-view')">📝 Phòng Thi Thử</button>
         <button class="sub-nav-btn" id="btnSubDashboard" onclick="switchTab('dashboard-view')" style="display: none;">⚙️ Bảng Điều Khiển Admin</button>
       </div>
 
@@ -393,7 +405,7 @@
 
           <div class="stats-grid">
             <div class="stat-card">
-              <h3>Tiến Độ Học Tập </h3>
+              <h3>Tiến Độ Học Tập</h3>
               <div class="stat-big-num" id="homeRealProgressNum">0%</div>
               <div class="card-progress-bar-bg" style="margin-top: 12px;">
                 <div class="card-progress-bar-fill" id="homeProgressBarFill" style="width: 0%;"></div>
@@ -417,13 +429,10 @@
           </div>
 
           <div class="stat-card">
-            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">🎯 ĐÔI LỜI TÂM SỰ GỬI ĐẾN CÁC BẠN </h3>
+            <h3 style="margin-bottom: 14px; color: var(--accent-cyan);">🎯 ĐÔI LỜI TÂM SỰ GỬI ĐẾN CÁC BẠN</h3>
             <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
-              Gửi các bạn.
-Thực sự thì những ngày này, đứa nào trong chúng ta cũng mệt. Cái mệt không chỉ vì giải hoài không xong một câu logic VACT hay mỏi mắt vì gõ đề, mà là cái mệt của sự mơ hồ. Nhiều lúc ngồi trước bàn học lúc 1 giờ sáng, tự dưng thấy trống rỗng rồi tự hỏi: “Rốt cuộc mình đang cố gắng vì cái gì? Liệu có đi đến đâu không?”
-Chúng ta hay giấu sự sợ hãi đó sau mấy câu nói đùa “chắc tạch quá”, nhưng sâu bên trong, ai cũng đang gánh một nỗi áp lực rất thật: sợ làm bố mẹ thất vọng, sợ thua kém bạn bè, và sợ chính bản thân mình vô dụng.
-Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lại ngồi vào bàn. Sự thật là chẳng có phép màu nào cả, chỉ có sự lỳ lợm của chúng ta qua từng ngày. Kỳ thi VACT sắp tới sẽ khó, cạnh tranh sẽ gắt, nhưng nó cũng chỉ là một kỳ thi. Nó không đánh giá được hết con người bạn, cũng chẳng thể quyết định cả cuộc đời bạn đúng hay sai.
-Đừng ép mình phải phi thường, chỉ cần mỗi ngày nhích lên một chút. Mệt thì nằm nghỉ 15 phút rồi dậy học tiếp, đừng bỏ cuộc là được. Chúng ta đều đang tự chiến đấu với chính mình, nên hãy đối xử tử tế với bản thân một chút. Cố gắng hết sức đi, để sau này nhìn lại, ít nhất mình không phải tiếc nuối vì đã buông xuôi.
+              Gửi các bạn. Thực sự thì những ngày này, đứa nào trong chúng ta cũng mệt. Cái mệt không chỉ vì giải hoài không xong một câu logic hay mỏi mắt vì gõ đề, mà là cái mệt của sự mơ hồ. Nhiều lúc ngồi trước bàn học lúc 1 giờ sáng, tự dưng thấy trống rỗng rồi tự hỏi: “Rốt cuộc mình đang cố gắng vì cái gì?”
+              Chúng ta hay giấu sự sợ hãi đó sau mấy câu nói đùa, nhưng sâu bên trong, ai cũng đang gánh một nỗi áp lực rất thật. Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lại ngồi vào bàn. Sự thật là chẳng có phép màu nào cả, chỉ có sự lỳ lợm của chúng ta qua từng ngày. Kỳ thi sắp tới sẽ khó, cạnh tranh sẽ gắt, nhưng nó cũng chỉ là một kỳ thi. Đừng ép mình phải phi thường, chỉ cần mỗi ngày nhích lên một chút. Mệt thì nghỉ 15 phút rồi dậy học tiếp, đừng bỏ cuộc là được!
             </p>
           </div>
         </section>
@@ -431,7 +440,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         <section id="coursesTab" style="display: none;">
           <div class="page-header">
             <div>
-              <span class="page-title" id="courseSectionTitle">DANH SÁCH KHÓA HỌC ĐANG THAM GIA </span>
+              <span class="page-title" id="courseSectionTitle">DANH SÁCH KHÓA HỌC ĐANG THAM GIA</span>
             </div>
             <div style="font-size: 0.9rem; color: var(--text-muted);" id="userWelcomeText"></div>
           </div>
@@ -448,7 +457,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           <div id="bigCourseDetailView" style="display: none;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
               <div style="display: flex; align-items: center; gap: 14px;">
-                <button class="ctrl-btn" onclick="goBackToBigCourses()">⬅ Quay lại </button>
+                <button class="ctrl-btn" onclick="goBackToBigCourses()">⬅ Quay lại</button>
                 <h3 id="detailBigCourseTitle" style="color: var(--accent-cyan);"></h3>
               </div>
               <div id="scheduleButtonBox" style="display: flex; gap: 10px; align-items: center;"></div>
@@ -458,7 +467,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                 <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                  <button class="ctrl-btn" style="background: var(--primary);" onclick="toggleDocSideBySide(true)">📄 Hướng dẫn khung xem tài liệu </button>
+                  <button class="ctrl-btn" style="background: var(--primary);" onclick="toggleDocSideBySide(true)">📄 Hướng dẫn khung xem tài liệu</button>
                   <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đang học (0%)</span>
                 </div>
               </div>
@@ -475,7 +484,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
                     </div>
 
                     <div class="custom-video-controls" id="customControls">
-                      <button class="ctrl-btn" id="btnPlayPause" onclick="customPlayPause()"> ▶ </button>
+                      <button class="ctrl-btn" id="btnPlayPause" onclick="customPlayPause()">▶</button>
                       <button class="ctrl-btn" onclick="customSeek(-10)">⏮ -10s</button>
                       <button class="ctrl-btn" onclick="customSeek(10)">+10s ⏭</button>
                       
@@ -490,19 +499,19 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
                       <select class="speed-select" onchange="customSpeed(this.value)">
                         <option value="0.5">0.5x</option>
                         <option value="0.75">0.75x</option>
-                        <option value="1.0" selected>1.0x </option>
+                        <option value="1.0" selected>1.0x</option>
                         <option value="1.25">1.25x</option>
                         <option value="1.5">1.5x</option>
-                        <option value="2.0">2.0x </option>
+                        <option value="2.0">2.0x</option>
                       </select>
 
                       <select class="quality-select" onchange="customQuality(this.value)">
-                        <option value="hd1080" selected>1080p </option>
-                        <option value="hd720">720p </option>
-                        <option value="medium">480p </option>
+                        <option value="hd1080" selected>1080p</option>
+                        <option value="hd720">720p</option>
+                        <option value="medium">480p</option>
                       </select>
 
-                      <button class="ctrl-btn" onclick="customToggleFullscreen()"> ⛶ </button>
+                      <button class="ctrl-btn" onclick="customToggleFullscreen()">⛶</button>
                     </div>
                   </div>
                 </div>
@@ -510,7 +519,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
                 <div class="docs-column" id="docsColumn" style="display: none;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Tài liệu đính kèm:</span>
-                    <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng </button>
+                    <button class="ctrl-btn" style="background: var(--danger);" onclick="toggleDocSideBySide(false)">❌ Đóng</button>
                   </div>
                   <div style="flex-grow: 1; height: 100%; min-height: 480px; position: relative;">
                     <iframe id="docSideFrame" src="" style="width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 14px; background: #fff;"></iframe>
@@ -528,11 +537,12 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           </div>
         </section>
 
+        <!-- NÂNG CẤP PHÒNG LIVE STUDIO & EMBED ĐA PHƯƠNG TIỆN -->
         <section id="liveTab" style="display: none;">
           <div class="page-header">
             <div>
-              <span class="page-title">PHÒNG LIVE TRỰC TUYẾN CỦA KHÓA HỌC </span>
-              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Khi có phòng live, các bạn nhớ tham gia học tập đầy đủ!</p>
+              <span class="page-title">PHÒNG LIVE STUDIO 1080P & TƯƠNG TÁC</span>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Tham gia buổi học trực tuyến, tương tác thời gian thực và xem tài liệu chèn trực tiếp!</p>
             </div>
             <div id="adminLiveControls" style="display: none;">
               <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
@@ -545,36 +555,76 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
 
           <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-              <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream</h3>
-              <div style="display: flex; gap: 12px;">
+              <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream Studio</h3>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="ctrl-btn" style="background: var(--primary);" onclick="copyLiveRoomLink()">🔗 Sao Chép Link Phòng Live</button>
                 <button class="ctrl-btn" style="background: var(--danger);" onclick="leaveLiveRoom()">Thoát Phòng Live</button>
               </div>
             </div>
             
             <div class="lesson-view-layout split-screen">
+              <!-- Left: Video Stream & Embedded Docs Modal Viewer -->
               <div class="media-column" style="flex: 2;">
-                <div class="media-wrapper" style="height: 100%; min-height: 500px; padding-top: 0;">
-                  <video id="liveVideoPlayer" autoplay playsinline style="width:100%; height:100%; object-fit: cover; background:#000; position: absolute; top:0; left:0;"></video>
+                <div class="media-wrapper" style="height: 100%; min-height: 520px; padding-top: 0; position: relative; background: #000;">
+                  <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0;"></video>
+                  
+                  <div id="liveVideoPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #030712; color: var(--text-muted); gap: 12px; z-index: 5;">
+                    <i class="fa-solid fa-satellite-dish fa-3x" style="color: var(--primary-bright);"></i>
+                    <p style="font-size: 0.95rem;">Đang chờ tín hiệu phát trực tiếp từ Giảng viên...</p>
+                  </div>
+
+                  <!-- Embedded Document Viewer Modal Overlay trong Live Room -->
+                  <div id="embeddedDocContainer" style="display: none; position: absolute; inset: 10px; z-index: 40; background: rgba(15,23,42,0.95); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; flex-direction: column; overflow: hidden;">
+                    <div style="padding: 12px 16px; background: rgba(3,7,18,0.8); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                      <span id="embeddedDocTitle" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem;">Tài Liệu / Video Đang Mở</span>
+                      <button class="ctrl-btn" style="background: var(--danger); padding: 4px 10px;" onclick="closeEmbeddedDoc()">✕ Đóng</button>
+                    </div>
+                    <div style="flex-grow: 1; width: 100%; height: 100%;" id="embeddedDocWrapper"></div>
+                  </div>
                 </div>
-                <div id="adminBroadcastingBar" style="display: none; margin-top: 12px; gap: 12px; flex-wrap: wrap;">
-                  <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình Live</button>
-                  <button class="ctrl-btn" style="background: var(--danger);" onclick="adminEndLiveStream()">🔴 Kết Thúc Phòng Live</button>
+
+                <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; gap: 12px; flex-wrap: wrap;">
+                  <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình (1080p)</button>
+                  <button class="ctrl-btn" style="background: var(--primary);" onclick="adminOpenAttachDocModal()">📄 Chèn Link / Tài Liệu (YouTube, Drive, PDF)</button>
+                  <button class="ctrl-btn" style="background: var(--danger);" onclick="adminEndLiveStream()">🔴 Kết Thúc & Xuất MP4</button>
                 </div>
               </div>
+
+              <!-- Right: Chat & Attached Docs Pinned Bar -->
               <div class="docs-column" style="flex: 1;">
                 <div class="chat-container">
-                  <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan);">💬 Khung Trò Chuyện Trực Tuyến</div>
+                  <div id="pinnedDocsBar" style="padding: 10px 14px; background: var(--bg-dark); border-bottom: 1px solid var(--border); display: none; flex-wrap: wrap; gap: 8px;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); width: 100%;">📌 Tài liệu ghim trong phòng:</span>
+                    <div id="pinnedDocsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                  </div>
+
+                  <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan); display: flex; justify-content: space-between; align-items: center;">
+                    <span>💬 Trò Chuyện Trực Tuyến</span>
+                  </div>
+
                   <div class="chat-messages" id="liveChatMessagesBox">
                     <div style="color: var(--text-muted); text-align: center;">Đang kết nối khung chat...</div>
                   </div>
+
+                  <!-- Facebook-like Reactions Bar -->
+                  <div style="padding: 10px 14px; background: var(--bg-dark); border-top: 1px solid var(--border); display: flex; justify-content: space-around;">
+                    <button onclick="sendReaction('❤️')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">❤️</button>
+                    <button onclick="sendReaction('👍')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">👍</button>
+                    <button onclick="sendReaction('😆')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">😆</button>
+                    <button onclick="sendReaction('😮')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">😮</button>
+                    <button onclick="sendReaction('😢')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">😢</button>
+                    <button onclick="sendReaction('🔥')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem;">🔥</button>
+                  </div>
+
                   <div class="chat-input-area">
-                    <input type="text" id="liveChatMessageInput" placeholder="Nhập tin nhắn trò chuyện..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()">
+                    <input type="text" id="liveChatMessageInput" placeholder="Nhập bình luận..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()">
                     <button class="ctrl-btn" style="background: var(--primary);" onclick="sendLiveChatMessage()">Gửi</button>
                   </div>
                 </div>
               </div>
             </div>
+            <!-- Floating Reactions Container Overlay -->
+            <div id="reactionsOverlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden;"></div>
           </div>
         </section>
 
@@ -582,9 +632,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           <div class="page-header">
             <div>
               <span class="page-title">PHÒNG THI THỬ KHÓA HỌC TRỰC TUYẾN</span>
-              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quy định khi làm bài kiểm tra: Khi đã ấn nút làm bài sẽ bắt đầu bài kiểm tra thì sẽ tính thời gian. 
-                Khi làm đề thì sẽ bật tính năng chống gian lận: toàn màn hình, chống chuyển tab, chuyển ứng dụng. Lưu ý: khi vi phạm 1 trong các điều đó sẽ bị đánh giá là 0 điểm. 
-                Có thể tải đề về in ra và làm trước bằng cách vào "KHÓA THỰC CHIẾN ĐỀ THI THỬ ĐGNL VACT (ĐỢT 1)" tìm bài giảng và tải tài liệu về sau đó lên nhập đáp án ở phòng thi thử. Sau khi hoàn thành bài kiểm tra, máy tính sẽ tự động chấm điểm theo phương thức IRT (của ĐHQG HCM); sau đó sẽ công bố điểm lên bảng xếp hạng. </p>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quy định khi làm bài kiểm tra: Chống gian lận (toàn màn hình, chống chuyển tab). Vi phạm sẽ bị đánh giá 0 điểm. Chấm điểm theo phương thức IRT.</p>
             </div>
             <div id="adminExamControls" style="display: none;">
               <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử Mới</button>
@@ -593,7 +641,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
           </div>
 
           <div id="examListView">
-            <h3 style="margin-bottom: 16px; color: var(--accent-cyan);">Danh Sách Bài Thi Khả Dụng - Đang hoạt động </h3>
+            <h3 style="margin-bottom: 16px; color: var(--accent-cyan);">Danh Sách Bài Thi Khả Dụng - Đang hoạt động</h3>
             <div id="examListContainer" class="big-course-grid"></div>
           </div>
 
@@ -604,19 +652,19 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
             </div>
             <div id="examSourceDocBox" style="margin-bottom: 24px;"></div>
             <div id="examQuestionsContainer" style="display: flex; flex-direction: column; gap: 24px; margin-bottom: 28px;"></div>
-            <button class="btn-submit" style="padding: 16px; font-size: 1.05rem;" onclick="submitExam()">NỘP BÀI VÀ CHẤM ĐIỂM </button>
+            <button class="btn-submit" style="padding: 16px; font-size: 1.05rem;" onclick="submitExam()">NỘP BÀI VÀ CHẤM ĐIỂM</button>
           </div>
 
           <div id="examResultReviewView" style="display: none;">
             <div style="background: var(--bg-panel); border-radius: 24px; padding: 32px; border: 1px solid var(--accent-green); margin-bottom: 24px; text-align: center;">
-              <h3 style="color: var(--accent-green); font-size: 2rem; margin-bottom: 10px;">🎉 KẾT QUẢ THI THỬ </h3>
+              <h3 style="color: var(--accent-green); font-size: 2rem; margin-bottom: 10px;">🎉 KẾT QUẢ THI THỬ</h3>
               <div class="stat-big-num" id="resultScoreDisplay" style="color: var(--accent-cyan);">Điểm: 0.0</div>
               <p style="color: var(--text-muted); font-size: 1rem;" id="resultDetailText">Đã hoàn thành bài kiểm tra năng lực.</p>
               <div style="margin-top: 16px; font-weight: 700; color: var(--warning);" id="resultTimeUsedText">⏱ Thời gian làm bài: 0 phút</div>
             </div>
 
             <div class="stat-card" style="margin-bottom: 28px;">
-              <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">🏆 Bảng Xếp Hạng Bài Thi </h3>
+              <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">🏆 Bảng Xếp Hạng Bài Thi</h3>
               <table class="data-table">
                 <thead>
                   <tr>
@@ -741,7 +789,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
     </div>
   </div>
 
-  <!-- MODAL TẠO BÀI THI THỬ MỚI (TÍCH HỢP ĐỀ GGS, DRIVE, PDF & Ô ĐIỂM CỘNG/TRỪ) -->
+  <!-- MODAL TẠO BÀI THI THỬ MỚI -->
   <div class="resume-modal" id="adminExamModal" style="display: none;">
     <div class="modal-box" style="max-width: 720px; text-align: left; max-height: 90vh; overflow-y: auto;">
       <h3 style="text-align: center; color: var(--accent-cyan); margin-bottom: 18px;">📝 TẠO BÀI THI THỬ MỚI</h3>
@@ -772,6 +820,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
   </div>
 
   <script>
+    // Firebase Configuration (Giữ nguyên cấu hình Firebase gốc của bạn)
     const firebaseConfig = {
       apiKey: "AIzaSyCdC9u4XFa0UgM09dtn-OCPFf8EIFPXZUQ",
       authDomain: "khoa-hoc-online-f936d.firebaseapp.com",
@@ -789,7 +838,6 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
 
     const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='100%' height='100%' fill='%231e293b'/><circle cx='300' cy='140' r='60' fill='%236366f1' opacity='0.25'/><text x='50%' y='48%' fill='%23818cf8' font-family='sans-serif' font-size='48' text-anchor='middle' dominant-baseline='middle'>📚</text><text x='50%' y='70%' fill='%2394a3b8' font-family='sans-serif' font-size='18' font-weight='700' text-anchor='middle'>HỆ THỐNG MASTER TRỰC TUYẾN</text></svg>";
 
-    // Auto-detect client IP
     let clientIP = 'Đang xác định IP...';
     fetch('https://api.ipify.org?format=json')
       .then(res => res.json())
@@ -886,11 +934,12 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
     let currentLessonInfo = null;
     let activeLiveRoomId = null;
     let localMediaStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
     let currentExamObj = null;
     let examTimerInterval = null;
     let examStartTime = 0;
 
-    // Realtime activity logger
     document.addEventListener('click', (e) => {
       if (!currentUser || currentUser.role === 'admin') return;
       const targetText = e.target.innerText || e.target.tagName;
@@ -1341,7 +1390,6 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
       }
     }
 
-    // THỜI KHÓA BIỂU MỞ NGAY TRÊN WEB KHÔNG CHUYỂN HƯỚNG
     function openScheduleModal(url) {
       if (!url) { alert('Chưa cập nhật link thời khóa biểu!'); return; }
       document.getElementById('scheduleIframe').src = url.replace('/view', '/preview');
@@ -1352,7 +1400,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
       document.getElementById('scheduleIframe').src = '';
     }
 
-    // PHÒNG LIVE STREAM ĐỒNG BỘ
+    // --- STUDIO LIVE & EMBEDDED DOCS / 1080P RECORDING ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -1364,7 +1412,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
       Object.entries(roomsData).forEach(([roomId, room]) => {
         container.innerHTML += `
           <div class="live-card">
-            <span class="live-badge">🔴 LIVE TRỰC TIẾP</span>
+            <span class="live-badge">🔴 LIVE 1080P</span>
             <h4 style="margin: 12px 0; color: #fff;">${room.title}</h4>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên: ${room.host}</p>
             <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host}')">Tham Gia Xem Live ➔</button>
@@ -1386,7 +1434,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
 
     function joinLiveRoom(roomId, title, host) {
       activeLiveRoomId = roomId;
-      document.getElementById('liveRoomTitleDisplay').innerText = `🔴 LIVE: ${title} (Host: ${host})`;
+      document.getElementById('liveRoomTitleDisplay').innerText = `🔴 STUDIO LIVE: ${title} (Host: ${host})`;
       document.getElementById('activeLiveViewer').style.display = 'block';
 
       if (currentUser.role === 'admin') {
@@ -1395,8 +1443,19 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         document.getElementById('adminBroadcastingBar').style.display = 'none';
       }
 
+      // Listen chat
       db.ref(`liveRooms/${roomId}/chat`).on('value', (snapshot) => {
         renderLiveChatMessages(snapshot.val());
+      });
+
+      // Listen reactions
+      db.ref(`liveRooms/${roomId}/reactions`).on('child_added', (snapshot) => {
+        showFloatingReaction(snapshot.val().emoji);
+      });
+
+      // Listen attached docs
+      db.ref(`liveRooms/${roomId}/attachedDocs`).on('value', (snapshot) => {
+        renderPinnedDocs(snapshot.val());
       });
     }
 
@@ -1409,27 +1468,132 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
 
     async function adminStartScreenShare() {
       try {
-        localMediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        localMediaStream = await navigator.mediaDevices.getDisplayMedia({ 
+          video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } }, 
+          audio: true 
+        });
         const videoElem = document.getElementById('liveVideoPlayer');
         videoElem.srcObject = localMediaStream;
-        alert('Đã chia sẻ màn hình giảng dạy thành công!');
+        videoElem.muted = true;
+        document.getElementById('liveVideoPlaceholder').style.display = 'none';
+
+        recordedChunks = [];
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus' : 'video/webm';
+        mediaRecorder = new MediaRecorder(localMediaStream, { 
+          mimeType: mimeType, 
+          videoBitsPerSecond: 1500000 
+        });
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.start(1000);
+
+        alert('Đã chia sẻ màn hình 1080p thành công!');
+        localMediaStream.getVideoTracks()[0].onended = () => { adminEndLiveStream(); };
       } catch (err) {
         alert('Lỗi chia sẻ màn hình: ' + err.message);
       }
     }
 
+    function adminOpenAttachDocModal() {
+      if (!activeLiveRoomId) return;
+      const title = prompt('Nhập tiêu đề tài liệu / video (VD: Slide bài giảng, Video YouTube...):');
+      if (!title) return;
+      const url = prompt('Dán link YouTube, Google Docs, Drive, PDF... vào đây:');
+      if (!url) return;
+
+      db.ref(`liveRooms/${activeLiveRoomId}/attachedDocs`).push({ title, url });
+    }
+
+    function renderPinnedDocs(data) {
+      const bar = document.getElementById('pinnedDocsBar');
+      const list = document.getElementById('pinnedDocsList');
+      if (!bar || !list) return;
+
+      if (!data) {
+        bar.style.display = 'none';
+        list.innerHTML = '';
+        return;
+      }
+
+      bar.style.display = 'flex';
+      list.innerHTML = '';
+      Object.entries(data).forEach(([docKey, docObj]) => {
+        list.innerHTML += `
+          <button class="ctrl-btn" style="background: rgba(99,102,241,0.2); border-color: var(--primary);" onclick="openEmbeddedDoc('${docObj.url}', '${docObj.title}')">📄 ${docObj.title}</button>
+        `;
+      });
+    }
+
+    function openEmbeddedDoc(rawUrl, title) {
+      const modal = document.getElementById('embeddedDocContainer');
+      const wrapper = document.getElementById('embeddedDocWrapper');
+      const titleEl = document.getElementById('embeddedDocTitle');
+      if (!modal || !wrapper) return;
+
+      let embedUrl = rawUrl;
+      if (rawUrl.includes('youtube.com/watch?v=')) {
+        const vId = rawUrl.split('v=')[1].split('&')[0];
+        embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+      } else if (rawUrl.includes('youtu.be/')) {
+        const vId = rawUrl.split('youtu.be/')[1].split('?')[0];
+        embedUrl = `https://www.youtube.com/embed/${vId}?autoplay=1`;
+      } else if (rawUrl.includes('docs.google.com') || rawUrl.includes('drive.google.com')) {
+        embedUrl = rawUrl.replace('/edit', '/preview').replace('/view', '/preview');
+      }
+
+      titleEl.innerText = title || 'Tài Liệu Xem Trực Tiếp';
+      wrapper.innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:100%; border:none; background:#fff;" allow="autoplay; fullscreen"></iframe>`;
+      modal.style.display = 'flex';
+    }
+
+    function closeEmbeddedDoc() {
+      const modal = document.getElementById('embeddedDocContainer');
+      const wrapper = document.getElementById('embeddedDocWrapper');
+      if (modal) modal.style.display = 'none';
+      if (wrapper) wrapper.innerHTML = '';
+    }
+
     function adminEndLiveStream() {
-      if (confirm('Kết thúc phòng Live Stream? Toàn bộ lịch sử chat và stream sẽ bị XÓA!')) {
-        if (localMediaStream) localMediaStream.getTracks().forEach(track => track.stop());
-        db.ref(`liveRooms/${activeLiveRoomId}`).remove();
-        leaveLiveRoom();
+      const wantDownload = confirm('Bạn có muốn tải video ghi hình 1080p của buổi live về máy trước khi kết thúc không?');
+      if (wantDownload && mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = `LiveStream_1080p_${activeLiveRoomId}.mp4`;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            finalizeRoomCleanup();
+          }, 200);
+        };
+      } else {
+        finalizeRoomCleanup();
       }
     }
 
+    function finalizeRoomCleanup() {
+      if (localMediaStream) localMediaStream.getTracks().forEach(track => track.stop());
+      if (activeLiveRoomId) {
+        db.ref(`liveRooms/${activeLiveRoomId}`).remove();
+      }
+      leaveLiveRoom();
+      alert('Đã kết thúc phòng Live Stream và dọn dẹp dữ liệu thành công!');
+    }
+
     function leaveLiveRoom() {
-      if (activeLiveRoomId) db.ref(`liveRooms/${activeLiveRoomId}/chat`).off();
+      if (activeLiveRoomId) {
+        db.ref(`liveRooms/${activeLiveRoomId}/chat`).off();
+        db.ref(`liveRooms/${activeLiveRoomId}/reactions`).off();
+        db.ref(`liveRooms/${activeLiveRoomId}/attachedDocs`).off();
+      }
       activeLiveRoomId = null;
       document.getElementById('activeLiveViewer').style.display = 'none';
+      closeEmbeddedDoc();
     }
 
     function sendLiveChatMessage() {
@@ -1441,6 +1605,22 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         sender: currentUser.name, text, time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
       });
       input.value = '';
+    }
+
+    function sendReaction(emoji) {
+      if (!activeLiveRoomId) return;
+      db.ref(`liveRooms/${activeLiveRoomId}/reactions`).push({ emoji, time: Date.now() });
+    }
+
+    function showFloatingReaction(emoji) {
+      const container = document.getElementById('reactionsOverlay');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'floating-reaction';
+      el.innerText = emoji;
+      el.style.left = Math.random() * 80 + 10 + '%';
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 2800);
     }
 
     function renderLiveChatMessages(data) {
@@ -1458,7 +1638,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
       box.scrollTop = box.scrollHeight;
     }
 
-    // THI THỬ & CHẤM ĐIỂM THEO Ô ĐIỂM CỘNG / TRỪ MỚI
+    // --- THI THỬ & CHẤM ĐIỂM ---
     function renderExamList() {
       const container = document.getElementById('examListContainer');
       if (!container) return;
@@ -1779,7 +1959,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
       });
     }
 
-    // BẢNG ĐIỀU KHIỂN ADMIN & LỌC HOẠT ĐỘNG THEO NGÀY
+    // --- BẢNG ĐIỀU KHIỂN ADMIN & HOẠT ĐỘNG ---
     function renderAdminDashboardStats() {
       const onlineCount = userAccounts.filter(u => u.isOnline).length;
       const lockedCount = userAccounts.filter(u => u.isLocked).length;
@@ -1946,7 +2126,7 @@ Nhưng nhìn lại mà xem, dù sợ, dù nản, tối nào chúng ta cũng lạ
         Notification.requestPermission().then(permission => {
           if (permission === "granted") {
             new Notification("STUDY MASTER PWA", {
-              body: "Đã bật thông báo đẩy thành công! Bạn sẽ nhận thông báo bài học mới và lịch học.",
+              body: "Đã bật thông báo đẩy thành công!",
               icon: DEFAULT_FALLBACK_IMAGE
             });
           }
