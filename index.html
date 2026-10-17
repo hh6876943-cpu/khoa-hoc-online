@@ -19,7 +19,7 @@
 
   <style>
     :root {
-      --bg-dark: #030712;
+      --bg-dark: #020617;
       --bg-panel: #0f172a;
       --bg-card: #1e293b;
       --bg-hover: #334155;
@@ -32,8 +32,8 @@
       --warning: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.1);
-      --glass-bg: rgba(15, 23, 42, 0.9);
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(15, 23, 42, 0.85);
       --font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
@@ -50,7 +50,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(3, 7, 18, 0.98);
+      background: rgba(2, 6, 23, 0.98);
       z-index: 999999;
       flex-direction: column;
       justify-content: center;
@@ -62,15 +62,15 @@
 
     #loginScreen {
       display: flex; justify-content: center; align-items: center; min-height: 100vh;
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #030712 100%);
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #020617 100%);
       position: relative;
     }
     .login-card {
       background: var(--glass-bg); 
       backdrop-filter: blur(24px);
-      border: 1px solid rgba(129, 140, 248, 0.3);
+      border: 1px solid rgba(129, 140, 248, 0.25);
       padding: 48px 40px; border-radius: 28px; width: 100%; max-width: 460px; 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.15);
     }
     .login-card h2 { text-align: center; color: var(--accent-cyan); margin-bottom: 8px; font-weight: 800; font-size: 2rem; }
     .login-subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
@@ -78,7 +78,7 @@
     .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
     .form-group input, .form-group select, .form-group textarea {
       width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border);
-      background: rgba(3, 7, 18, 0.8); color: #fff; outline: none; font-family: var(--font-family);
+      background: rgba(2, 6, 23, 0.8); color: #fff; outline: none; font-family: var(--font-family);
       transition: all 0.3s ease;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
@@ -88,15 +88,15 @@
     .btn-submit {
       width: 100%; padding: 14px; background: linear-gradient(135deg, var(--bg-sidebar-left) 0%, var(--primary-bright) 100%); 
       color: #fff; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; 
-      font-family: var(--font-family); transition: all 0.3s ease; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5);
+      font-family: var(--font-family); transition: all 0.3s ease; box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
     }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(129, 140, 248, 0.7); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(129, 140, 248, 0.6); }
 
     #appScreen { display: none; height: 100vh; }
     .app-container { display: flex; height: 100vh; overflow: hidden; }
 
     .icon-sidebar {
-      width: 80px; background: #0b0f19; border-right: 1px solid var(--border);
+      width: 80px; background: #090d16; border-right: 1px solid var(--border);
       display: flex; flex-direction: column; align-items: center; padding: 24px 0; justify-content: space-between; flex-shrink: 0; z-index: 20;
     }
     .icon-group { display: flex; flex-direction: column; gap: 18px; align-items: center; }
@@ -105,7 +105,7 @@
       width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 16px;
       position: relative;
     }
-    .nav-icon:hover, .nav-icon.active { color: #fff; background: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+    .nav-icon:hover, .nav-icon.active { color: #fff; background: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); }
 
     .sub-sidebar {
       width: 280px; background-color: var(--bg-panel); border-right: 1px solid var(--border);
@@ -153,7 +153,7 @@
       display: flex; flex-direction: column; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative;
     }
     .big-course-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-color: var(--primary-bright); }
-    .card-thumb-box { width: 100%; height: 190px; background: #111827; position: relative; overflow: hidden; }
+    .card-thumb-box { width: 100%; height: 190px; background: #0f172a; position: relative; overflow: hidden; }
     .card-thumb-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
     .big-course-card:hover .card-thumb-box img { transform: scale(1.05); }
     .card-body { padding: 24px; display: flex; flex-direction: column; flex-grow: 1; }
@@ -178,7 +178,7 @@
     }
     .part-header-box:hover { background: var(--bg-hover); }
 
-    .lessons-list { display: none; padding: 14px 18px; background: #090d16; border-radius: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+    .lessons-list { display: none; padding: 14px 18px; background: #050b14; border-radius: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
     .lessons-list.open { display: block; }
     
     .lesson-item {
@@ -234,7 +234,7 @@
 
     .custom-video-controls {
       position: absolute; bottom: 0; left: 0; width: 100%;
-      background: linear-gradient(to top, rgba(3,7,18,0.98), rgba(3,7,18,0));
+      background: linear-gradient(to top, rgba(2,6,23,0.98), rgba(2,6,23,0));
       padding: 16px 20px; display: flex; align-items: center; gap: 12px; z-index: 50; pointer-events: auto; flex-wrap: wrap;
     }
     .ctrl-btn {
@@ -246,7 +246,7 @@
     .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.25); border-radius: 4px; position: relative; }
     .progress-fill { width: 0%; height: 100%; background: var(--accent-cyan); border-radius: 4px; }
     .volume-bar { width: 75px; accent-color: var(--accent-cyan); cursor: pointer; }
-    .quality-select, .speed-select { background: rgba(3,7,18,0.85); color: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; font-family: var(--font-family); }
+    .quality-select, .speed-select { background: rgba(2,6,23,0.85); color: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; font-size: 0.8rem; font-family: var(--font-family); }
 
     /* STUDIO LIVE & REACTIONS */
     @keyframes floatUp {
@@ -274,7 +274,7 @@
 
     .resume-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(3,7,18,0.8); backdrop-filter: blur(10px); z-index: 9999;
+      background: rgba(2,6,23,0.85); backdrop-filter: blur(10px); z-index: 9999;
       justify-content: center; align-items: center; padding: 20px;
     }
     .modal-box {
@@ -370,7 +370,7 @@
       <div class="sub-sidebar" id="subSidebar">
         <div class="sub-sidebar-header">
           <span class="sub-sidebar-title">KHÓA HỌC TRỰC TUYẾN</span>
-          <button class="toggle-sidebar-btn" onclick="toggleSidebar()" title="Thu gọn / Mở rộng">◀</button>
+          <button class="toggle-sidebar-btn" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Thu gọn / Mở rộng">◀</button>
         </div>
         <button class="sub-nav-btn active" id="btnSubHome" onclick="switchTab('home-view')">🏠 Trang Chủ & Tiến Độ</button>
         <button class="sub-nav-btn" id="btnSubCourses" onclick="switchTab('all-courses')">📖 Tất Cả Khóa Học</button>
@@ -388,8 +388,11 @@
               <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Thông báo tiến độ học tập, về khóa học và cập nhật mới nhất từ Admin.</p>
             </div>
             <div style="display: flex; align-items: center; gap: 14px;">
-              <div id="userAvatarBox" style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="promptChangeAvatar()" title="Đổi Avatar">
-                <span id="userAvatarText">H</span>
+              <!-- Nút thay đổi avatar chọn ảnh từ thiết bị -->
+              <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarFileSelect(event)">
+              <div id="userAvatarBox" style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer; position: relative;" onclick="document.getElementById('avatarFileInput').click()" title="Bấm để chọn ảnh đại diện từ thiết bị">
+                <span id="userAvatarText" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">H</span>
+                <img id="userAvatarImg" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
               </div>
               <div>
                 <div style="font-weight: 700; font-size: 1rem;" id="homeUserName">Học viên</div>
@@ -537,7 +540,7 @@
           </div>
         </section>
 
-        <!-- PHÒNG LIVE STUDIO & TƯƠNG TÁC (ĐÃ KHẮC PHỤC LỖI HIỂN THỊ MÀN HÌNH CHO HỌC SINH) -->
+        <!-- PHÒNG LIVE STUDIO & TƯƠNG TÁC (TỐI ƯU GIAO DIỆN & TÀI LIỆU TRỰC TIẾP) -->
         <section id="liveTab" style="display: none;">
           <div class="page-header">
             <div>
@@ -563,20 +566,20 @@
             </div>
             
             <div class="lesson-view-layout split-screen">
-              <!-- Left: Video Stream & Embedded Docs Modal Viewer -->
-              <div class="media-column" style="flex: 2;">
-                <div class="media-wrapper" style="height: 100%; min-height: 520px; padding-top: 0; position: relative; background: #000;">
+              <!-- Left: Video Stream mở rộng lớn hơn (flex: 3) -->
+              <div class="media-column" style="flex: 3;">
+                <div class="media-wrapper" style="height: 100%; min-height: 560px; padding-top: 0; position: relative; background: #000;">
                   <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0; z-index: 2;"></video>
                   <div id="liveStreamIframeWrapper" style="position: absolute; inset: 0; z-index: 3; display: none;"></div>
                   
-                  <div id="liveVideoPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #030712; color: var(--text-muted); gap: 12px; z-index: 5;">
+                  <div id="liveVideoPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #020617; color: var(--text-muted); gap: 12px; z-index: 5;">
                     <i class="fa-solid fa-satellite-dish fa-3x" style="color: var(--primary-bright);"></i>
                     <p style="font-size: 0.95rem;">Đang chờ tín hiệu phát trực tiếp từ Giảng viên...</p>
                   </div>
 
                   <!-- Embedded Document Viewer Modal Overlay trong Live Room -->
-                  <div id="embeddedDocContainer" style="display: none; position: absolute; inset: 10px; z-index: 40; background: rgba(15,23,42,0.95); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; flex-direction: column; overflow: hidden;">
-                    <div style="padding: 12px 16px; background: rgba(3,7,18,0.8); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                  <div id="embeddedDocContainer" style="display: none; position: absolute; inset: 10px; z-index: 40; background: rgba(15,23,42,0.96); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; flex-direction: column; overflow: hidden;">
+                    <div style="padding: 12px 16px; background: rgba(2,6,23,0.9); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
                       <span id="embeddedDocTitle" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem;">Tài Liệu / Video Đang Mở</span>
                       <button class="ctrl-btn" style="background: var(--danger); padding: 4px 10px;" onclick="closeEmbeddedDoc()">✕ Đóng</button>
                     </div>
@@ -592,12 +595,13 @@
                 </div>
               </div>
 
-              <!-- Right: Chat & Attached Docs Pinned Bar -->
-              <div class="docs-column" style="flex: 1;">
+              <!-- Right: Khung chat thu nhỏ gọn (flex: 1.2) kết hợp danh mục tài liệu ghim ngay phía trên chat -->
+              <div class="docs-column" style="flex: 1.2;">
                 <div class="chat-container">
-                  <div id="pinnedDocsBar" style="padding: 10px 14px; background: var(--bg-dark); border-bottom: 1px solid var(--border); display: none; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); width: 100%;">📌 Tài liệu ghim trong phòng:</span>
-                    <div id="pinnedDocsList" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                  <!-- Tài liệu ghim từ Admin xuất hiện ngay phía trên khung trò chuyện -->
+                  <div id="pinnedDocsBar" style="padding: 12px 16px; background: rgba(15,23,42,0.95); border-bottom: 1px solid var(--border); display: none; flex-wrap: wrap; gap: 8px;">
+                    <span style="font-size: 0.78rem; font-weight: 800; color: var(--accent-cyan); width: 100%; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fa-solid fa-paperclip"></i> Tài liệu học tập đính kèm (Bấm để xem trực tiếp):</span>
+                    <div id="pinnedDocsList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;"></div>
                   </div>
 
                   <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan); display: flex; justify-content: space-between; align-items: center;">
@@ -685,23 +689,37 @@
             <button class="ctrl-btn" onclick="backToExamList()">⬅ Quay Lại Danh Sách Thi</button>
           </div>
 
+          <!-- NÂNG CẤP: Giao diện Admin quản lý điểm theo từng bài kiểm tra cụ thể -->
           <div id="adminExamResultsView" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-              <h3 style="color: var(--accent-cyan);">📊 Tổng Hợp Điểm & Bài Làm Của Học Sinh</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+              <h3 style="color: var(--accent-cyan);">📊 Tổng Hợp Điểm & Xếp Hạng Bài Thi Thử</h3>
               <button class="ctrl-btn" onclick="document.getElementById('adminExamResultsView').style.display='none'; document.getElementById('examListView').style.display='block';">Quay lại</button>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Học Viên</th>
-                  <th>Bài Thi</th>
-                  <th>Điểm IRT</th>
-                  <th>Thời Gian Nộp</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody id="adminExamResultsTable"></tbody>
-            </table>
+            
+            <div class="stat-card" style="margin-bottom: 24px;">
+              <label style="display:block; margin-bottom:8px; font-weight:700; color:var(--text-muted);">🎯 Chọn bài kiểm tra để xem chi tiết kết quả & xếp hạng:</label>
+              <select id="adminSelectExamFilter" style="width:100%; padding:14px; border-radius:12px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);" onchange="filterAdminExamSubmissions(this.value)">
+                <option value="">-- Chọn bài thi --</option>
+              </select>
+            </div>
+
+            <div class="stat-card" id="adminExamSubmissionsContainer" style="display:none;">
+              <h4 id="adminExamSubTitle" style="color: var(--accent-cyan); margin-bottom: 16px;">Bảng Xếp Hạng & Điểm Chi Tiết</h4>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Hạng</th>
+                    <th>Học Viên</th>
+                    <th>Điểm IRT</th>
+                    <th>Số Câu Đúng</th>
+                    <th>Thời Gian Làm</th>
+                    <th>Thời Điểm Nộp</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="adminExamResultsTable"></tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -822,7 +840,7 @@
   </div>
 
   <script>
-    // Firebase Configuration (Giữ nguyên cấu hình Firebase gốc của bạn)
+    // Firebase Configuration (Giữ nguyên cấu hình Firebase gốc)
     const firebaseConfig = {
       apiKey: "AIzaSyCdC9u4XFa0UgM09dtn-OCPFf8EIFPXZUQ",
       authDomain: "khoa-hoc-online-f936d.firebaseapp.com",
@@ -909,8 +927,8 @@
     ];
 
     const defaultUserAccounts = [
-      { id: 1, name: "Administrator Hưng", username: "admin", password: "hhh@123456", role: "admin", devices: [], isLocked: false, avatar: "H", lastIP: "127.0.0.1" },
-      { id: 2, name: "Học Viên Nguyễn Văn A", username: "user1", password: "123456", role: "user", devices: [], isLocked: false, avatar: "N", lastIP: "127.0.0.1" }
+      { id: 1, name: "Administrator Hưng", username: "admin", password: "hhh@123456", role: "admin", devices: [], isLocked: false, avatar: "H", avatarUrl: "", lastIP: "127.0.0.1" },
+      { id: 2, name: "Học Viên Nguyễn Văn A", username: "user1", password: "123456", role: "user", devices: [], isLocked: false, avatar: "N", avatarUrl: "", lastIP: "127.0.0.1" }
     ];
 
     const defaultExamsData = [
@@ -942,7 +960,6 @@
     let examTimerInterval = null;
     let examStartTime = 0;
 
-    // WebRTC Peer Connections for Live Stream Broadcasting
     let peerConnections = {};
     let studentPeerConnection = null;
     const rtcConfig = {
@@ -1086,7 +1103,7 @@
 
       document.getElementById('userWelcomeText').innerHTML = `Xin chào: <b>${user.name}</b> (${user.role === 'admin' ? 'Quản Trị Viên' : 'Học Viên'})`;
       document.getElementById('homeUserName').innerText = user.name;
-      document.getElementById('userAvatarText').innerText = user.avatar || user.name.charAt(0).toUpperCase();
+      updateAvatarDisplay(user);
 
       if (currentUser.username === 'admin') {
         document.getElementById('adminNavIcon').style.display = 'flex';
@@ -1122,6 +1139,43 @@
           }
         });
       }
+    }
+
+    function updateAvatarDisplay(user) {
+      const imgEl = document.getElementById('userAvatarImg');
+      const textEl = document.getElementById('userAvatarText');
+      if (user.avatarUrl) {
+        imgEl.src = user.avatarUrl;
+        imgEl.style.display = 'block';
+        textEl.style.display = 'none';
+      } else {
+        imgEl.style.display = 'none';
+        textEl.style.display = 'flex';
+        textEl.innerText = user.avatar || user.name.charAt(0).toUpperCase();
+      }
+    }
+
+    // TÍNH NĂNG MỚI: Chọn ảnh đại diện từ thiết bị
+    function handleAvatarFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        alert('Vui lòng chọn file hình ảnh hợp lệ!');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const base64Data = evt.target.result;
+        currentUser.avatarUrl = base64Data;
+        const idx = userAccounts.findIndex(u => u.username === currentUser.username);
+        if (idx !== -1) {
+          userAccounts[idx].avatarUrl = base64Data;
+        }
+        saveUsersToStorage();
+        updateAvatarDisplay(currentUser);
+        alert('Đã cập nhật ảnh đại diện thành công từ thiết bị!');
+      };
+      reader.readAsDataURL(file);
     }
 
     function listenSingleSession() {
@@ -1205,14 +1259,8 @@
     }
 
     function promptChangeAvatar() {
-      const newChar = prompt('Nhập ký tự đầu hoặc chữ cái cho Avatar của bạn:', currentUser.avatar || 'H');
-      if (!newChar) return;
-      currentUser.avatar = newChar.charAt(0).toUpperCase();
-      const idx = userAccounts.findIndex(u => u.username === currentUser.username);
-      if (idx !== -1) userAccounts[idx].avatar = currentUser.avatar;
-      saveUsersToStorage();
-      document.getElementById('userAvatarText').innerText = currentUser.avatar;
-      alert('Đổi avatar thành công!');
+      // Hỗ trợ dự phòng prompt nếu click tên hoặc giữ tính năng cũ, nhưng ưu tiên chọn file từ thiết bị
+      document.getElementById('avatarFileInput').click();
     }
 
     function saveVideoProgress(lessonTitle, currentTime, duration) {
@@ -1412,7 +1460,7 @@
       document.getElementById('scheduleIframe').src = '';
     }
 
-    // --- STUDIO LIVE & WEBRTC SIGNALING & STREAM BROADCASTING ---
+    // --- STUDIO LIVE & WEBRTC & EMBEDDED DOCUMENTS ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -1453,26 +1501,21 @@
         document.getElementById('adminBroadcastingBar').style.display = 'flex';
       } else {
         document.getElementById('adminBroadcastingBar').style.display = 'none';
-        // Student joins: initiate WebRTC viewer connection or watch stream URL
         initStudentWebRTC(roomId);
       }
 
-      // Listen chat
       db.ref(`liveRooms/${roomId}/chat`).on('value', (snapshot) => {
         renderLiveChatMessages(snapshot.val());
       });
 
-      // Listen reactions
       db.ref(`liveRooms/${roomId}/reactions`).on('child_added', (snapshot) => {
         showFloatingReaction(snapshot.val().emoji);
       });
 
-      // Listen attached docs
       db.ref(`liveRooms/${roomId}/attachedDocs`).on('value', (snapshot) => {
         renderPinnedDocs(snapshot.val());
       });
 
-      // Listen Stream URL broadcasts
       db.ref(`liveRooms/${roomId}/streamUrl`).on('value', (snapshot) => {
         const sUrl = snapshot.val();
         handleRemoteStreamUrl(sUrl);
@@ -1526,10 +1569,8 @@
         videoElem.muted = true;
         document.getElementById('liveVideoPlaceholder').style.display = 'none';
 
-        // Clear streamUrl if any
         db.ref(`liveRooms/${activeLiveRoomId}/streamUrl`).set('');
 
-        // Listen for students offering connections
         db.ref(`liveRooms/${activeLiveRoomId}/offers`).on('child_added', async (snapshot) => {
           const data = snapshot.val();
           const studentId = snapshot.key;
@@ -1595,13 +1636,11 @@
           }
         };
 
-        // Create offer to admin
         const offer = await studentPeerConnection.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true });
         await studentPeerConnection.setLocalDescription(offer);
 
         db.ref(`liveRooms/${roomId}/offers/${studentId}`).set({ offer: offer });
 
-        // Listen for admin answer
         db.ref(`liveRooms/${roomId}/answers/${studentId}`).on('value', async (snapshot) => {
           const data = snapshot.val();
           if (data && data.answer && studentPeerConnection && !studentPeerConnection.remoteDescription) {
@@ -1609,7 +1648,6 @@
           }
         });
 
-        // Listen for admin ICE candidates
         db.ref(`liveRooms/${roomId}/adminCandidates/${studentId}`).on('child_added', (candSnap) => {
           const cand = candSnap.val();
           if (cand && studentPeerConnection) {
@@ -1623,7 +1661,7 @@
 
     function adminOpenAttachDocModal() {
       if (!activeLiveRoomId) return;
-      const title = prompt('Nhập tiêu đề tài liệu / video (VD: Slide bài giảng, Video YouTube...):');
+      const title = prompt('Nhập tiêu đề tài liệu / video (VD: Slide bài giảng, Tài liệu tham khảo...):');
       if (!title) return;
       const url = prompt('Dán link YouTube, Google Docs, Drive, PDF... vào đây:');
       if (!url) return;
@@ -1646,7 +1684,7 @@
       list.innerHTML = '';
       Object.entries(data).forEach(([docKey, docObj]) => {
         list.innerHTML += `
-          <button class="ctrl-btn" style="background: rgba(99,102,241,0.2); border-color: var(--primary);" onclick="openEmbeddedDoc('${docObj.url}', '${docObj.title}')">📄 ${docObj.title}</button>
+          <button class="ctrl-btn" style="background: rgba(99,102,241,0.25); border-color: var(--primary-bright); font-size: 0.8rem; padding: 6px 12px;" onclick="openEmbeddedDoc('${docObj.url}', '${docObj.title}')">📄 ${docObj.title}</button>
         `;
       });
     }
@@ -2075,27 +2113,63 @@
       }
     }
 
+    // TÍNH NĂNG MỚI CHO ADMIN: Xem điểm, xếp hạng và thông tin khi ấn vào từng bài thi cụ thể
     function adminViewAllStudentExams() {
       document.getElementById('examListView').style.display = 'none';
       document.getElementById('adminExamResultsView').style.display = 'block';
+
+      const selectEl = document.getElementById('adminSelectExamFilter');
+      selectEl.innerHTML = '<option value="">-- Chọn bài kiểm tra --</option>';
+      examsData.forEach(ex => {
+        selectEl.innerHTML += `<option value="${ex.examId}">${ex.title} (${ex.questions.length} câu)</option>`;
+      });
+
+      document.getElementById('adminExamSubmissionsContainer').style.display = 'none';
+    }
+
+    function filterAdminExamSubmissions(examId) {
+      const container = document.getElementById('adminExamSubmissionsContainer');
       const tbody = document.getElementById('adminExamResultsTable');
-      tbody.innerHTML = 'Đang tải dữ liệu điểm...';
+      const titleEl = document.getElementById('adminExamSubTitle');
+      if (!examId) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      tbody.innerHTML = 'Đang tải dữ liệu bài thi...';
+
+      const currentEx = examsData.find(e => e.examId === examId);
+      if (currentEx) {
+        titleEl.innerText = `📊 Bảng Xếp Hạng & Điểm Chi Tiết: ${currentEx.title}`;
+      }
 
       db.ref('examResults').once('value', (snapshot) => {
         tbody.innerHTML = '';
         const data = snapshot.val();
         if (!data) {
-          tbody.innerHTML = '<tr><td colspan="5" style="color: var(--text-muted);">Chưa có học sinh nào nộp bài thi.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="color: var(--text-muted);">Chưa có học sinh nào nộp bài thi này.</td></tr>';
           return;
         }
-        Object.entries(data).forEach(([resId, res]) => {
+
+        let list = Object.entries(data).map(([resId, res]) => ({ resId, ...res })).filter(r => r.examId === examId);
+        list.sort((a, b) => b.irtScore - a.irtScore || a.timeSpentMinutes - b.timeSpentMinutes);
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="color: var(--text-muted);">Chưa có học sinh nào nộp bài kiểm tra này.</td></tr>';
+          return;
+        }
+
+        list.forEach((item, index) => {
           tbody.innerHTML += `
             <tr>
-              <td><b>${res.name}</b> (<code>${res.username}</code>)</td>
-              <td>${res.examTitle}</td>
-              <td style="color: var(--accent-cyan); font-weight:800;">${res.irtScore} Điểm (Đúng ${res.totalCorrect}/${res.totalQuestions})</td>
-              <td>${res.time}</td>
-              <td><button class="admin-btn-sm admin-btn-danger" onclick="db.ref('examResults/${resId}').remove(); adminViewAllStudentExams();">Xóa</button></td>
+              <td><b>#${index + 1}</b></td>
+              <td><b>${item.name}</b> (<code>${item.username}</code>)</td>
+              <td style="color: var(--accent-cyan); font-weight:800;">${item.irtScore} Điểm</td>
+              <td>${item.totalCorrect} / ${item.totalQuestions}</td>
+              <td>${item.timeSpentMinutes} phút</td>
+              <td>${item.time}</td>
+              <td><button class="admin-btn-sm admin-btn-danger" onclick="db.ref('examResults/${item.resId}').remove(); filterAdminExamSubmissions('${examId}');">Xóa Bài</button></td>
             </tr>
           `;
         });
@@ -2233,7 +2307,7 @@
 
       userAccounts.push({
         id: Date.now(), name, username, password,
-        role: isSubAdmin ? 'admin' : 'user', devices: [], isLocked: false, avatar: name.charAt(0).toUpperCase(), lastIP: '127.0.0.1'
+        role: isSubAdmin ? 'admin' : 'user', devices: [], isLocked: false, avatar: name.charAt(0).toUpperCase(), avatarUrl: '', lastIP: '127.0.0.1'
       });
       saveUsersToStorage();
       renderAdminUsers();
@@ -2254,7 +2328,7 @@
         short_name: "StudyMaster",
         start_url: ".",
         display: "standalone",
-        background_color: "#030712",
+        background_color: "#020617",
         theme_color: "#6366f1",
         icons: [{ src: DEFAULT_FALLBACK_IMAGE, sizes: "192x192", type: "image/svg+xml" }]
       };
@@ -2277,13 +2351,18 @@
       }
     }
 
+    // TÍNH NĂNG MỚI: Nút thu gọn & mở lại danh mục linh hoạt
     function toggleSidebar() {
       const sidebar = document.getElementById('subSidebar');
-      const btn = document.querySelector('.toggle-sidebar-btn');
+      const btn = document.getElementById('sidebarToggleBtn');
       if (sidebar.classList.contains('collapsed')) {
-        sidebar.classList.remove('collapsed'); btn.innerText = '◀';
+        sidebar.classList.remove('collapsed'); 
+        btn.innerText = '◀';
+        btn.title = 'Thu gọn danh mục';
       } else {
-        sidebar.classList.add('collapsed'); btn.innerText = '▶';
+        sidebar.classList.add('collapsed'); 
+        btn.innerText = '▶';
+        btn.title = 'Mở rộng danh mục';
       }
     }
 
@@ -2659,3 +2738,4 @@
   </script>
 </body>
 </html>
+```[cite: 5]
