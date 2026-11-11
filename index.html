@@ -201,13 +201,12 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; 
     }
 
-    /* ĐẢO VỊ TRÍ: LỚP PHỦ Ở DƯỚI (z-index thấp hơn) VÀ THANH ĐIỀU HƯỚNG LÊN TRÊN (z-index cao hơn) */
     .video-guard-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; background: transparent; cursor: pointer;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 45; background: transparent; cursor: pointer;
     }
 
     .watermark-overlay {
-      position: absolute; top: 15%; left: 10%; pointer-events: none; z-index: 41;
+      position: absolute; top: 15%; left: 10%; pointer-events: none; z-index: 40;
       color: rgba(255, 255, 255, 0.32); font-size: 1.05rem; font-weight: 800; letter-spacing: 1.5px;
       text-shadow: 0 0 8px rgba(0,0,0,0.9);
       animation: watermarkFloat 14s infinite ease-in-out alternate;
@@ -220,7 +219,7 @@
       100% { top: 15%; left: 10%; opacity: 0.3; }
     }
 
-    /* THANH ĐIỀU HƯỚNG BÀI GIẢNG ĐƯỢC ĐƯA LÊN TRÊN (z-index: 50) */
+    /* THANH ĐIỀU KHIỂN VIDEO CAO CẤP */
     .custom-video-controls {
       position: absolute; bottom: 0; left: 0; width: 100%;
       background: linear-gradient(to top, rgba(2,6,23,0.98), rgba(2,6,23,0));
@@ -459,7 +458,7 @@
         <div class="stat-card" style="margin-bottom: 28px; background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(15,23,42,0.9) 100%); border-color: rgba(99,102,241,0.4);">
           <h3 style="color: var(--primary-bright); margin-bottom: 12px;"><i class="fa-solid fa-heart"></i> Đôi Lời Tâm Sự Cùng Sĩ Tử VACT EDU</h3>
           <p style="font-size: 1rem; line-height: 1.6; color: var(--text-main); font-style: italic;">
-            "Hành trình ôn thi đại học chưa bao giờ là dễ dàng, sẽ có những đêm thức khuya giải từng bài toán khó, những lúc mệt mỏi vì áp lực điểm số. Nhưng hãy nhớ rằng, mỗi phút giây bạn nổ lực hôm nay chính là viên gạch vững chắc xây nên cánh cửa đại học mơ ước tại Bách Khoa và các trường hàng đầu. Đừng đơn độc chiến đấu, VACT EDU luôn ở đây đồng hành, cung cấp đầy đủ tài liệu, phòng live và hệ thống học tập tốt nhất để cùng bạn chạm tay tới vinh quang!"
+            "Hành trình ôn thi đại học chưa bao giờ là dễ dàng, sẽ có những đêm thức khuya giải từng bài toán khó, những lúc mệt mỏi vì áp lực điểm số. Nhưng hãy nhớ rằng, mỗi phút giây bạn nỗ lực hôm nay chính là viên gạch vững chắc xây nên cánh cửa đại học mơ ước tại Bách Khoa và các trường hàng đầu. Đừng đơn độc chiến đấu, VACT EDU luôn ở đây đồng hành, cung cấp đầy đủ tài liệu, phòng live và hệ thống học tập tốt nhất để cùng bạn chạm tay tới vinh quang!"
           </p>
         </div>
 
@@ -531,7 +530,7 @@
             <input type="text" id="lessonSearchInput" placeholder="🔍 Tìm kiếm bài giảng theo tên trong khóa học này..." style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
           </div>
 
-          <!-- MEDIA PLAYER & THANH ĐIỀU HƯỚNG BÀI GIẢNG (ĐÃ ĐƯA LÊN TRÊN, LỚP PHỦ Ở DƯỚI) -->
+          <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH CHI TIẾT -->
           <div class="media-player-container" id="mediaPlayerContainer" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
@@ -546,11 +545,9 @@
                 <div class="media-wrapper" id="mediaWrapper">
                   <div id="ytPlayerDiv"></div>
                   
-                  <!-- Lớp phủ bảo vệ được để ở dưới thanh điều hướng -->
                   <div class="video-guard-overlay" onclick="alert('Bảo mật: Vùng phát video được bảo vệ!')"></div>
                   <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">VACT EDU WATERMARK</span></div>
 
-                  <!-- Thanh điều hướng video được đưa lên trên (z-index: 50) -->
                   <div class="custom-video-controls" id="customControls">
                     <button class="video-ctrl-btn" id="btnPlayPause" onclick="customPlayPause()" title="Dừng / Phát"><i class="fa-solid fa-play" id="playPauseIcon"></i></button>
                     <button class="video-ctrl-btn" onclick="customSeek(-10)" title="Tua lùi 10 giây"><i class="fa-solid fa-rotate-left"></i><span style="font-size:10px; margin-left:-8px; font-weight:800;">10</span></button>
@@ -558,7 +555,7 @@
                     
                     <div class="video-time-text" id="videoTimeDisplay">0:00 / 0:00</div>
 
-                    <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video">
+                    <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video (chỉnh như YouTube)">
                       <div class="video-progress-bar">
                         <div class="video-progress-fill" id="customProgressFill"></div>
                       </div>
@@ -638,26 +635,25 @@
         <div id="libraryContainer" class="big-course-grid"></div>
       </section>
 
-      <!-- PHÒNG LIVE MỚI HOÀN TOÀN: SIÊU NHẸ, TIẾT KIỆM BĂNG THÔNG & DUNG LƯỢNG -->
       <section id="liveTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG LIVE STUDIO (TỐI ƯU HÓA SIÊU NHẸ)</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Phòng live thông minh kết hợp nhúng luồng phát trực tiếp, gom nhóm thả tim và giới hạn tin nhắn chat để tiết kiệm tối đa dung lượng.</p>
+            <span class="page-title">PHÒNG LIVE STUDIO & TƯƠNG TÁC XỊN HƠN</span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý phòng live, thêm, sửa, xóa phòng live linh hoạt & chuyên nghiệp.</p>
           </div>
           <div id="adminLiveControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
           </div>
         </div>
 
         <div id="liveRoomsContainer" class="live-grid">
-          <div style="color: var(--text-muted);">Đang tải danh sách phòng live...</div>
+          <div style="color: var(--text-muted);">Đang tải thông tin các phòng live...</div>
         </div>
 
-        <!-- GIAO DIỆN PHÒNG LIVE STREAM CHI TIẾT -->
+        <!-- PHÒNG LIVE STREAM NÂNG CẤP XỊN HƠN -->
         <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Studio</h3>
+          <div style="display: flex; justify-content: space-between; align- items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream Studio</h3>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
               <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> Sao Chép Link</button>
               <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()"><i class="fa-solid fa-right-from-bracket"></i> Thoát Phòng Live</button>
@@ -667,32 +663,36 @@
           <div class="lesson-view-layout split-screen">
             <div class="media-column" style="flex: 3;">
               <div class="media-wrapper" style="height: 100%; min-height: 520px; padding-top: 0; position: relative; background: #000;">
-                <!-- Dùng iframe nhúng luồng YouTube / Hybrid stream để tiết kiệm băng thông Server Firebase -->
-                <div id="liveStreamEmbedBox" style="position: absolute; inset: 0; z-index: 3;">
-                  <iframe id="liveEmbedIframe" src="" style="width: 100%; height: 100%; border: none; display: none;" allow="autoplay; fullscreen"></iframe>
-                  <div id="livePlaceholderBox" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #020617; color: var(--text-muted); gap: 12px;">
-                    <i class="fa-solid fa-satellite-dish fa-3x" style="color: var(--primary-bright);"></i>
-                    <p style="font-size: 0.95rem;">Đang chờ giảng viên phát luồng trực tiếp (Live Stream Stream URL)...</p>
-                  </div>
+                <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0; z-index: 2;"></video>
+                <div id="liveStreamIframeWrapper" style="position: absolute; inset: 0; z-index: 3; display: none;"></div>
+                
+                <div id="liveVideoPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #020617; color: var(--text-muted); gap: 12px; z-index: 5;">
+                  <i class="fa-solid fa-satellite-dish fa-3x" style="color: var(--primary-bright);"></i>
+                  <p style="font-size: 0.95rem;">Đang chờ tín hiệu phát trực tiếp từ Giảng viên...</p>
                 </div>
 
-                <div id="embeddedLiveDocContainer" style="display: none; position: absolute; inset: 10px; z-index: 40; background: rgba(15,23,42,0.96); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; flex-direction: column; overflow: hidden;">
+                <div id="embeddedDocContainer" style="display: none; position: absolute; inset: 10px; z-index: 40; background: rgba(15,23,42,0.96); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; flex-direction: column; overflow: hidden;">
                   <div style="padding: 12px 16px; background: rgba(2,6,23,0.9); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-                    <span id="embeddedLiveDocTitle" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem;">Tài Liệu Trực Tuyến</span>
-                    <button class="ctrl-btn" style="background: var(--danger); padding: 4px 10px; border:none; border-radius:8px; color:#fff; cursor:pointer;" onclick="closeEmbeddedLiveDoc()">✕ Đóng</button>
+                    <span id="embeddedDocTitle" style="font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem;">Tài Liệu Đang Mở</span>
+                    <button class="ctrl-btn" style="background: var(--danger); padding: 4px 10px; border:none; border-radius:8px; color:#fff; cursor:pointer;" onclick="closeEmbeddedDoc()">✕ Đóng</button>
                   </div>
-                  <div style="flex-grow: 1; width: 100%; height: 100%;" id="embeddedLiveDocWrapper"></div>
+                  <div style="flex-grow: 1; width: 100%; height: 100%;" id="embeddedDocWrapper"></div>
                 </div>
               </div>
 
-              <!-- Thanh điều khiển dành riêng cho Admin phát live -->
-              <div id="adminLiveBroadcastingBar" style="display: none; margin-top: 14px; gap: 10px; flex-direction: column;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                  <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminSetLiveStreamUrlPrompt()">
-                    <i class="fa-solid fa-globe"></i> Cài Đặt Link Phát Live (YouTube/Stream)
+              <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; flex-direction: column; gap: 10px;">
+                <button class="btn-submit" style="width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(99,102,241,0.4);" onclick="adminStartScreenShare()">
+                  <i class="fa-solid fa-desktop"></i> Bắt Đầu Share Màn Hình
+                </button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                  <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminBroadcastStreamUrlPrompt()">
+                    <i class="fa-solid fa-globe"></i> Phát Link YouTube
                   </button>
-                  <button class="ctrl-btn" style="background: var(--primary); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminOpenAttachLiveDocModal()">
-                    <i class="fa-solid fa-file-arrow-up"></i> Ghim Tài Liệu Đính Kèm
+                  <button class="ctrl-btn" style="background: var(--primary); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminOpenAttachDocModal()">
+                    <i class="fa-solid fa-file-arrow-up"></i> Chèn Tài Liệu
+                  </button>
+                  <button class="ctrl-btn" style="background: var(--danger); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminEndLiveStream()">
+                    <i class="fa-solid fa-circle-stop"></i> Kết Thúc
                   </button>
                 </div>
               </div>
@@ -700,32 +700,29 @@
 
             <div class="docs-column" style="flex: 1.2;">
               <div class="chat-container">
-                <div id="livePinnedDocsBar" style="padding: 12px 16px; background: rgba(15,23,42,0.95); border-bottom: 1px solid var(--border); display: none; flex-wrap: wrap; gap: 8px;">
-                  <span style="font-size: 0.78rem; font-weight: 800; color: var(--accent-cyan); width: 100%; text-transform: uppercase;"><i class="fa-solid fa-paperclip"></i> Tài liệu ghim trong phòng live:</span>
-                  <div id="livePinnedDocsList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;"></div>
+                <div id="pinnedDocsBar" style="padding: 12px 16px; background: rgba(15,23,42,0.95); border-bottom: 1px solid var(--border); display: none; flex-wrap: wrap; gap: 8px;">
+                  <span style="font-size: 0.78rem; font-weight: 800; color: var(--accent-cyan); width: 100%; text-transform: uppercase;"><i class="fa-solid fa-paperclip"></i> Tài liệu đính kèm:</span>
+                  <div id="pinnedDocsList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;"></div>
                 </div>
 
-                <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan); display: flex; justify-content: space-between; align-items: center;">
-                  <span>💬 Trò Chuyện Trực Tuyến (Tối ưu 50 tin nhắn gần nhất)</span>
-                  <span style="font-size: 0.75rem; color: var(--accent-green);" id="liveConnectionStatus">● Connected</span>
+                <div style="padding: 14px 18px; background: var(--bg-dark); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; color: var(--accent-cyan);">
+                  <span>💬 Trò Chuyện Trực Tuyến</span>
                 </div>
 
-                <!-- Khung chat giới hạn tin nhắn tải về -->
                 <div class="chat-messages" id="liveChatMessagesBox">
                   <div style="color: var(--text-muted); text-align: center;">Đang kết nối khung chat...</div>
                 </div>
 
-                <!-- Thả tim tối ưu bằng Debounce Buffer -->
                 <div style="padding: 10px 14px; background: var(--bg-dark); border-top: 1px solid var(--border); display: flex; justify-content: space-around;">
-                  <button onclick="bufferReaction('❤️')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">❤️</button>
-                  <button onclick="bufferReaction('👍')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">👍</button>
-                  <button onclick="bufferReaction('😆')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">😆</button>
-                  <button onclick="bufferReaction('🔥')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">🔥</button>
+                  <button onclick="sendReaction('❤️')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">❤️</button>
+                  <button onclick="sendReaction('👍')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">👍</button>
+                  <button onclick="sendReaction('😆')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">😆</button>
+                  <button onclick="sendReaction('🔥')" class="ctrl-btn" style="background: transparent; border: none; font-size: 1.3rem; cursor:pointer;">🔥</button>
                 </div>
 
                 <div class="chat-input-area">
-                  <input type="text" id="liveChatMessageInput" placeholder="Nhập bình luận..." onkeypress="if(event.key==='Enter') sendOptimizedLiveChatMessage()">
-                  <button class="ctrl-btn" style="background: var(--primary); border:none; padding:10px 16px; border-radius:10px; color:#fff; cursor:pointer;" onclick="sendOptimizedLiveChatMessage()">Gửi</button>
+                  <input type="text" id="liveChatMessageInput" placeholder="Nhập bình luận..." onkeypress="if(event.key==='Enter') sendLiveChatMessage()">
+                  <button class="ctrl-btn" style="background: var(--primary); border:none; padding:10px 16px; border-radius:10px; color:#fff; cursor:pointer;" onclick="sendLiveChatMessage()">Gửi</button>
                 </div>
               </div>
             </div>
@@ -2150,7 +2147,7 @@
       alert('Đã gửi khảo sát thành công!');
     }
 
-    // --- VIDEO PLAYER & THANH ĐIỀU HƯỚNG VIDEO TỐC ĐỘ 0.2X ĐẾN 4X, ĐỘ PHÂN GIẢI, PHỤ ĐỀ, KHUNG CỬA SỔ, RẠP CHIẾU PHIM, TOÀN MÀN HÌNH ---
+    // --- VIDEO PLAYER & THANH ĐIỀU KHIỂN VIDEO TỐC ĐỘ 0.2X ĐẾN 4X, ĐỘ PHÂN GIẢI, PHỤ ĐỀ, KHUNG CỬA SỔ, RẠP CHIẾU PHIM, TOÀN MÀN HÌNH ---
     function customPlayPause() {
       if (!ytPlayerInstance) return;
       const state = ytPlayerInstance.getPlayerState();
@@ -2360,31 +2357,30 @@
       document.body.appendChild(modal);
     }
 
-    // --- PHÒNG LIVE MỚI HOÀN TOÀN: TỐI ƯU DUNG LƯỢNG & BĂNG THÔNG ---
-    let liveReactionBuffer = [];
-    let reactionFlushInterval = null;
-
+    // --- PHÒNG LIVE NÂNG CẤP ĐỔI MỚI TỐT HƠN XỊN HƠN (THÊM, SỬA, XÓA CHO ADMIN) ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
       container.innerHTML = '';
-      if (!roomsData) { container.innerHTML = '<div style="color: var(--text-muted);">Chưa có phòng Live. Hãy tạo phòng mới.</div>'; return; }
+      if (!roomsData) { container.innerHTML = '<div style="color: var(--text-muted);">Chưa có phòng Live.</div>'; return; }
       Object.entries(roomsData).forEach(([roomId, room]) => {
         let adminLiveActions = '';
         if (currentUser && currentUser.role === 'admin') {
+          const safeTitle = (room.title || '').replace(/'/g, "\\'");
+          const safeHost = (room.host || 'Admin').replace(/'/g, "\\'");
           adminLiveActions = `
             <div style="display:flex; gap:8px; margin-top:12px;">
-              <button class="admin-btn-sm admin-btn-warning" style="flex:1;" onclick="adminEditLiveRoom('${roomId}', '${room.title}')">Sửa Phòng</button>
+              <button class="admin-btn-sm admin-btn-warning" style="flex:1;" onclick="adminEditLiveRoom('${roomId}', '${safeTitle}', '${safeHost}')">Sửa Phòng</button>
               <button class="admin-btn-sm admin-btn-danger" style="flex:1;" onclick="adminDeleteLiveRoom('${roomId}')">Xóa Phòng</button>
             </div>
           `;
         }
         container.innerHTML += `
           <div class="live-card">
-            <span class="live-badge">🔴 LIVE STREAM STUDIO</span>
+            <span class="live-badge">🔴 LIVE STUDIO PHÒNG CAO CẤP</span>
             <h4 style="margin: 12px 0; color: #fff; font-size:1.15rem;">${room.title}</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên chủ trì: ${room.host}</p>
-            <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host}')">Tham Gia Phòng Live ➔</button>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên chủ trì: ${room.host || 'Admin'}</p>
+            <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host || 'Admin'}')">Tham Gia Live Studio ➔</button>
             ${adminLiveActions}
           </div>
         `;
@@ -2392,129 +2388,64 @@
     }
 
     function adminCreateLiveRoom() {
-      const title = prompt('Nhập tiêu đề phòng Live mới:'); if (!title) return;
+      const title = prompt('Nhập tiêu đề phòng Live Studio mới:'); if (!title) return;
+      const host = prompt('Nhập tên giảng viên chủ trì:', currentUser.name); if (!host) return;
       const roomId = 'ROOM_' + Date.now();
-      db.ref(`liveRooms/${roomId}`).set({ title, host: currentUser.name, streamUrl: '', createdAt: Date.now() });
-      joinLiveRoom(roomId, title, currentUser.name);
+      db.ref(`liveRooms/${roomId}`).set({ title, host, createdAt: Date.now() });
+      alert('Đã tạo phòng live thành công!');
     }
 
-    function adminEditLiveRoom(roomId, currentTitle) {
-      const newTitle = prompt('Sửa tiêu đề phòng Live:', currentTitle);
-      if (!newTitle) return;
-      db.ref(`liveRooms/${roomId}`).update({ title: newTitle });
-      alert('Đã cập nhật tiêu đề phòng live!');
+    function adminEditLiveRoom(roomId, currentTitle, currentHost) {
+      const newTitle = prompt('Sửa tiêu đề phòng Live Studio:', currentTitle);
+      if (newTitle === null) return;
+      const newHost = prompt('Sửa tên giảng viên chủ trì:', currentHost || currentUser.name);
+      if (newHost === null) return;
+      db.ref(`liveRooms/${roomId}`).update({ 
+        title: newTitle.trim() || currentTitle, 
+        host: newHost.trim() || currentHost 
+      });
+      alert('Đã cập nhật thông tin phòng live thành công!');
     }
 
     function adminDeleteLiveRoom(roomId) {
-      if (confirm('Xóa vĩnh viễn phòng live này?')) {
+      if (confirm('Xóa vĩnh viễn phòng live studio này?')) {
         db.ref(`liveRooms/${roomId}`).remove();
-        alert('Đã xóa phòng live!');
+        if (activeLiveRoomId === roomId) leaveLiveRoom();
+        alert('Đã xóa phòng live thành công!');
       }
-    }
-
-    function adminSetLiveStreamUrlPrompt() {
-      if (!activeLiveRoomId) return;
-      const url = prompt('Nhập Link YouTube Live / Stream (Giúp bên thứ ba gánh toàn bộ băng thông video, tiết kiệm tối đa dung lượng Server):');
-      if (url === null) return;
-      db.ref(`liveRooms/${activeLiveRoomId}`).update({ streamUrl: url });
-      alert('Đã cập nhật link phát trực tiếp cho phòng live!');
     }
 
     function joinLiveRoom(roomId, title, host) {
       activeLiveRoomId = roomId;
-      document.getElementById('liveRoomTitleDisplay').innerText = `🔴 VACT LIVE STUDIO: ${title} (Host: ${host})`;
+      document.getElementById('liveRoomTitleDisplay').innerText = `🔴 VACT STUDIO LIVE: ${title} (Host: ${host})`;
       document.getElementById('activeLiveViewer').style.display = 'block';
-      
-      if (currentUser.role === 'admin') {
-        document.getElementById('adminLiveBroadcastingBar').style.display = 'flex';
-      } else {
-        document.getElementById('adminLiveBroadcastingBar').style.display = 'none';
-      }
+      if (currentUser.role === 'admin') document.getElementById('adminBroadcastingBar').style.display = 'flex';
+      else document.getElementById('adminBroadcastingBar').style.display = 'none';
 
-      // Lắng nghe streamUrl để hiển thị khung phát video
-      db.ref(`liveRooms/${roomId}/streamUrl`).on('value', (snapshot) => {
-        const streamUrl = snapshot.val();
-        const iframe = document.getElementById('liveEmbedIframe');
-        const placeholder = document.getElementById('livePlaceholderBox');
-        if (streamUrl) {
-          const ytId = extractYouTubeId(streamUrl);
-          if (ytId) {
-            iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
-          } else {
-            iframe.src = streamUrl;
-          }
-          iframe.style.display = 'block';
-          placeholder.style.display = 'none';
-        } else {
-          iframe.style.display = 'none';
-          placeholder.style.display = 'flex';
-        }
-      });
-
-      // Tối ưu Chat: Giới hạn chỉ tải 50 tin nhắn gần nhất (`limitToLast(50)`) để tiết kiệm dung lượng RAM và tải trang nhanh
-      db.ref(`liveRooms/${roomId}/chat`).limitToLast(50).on('value', (snapshot) => {
-        renderOptimizedLiveChatMessages(snapshot.val());
-      });
-
-      // Lắng nghe thả tim
-      db.ref(`liveRooms/${roomId}/reactions`).on('child_added', (snapshot) => {
-        showFloatingReaction(snapshot.val().emoji);
-      });
-
-      // Lắng nghe tài liệu ghim (Dạng link ngoài, dung lượng cơ sở dữ liệu = 0 MB)
-      db.ref(`liveRooms/${roomId}/attachedDocs`).on('value', (snapshot) => {
-        renderLivePinnedDocs(snapshot.val());
-      });
-
-      // Kích hoạt bộ đếm Gom nhóm Thả tim (Debounce Reaction Buffer)
-      if (!reactionFlushInterval) {
-        reactionFlushInterval = setInterval(() => {
-          if (liveReactionBuffer.length > 0 && activeLiveRoomId) {
-            // Gom nhóm và đẩy lên Firebase theo lô (batch) để giảm tối đa request
-            const emojiToSend = liveReactionBuffer[0];
-            db.ref(`liveRooms/${activeLiveRoomId}/reactions`).push({ emoji: emojiToSend, time: Date.now() });
-            liveReactionBuffer = [];
-          }
-        }, 1500);
-      }
+      db.ref(`liveRooms/${roomId}/chat`).on('value', (snapshot) => { renderLiveChatMessages(snapshot.val()); });
+      db.ref(`liveRooms/${roomId}/reactions`).on('child_added', (snapshot) => { showFloatingReaction(snapshot.val().emoji); });
+      db.ref(`liveRooms/${roomId}/attachedDocs`).on('value', (snapshot) => { renderPinnedDocs(snapshot.val()); });
     }
 
-    function adminOpenAttachLiveDocModal() {
+    function adminOpenAttachDocModal() {
       if (!activeLiveRoomId) return;
-      const title = prompt('Tiêu đề tài liệu đính kèm:'); if (!title) return;
-      const url = prompt('Link Google Drive / PDF / Doc / Sheet:'); if (!url) return;
+      const title = prompt('Tiêu đề tài liệu:'); if (!title) return;
+      const url = prompt('Link Google Drive / Doc / PDF / Sheet:'); if (!url) return;
       db.ref(`liveRooms/${activeLiveRoomId}/attachedDocs`).push({ title, url });
     }
 
-    function renderLivePinnedDocs(data) {
-      const bar = document.getElementById('livePinnedDocsBar');
-      const list = document.getElementById('livePinnedDocsList');
+    function renderPinnedDocs(data) {
+      const bar = document.getElementById('pinnedDocsBar');
+      const list = document.getElementById('pinnedDocsList');
       if (!bar || !list) return;
       if (!data) { bar.style.display = 'none'; list.innerHTML = ''; return; }
       bar.style.display = 'flex'; list.innerHTML = '';
       Object.entries(data).forEach(([docKey, docObj]) => {
-        list.innerHTML += `<button class="ctrl-btn" style="background: rgba(99,102,241,0.25); font-size:0.8rem; padding:6px 12px; border:none; border-radius:8px; color:#fff; cursor:pointer;" onclick="openEmbeddedLiveDoc('${docObj.url}', '${docObj.title}')">📄 ${docObj.title}</button>`;
+        list.innerHTML += `<button class="ctrl-btn" style="background: rgba(99,102,241,0.25); font-size:0.8rem; padding:6px 12px; border:none; border-radius:8px; color:#fff; cursor:pointer;" onclick="openEmbeddedDoc('${docObj.url}', '${docObj.title}')">📄 ${docObj.title}</button>`;
       });
     }
 
-    function openEmbeddedLiveDoc(rawUrl, title) {
-      let embedUrl = rawUrl.replace('/edit', '/preview').replace('/view', '/preview');
-      document.getElementById('embeddedLiveDocTitle').innerText = title || 'Tài Liệu Live';
-      document.getElementById('embeddedLiveDocWrapper').innerHTML = `<iframe src="${embedUrl}" style="width:100%; height:100%; border:none;" allow="autoplay; fullscreen"></iframe>`;
-      document.getElementById('embeddedLiveDocContainer').style.display = 'flex';
-    }
-
-    function closeEmbeddedLiveDoc() {
-      document.getElementById('embeddedLiveDocContainer').style.display = 'none';
-      document.getElementById('embeddedLiveDocWrapper').innerHTML = '';
-    }
-
-    // Cơ chế Gom nhóm Thả tim (Debounce Reaction) tiết kiệm băng thông database
-    function bufferReaction(emoji) {
-      liveReactionBuffer.push(emoji);
-      showFloatingReaction(emoji);
-    }
-
+    function sendReaction(emoji) { if (activeLiveRoomId) db.ref(`liveRooms/${activeLiveRoomId}/reactions`).push({ emoji, time: Date.now() }); }
     function showFloatingReaction(emoji) {
       const container = document.getElementById('reactionsOverlay');
       if (!container) return;
@@ -2525,18 +2456,14 @@
       container.appendChild(el);
       setTimeout(() => el.remove(), 2800);
     }
-
-    function sendOptimizedLiveChatMessage() {
+    function sendLiveChatMessage() {
       const input = document.getElementById('liveChatMessageInput');
       const text = input.value.trim();
       if (!text || !activeLiveRoomId) return;
-      db.ref(`liveRooms/${activeLiveRoomId}/chat`).push({
-        sender: currentUser.name, text, time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-      });
+      db.ref(`liveRooms/${activeLiveRoomId}/chat`).push({ sender: currentUser.name, text, time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) });
       input.value = '';
     }
-
-    function renderOptimizedLiveChatMessages(data) {
+    function renderLiveChatMessages(data) {
       const box = document.getElementById('liveChatMessagesBox');
       if (!box) return;
       box.innerHTML = '';
@@ -2546,20 +2473,10 @@
       });
       box.scrollTop = box.scrollHeight;
     }
-
     function leaveLiveRoom() {
-      if (activeLiveRoomId) {
-        db.ref(`liveRooms/${activeLiveRoomId}/chat`).off();
-        db.ref(`liveRooms/${activeLiveRoomId}/streamUrl`).off();
-      }
+      if (activeLiveRoomId) db.ref(`liveRooms/${activeLiveRoomId}/chat`).off();
       activeLiveRoomId = null;
       document.getElementById('activeLiveViewer').style.display = 'none';
-      if (reactionFlushInterval) { clearInterval(reactionFlushInterval); reactionFlushInterval = null; }
-    }
-
-    function copyLiveRoomLink() {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Đã sao chép liên kết phòng live vào bộ nhớ tạm!');
     }
 
     function renderExamList() {
