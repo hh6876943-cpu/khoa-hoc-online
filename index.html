@@ -182,7 +182,13 @@
     .media-player-container {
       background: var(--bg-panel); border-radius: 24px; padding: 28px; margin-bottom: 28px; border: 1px solid var(--primary-bright);
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      transition: all 0.3s ease;
     }
+    /* Chế độ Rạp Chiếu Phim */
+    .media-player-container.cinema-mode {
+      position: fixed; inset: 0; z-index: 99999; max-width: 100vw !important; height: 100vh; border-radius: 0; padding: 20px; overflow-y: auto; background: #020617;
+    }
+
     .lesson-view-layout { display: grid; grid-template-columns: 1fr; gap: 28px; transition: all 0.3s ease; }
     .lesson-view-layout.split-screen { grid-template-columns: 1fr 1fr; align-items: stretch; }
     
@@ -214,6 +220,7 @@
       100% { top: 15%; left: 10%; opacity: 0.3; }
     }
 
+    /* THANH ĐIỀU KHIỂN VIDEO GIỐNG YÊU CẦU / ẢNH MẪU */
     .custom-video-controls {
       position: absolute; bottom: 0; left: 0; width: 100%;
       background: linear-gradient(to top, rgba(2,6,23,0.98), rgba(2,6,23,0));
@@ -335,12 +342,12 @@
     </div>
   </div>
 
-  <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
+  <!-- ĐĂNG NHẬP / ĐĂNG KÝ -->
   <div id="loginScreen">
     <div class="login-card" id="loginCardBox">
       <h2>VACT EDU</h2>
       <div class="login-subtitle">Nền Tảng Đào Tạo & Khảo Thí Thông Minh</div>
-      <form id="authFormElement" onsubmit="handleLogin(event)">
+      <form onsubmit="handleLogin(event)">
         <div class="form-group">
           <label>Tài khoản học viên / Admin</label>
           <input type="text" id="username" placeholder="Nhập tài khoản của bạn" required>
@@ -349,8 +356,8 @@
           <label>Mật khẩu</label>
           <input type="password" id="password" placeholder="Nhập mật khẩu" required>
         </div>
-        <button type="submit" id="authSubmitBtn" class="btn-submit" style="margin-bottom: 14px;">🚀 Đăng Nhập Hệ Thống</button>
-        <button type="button" id="authSwitchBtn" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()">✨ Đăng Ký Tài Khoản Mới</button>
+        <button type="submit" class="btn-submit" style="margin-bottom: 14px;">🚀 Đăng Nhập Hệ Thống</button>
+        <button type="button" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()">✨ Đăng Ký Tài Khoản Mới</button>
       </form>
     </div>
   </div>
@@ -524,6 +531,7 @@
             <input type="text" id="lessonSearchInput" placeholder="🔍 Tìm kiếm bài giảng theo tên trong khóa học này..." style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
           </div>
 
+          <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH THEO YÊU CẦU -->
           <div class="media-player-container" id="mediaPlayerContainer" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
@@ -541,29 +549,28 @@
                   <div class="video-guard-overlay" onclick="alert('Bảo mật: Vùng phát video được bảo vệ!')"></div>
                   <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">VACT EDU WATERMARK</span></div>
 
-                  <!-- THANH ĐIỀU KHIỂN VIDEO HOÀN CHỈNH THEO YÊU CẦU -->
                   <div class="custom-video-controls" id="customControls">
-                    <button class="video-ctrl-btn" id="btnPlayPause" onclick="customPlayPause()" title="Phát / Tạm dừng"><i class="fa-solid fa-play" id="playPauseIcon"></i></button>
+                    <button class="video-ctrl-btn" id="btnPlayPause" onclick="customPlayPause()" title="Dừng / Phát"><i class="fa-solid fa-play" id="playPauseIcon"></i></button>
                     <button class="video-ctrl-btn" onclick="customSeek(-10)" title="Tua lùi 10 giây"><i class="fa-solid fa-rotate-left"></i><span style="font-size:10px; margin-left:-8px; font-weight:800;">10</span></button>
                     <button class="video-ctrl-btn" onclick="customSeek(10)" title="Tua tới 10 giây"><i class="fa-solid fa-rotate-right"></i><span style="font-size:10px; margin-left:-8px; font-weight:800;">10</span></button>
                     
                     <div class="video-time-text" id="videoTimeDisplay">0:00 / 0:00</div>
 
-                    <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video">
+                    <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video (chỉnh như YouTube)">
                       <div class="video-progress-bar">
                         <div class="video-progress-fill" id="customProgressFill"></div>
                       </div>
                     </div>
 
-                    <button class="video-ctrl-btn" onclick="customToggleMute()" title="Chỉnh âm lượng / Tắt tiếng" id="muteBtnIcon"><i class="fa-solid fa-volume-high"></i></button>
-                    <input type="range" id="volumeSliderInput" min="0" max="100" value="100" style="width: 70px; accent-color: var(--primary);" oninput="customChangeVolume(this.value)" title="Điều chỉnh âm lượng">
+                    <button class="video-ctrl-btn" onclick="customToggleMute()" title="Âm lượng / Tắt tiếng" id="muteBtnIcon"><i class="fa-solid fa-volume-high"></i></button>
+                    <input type="range" id="volumeSliderInput" min="0" max="100" value="100" style="width: 70px; accent-color: var(--primary);" oninput="customChangeVolume(this.value)" title="Chỉnh âm lượng">
                     
                     <div style="position: relative;">
                       <button class="video-ctrl-btn" onclick="toggleVideoSettingsPopup()" title="Cài đặt"><i class="fa-solid fa-gear"></i></button>
                       <div class="settings-popup-menu" id="videoSettingsPopup">
                         <div class="settings-popup-item" onclick="openSpeedSubMenu()">Tốc độ phát <span id="currentSpeedLabel">Chuẩn (1.0x) ></span></div>
                         <div class="settings-popup-item" onclick="openQualitySubMenu()">Độ phân giải <span id="currentQualityLabel">Cao (1080p) ></span></div>
-                        <div class="settings-popup-item" onclick="toggleSubtitlesFeature()">Bật/Tắt Phụ Đề <span id="subtitlesStatusLabel" style="color:var(--accent-green)">Tắt</span></div>
+                        <div class="settings-popup-item" onclick="toggleSubtitlesFeature()">Phụ đề <span id="subtitlesStatusLabel" style="color:var(--accent-green)">Tắt</span></div>
                       </div>
                       <div class="settings-popup-menu" id="speedSubMenu" style="display:none;">
                         <div class="settings-popup-item" onclick="setVideoSpeed(0.2)">0.2x</div>
@@ -571,17 +578,17 @@
                         <div class="settings-popup-item" onclick="setVideoSpeed(1.0)">Chuẩn (1.0x)</div>
                         <div class="settings-popup-item" onclick="setVideoSpeed(1.5)">1.5x</div>
                         <div class="settings-popup-item" onclick="setVideoSpeed(2.0)">2.0x</div>
-                        <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x</div>
+                        <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x (Tối đa)</div>
                       </div>
                       <div class="settings-popup-menu" id="qualitySubMenu" style="display:none;">
-                        <div class="settings-popup-item" onclick="setVideoQuality('hd1080')">Cao - 1080p HD</div>
-                        <div class="settings-popup-item" onclick="setVideoQuality('hd720')">Cao - 720p HD</div>
+                        <div class="settings-popup-item" onclick="setVideoQuality('hd1080')">Độ phân giải cao - 1080p HD</div>
+                        <div class="settings-popup-item" onclick="setVideoQuality('hd720')">Độ phân giải cao - 720p HD</div>
                         <div class="settings-popup-item" onclick="setVideoQuality('medium')">Tiêu chuẩn - 480p</div>
                       </div>
                     </div>
 
                     <button class="video-ctrl-btn" onclick="customToggleWindowMode()" title="Chế độ xem khung cửa sổ"><i class="fa-solid fa-window-restore"></i></button>
-                    <button class="video-ctrl-btn" onclick="customToggleCinemaMode()" title="Chế độ rạp chiếu phim"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='white' viewBox='0 0 24 24'><path d='M18 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H6V8h12z'/></svg>"></button>
+                    <button class="video-ctrl-btn" onclick="customToggleCinemaMode()" title="Chế độ rạp chiếu phim"><i class="fa-solid fa-film"></i></button>
                     <button class="video-ctrl-btn" onclick="customToggleFullscreen()" title="Phóng to toàn màn hình"><i class="fa-solid fa-expand"></i></button>
                   </div>
                 </div>
@@ -606,7 +613,7 @@
             </div>
 
             <div id="lessonDocsContainer" style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; display: none;">
-              <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh mục tài liệu đính kèm bài học (Hỗ trợ link tài liệu):</h4>
+              <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh mục tài liệu đính kèm bài học (Hỗ trợ nhiều tài liệu):</h4>
               <div id="lessonDocsList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
             </div>
           </div>
@@ -633,10 +640,10 @@
         <div class="page-header">
           <div>
             <span class="page-title">PHÒNG LIVE STUDIO & TƯƠNG TÁC</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý, thêm, sửa, xóa phòng live linh hoạt.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý phòng live, thêm, sửa, xóa linh hoạt.</p>
           </div>
           <div id="adminLiveControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Thêm Phòng Live Stream</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream</button>
           </div>
         </div>
 
@@ -644,18 +651,19 @@
           <div style="color: var(--text-muted);">Đang tải thông tin các phòng live...</div>
         </div>
 
+        <!-- PHÒNG LIVE VỚI CÁC NÚT ĐIỀU KHIỂN ĐƯỢC THIẾT KẾ LẠI GIỐNG ẢNH MẪU 132976 -->
         <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
             <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream Studio</h3>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-              <button class="ctrl-btn" style="background: var(--primary); border:none; padding:8px 16px; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()">🔗 Sao Chép Link</button>
-              <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()">Thoát Phòng Live</button>
+              <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> Sao Chép Link</button>
+              <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()"><i class="fa-solid fa-right-from-bracket"></i> Thoát Phòng Live</button>
             </div>
           </div>
           
           <div class="lesson-view-layout split-screen">
             <div class="media-column" style="flex: 3;">
-              <div class="media-wrapper" style="height: 100%; min-height: 560px; padding-top: 0; position: relative; background: #000;">
+              <div class="media-wrapper" style="height: 100%; min-height: 520px; padding-top: 0; position: relative; background: #000;">
                 <video id="liveVideoPlayer" autoplay playsinline controls style="width:100%; height:100%; object-fit: contain; background:#000; position: absolute; top:0; left:0; z-index: 2;"></video>
                 <div id="liveStreamIframeWrapper" style="position: absolute; inset: 0; z-index: 3; display: none;"></div>
                 
@@ -673,11 +681,22 @@
                 </div>
               </div>
 
-              <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; gap: 12px; flex-wrap: wrap;">
-                <button class="btn-submit" onclick="adminStartScreenShare()">📺 Bắt Đầu Share Màn Hình</button>
-                <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer;" onclick="adminBroadcastStreamUrlPrompt()">🌐 Phát Link YouTube / Stream URL</button>
-                <button class="ctrl-btn" style="background: var(--primary); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer;" onclick="adminOpenAttachDocModal()">📄 Chèn Nhiều Tài Liệu</button>
-                <button class="ctrl-btn" style="background: var(--danger); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer;" onclick="adminEndLiveStream()">🔴 Kết Thúc</button>
+              <!-- THANH NÚT ẤN PHÒNG LIVE ĐƯỢC CHỈNH SỬA LẠI GIỐNG ẢNH MẪU 132976 -->
+              <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; flex-direction: column; gap: 10px;">
+                <button class="btn-submit" style="width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(99,102,241,0.4);" onclick="adminStartScreenShare()">
+                  <i class="fa-solid fa-desktop"></i> Bắt Đầu Share Màn Hình
+                </button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                  <button class="ctrl-btn" style="background: var(--accent-green); color:#000; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminBroadcastStreamUrlPrompt()">
+                    <i class="fa-solid fa-globe"></i> Phát Link YouTube
+                  </button>
+                  <button class="ctrl-btn" style="background: var(--primary); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminOpenAttachDocModal()">
+                    <i class="fa-solid fa-file-arrow-up"></i> Chèn Tài Liệu
+                  </button>
+                  <button class="ctrl-btn" style="background: var(--danger); color:#fff; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer; text-align:center; font-size: 0.9rem;" onclick="adminEndLiveStream()">
+                    <i class="fa-solid fa-circle-stop"></i> Kết Thúc
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -777,12 +796,12 @@
         </div>
       </section>
 
-      <!-- DIỄN ĐÀN: ĐÃ BỎ AI, NHẮN TIN VỚI ADMIN, NHÓM CHAT ADMIN TẠO NHƯ ZALO -->
+      <!-- DIỄN ĐÀN & CHAT: BỎ AI, NHẮN ADMIN, NHÓM CHAT CHỈ HỌC SINH ĐƯỢC ADMIN ĐƯA VÀO MỚI THẤY VÀ CHÁT -->
       <section id="forumTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">DIỄN ĐÀN & NHÓM CHẢT CỘNG ĐỒNG</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nhắn tin trực tiếp với admin & nhóm chat do admin phân quyền như Zalo.</p>
+            <span class="page-title">DIỄN ĐÀN & NHÓM CHAT CỘNG ĐỒNG</span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nhắn tin trực tiếp với admin & nhóm chat Zalo-style (Chỉ thành viên được chỉ định mới thấy).</p>
           </div>
           <div id="adminForumControls" style="display: none;">
             <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateChatGroup()">+ Tạo Nhóm Chat Mới</button>
@@ -883,7 +902,6 @@
         </div>
       </section>
 
-      <!-- ADMIN DASHBOARD: CÓ TÍNH NĂNG MỞ KHÓA CHO THÀNH VIÊN KHI BỊ BÁO BẤT THƯỜNG -->
       <section id="dashboardTab" style="display: none;">
         <div class="page-header">
           <div>
@@ -981,7 +999,6 @@
     </div>
   </div>
 
-  <!-- MODAL CHỌN THÀNH VIÊN VÀO NHÓM CHAT (ZALO STYLE) -->
   <div class="resume-modal" id="adminGroupMembersModal" style="display: none;">
     <div class="modal-box" style="max-width: 500px; text-align: left;">
       <h3 style="color: var(--accent-cyan); margin-bottom: 16px;">👥 CHỌN THÀNH VIÊN VÀO NHÓM CHAT</h3>
@@ -1007,7 +1024,7 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
-    const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='100%' height='100% ' fill='%231e293b'/><circle cx='300' cy='140' r='60' fill='%236366f1' opacity='0.25'/><text x='50%' y='48%' fill='%23818cf8' font-family='sans-serif' font-size='48' text-anchor='middle' dominant-baseline='middle'>VACT</text></svg>";
+    const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='100%' height='100%' fill='%231e293b'/><circle cx='300' cy='140' r='60' fill='%236366f1' opacity='0.25'/><text x='50%' y='48%' fill='%23818cf8' font-family='sans-serif' font-size='48' text-anchor='middle' dominant-baseline='middle'>VACT</text></svg>";
 
     let clientIP = '127.0.0.1';
     fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => { clientIP = data.ip; }).catch(() => {});
@@ -1099,7 +1116,7 @@
     let examTimerInterval = null;
     let examStartTime = 0;
     let currentForumChannel = 'admin';
-    let isRegisterMode = false; // Trạng thái màn hình đăng ký
+    let isRegisterMode = false;
 
     let dailyLineChartInstance = null;
     let subjectColumnChartInstance = null;
@@ -1160,7 +1177,6 @@
       const notif = snapshot.val() || "Chào mừng bạn đến với hệ thống học trực tuyến VACT EDU!";
       const banner = document.getElementById('homeNotificationText');
       if (banner) banner.innerText = notif;
-      // Chỉ lưu lịch sử và thông báo mỗi tin 1 lần khi nội dung thay đổi thực tế
       if (notif && notif !== lastNotifText) {
         lastNotifText = notif;
         db.ref('notificationHistory').push({ text: notif, time: new Date().toLocaleString('vi-VN') });
@@ -1179,8 +1195,6 @@
       return 'Web Browser';
     }
 
-    // --- YÊU CẦU: ĐĂNG KÝ TÀI KHOẢN LÀ ĐỂ BẤT KÌ AI CŨNG CÓ THỂ TẠO TÀI KHOẢN HỌC SINH ---
-    // --- ẤN VÀO ĐĂNG KÍ SẼ HIỆN RA BẢN ĐĂNG KÍ VÀ MẤT KHUNG ĐĂNG NHẬP, SAU KHI ĐĂNG KÝ THÀNH CÔNG THÌ VÀO ĐƯỢC WEBSITE ---
     function toggleAuthMode() {
       isRegisterMode = !isRegisterMode;
       const card = document.getElementById('loginCardBox');
@@ -1250,8 +1264,6 @@
       userAccounts.push(newAcc);
       saveUsersToStorage();
       alert('Đăng ký tài khoản học sinh thành công! Đang tự động đăng nhập vào hệ thống...');
-      
-      // Sau khi đăng ký thành công thì vào được website ngay lập tức
       simulateAutoLoginAfterRegister(newAcc);
     }
 
@@ -1300,7 +1312,7 @@
       if (!user) { alert('Tài khoản hoặc mật khẩu không chính xác!'); return; }
 
       if (user.role !== 'admin' || user.username !== 'admin') {
-        if (user.isLocked) { alert('Tài khoản của bạn đã bị KHÓA do vi phạm / bất thường!'); return; }
+        if (user.isLocked) { alert('Tài khoản này đã bị KHÓA do vi phạm / bất thường!'); return; }
         if (!user.devices) user.devices = [];
         if (!user.devices.includes(detectedDevice)) {
           if (user.devices.length >= 2) {
@@ -1845,7 +1857,7 @@
       });
     }
 
-    // --- YÊU CẦU: DIỄN ĐÀN: BỎ TÍNH NĂNG AI, CHỈ NHẮN TIN ĐƯỢC VỚI ADMIN, ADMIN CÓ THỂ TẠO NHÓM VÀ CHỌN THÀNH VIÊN VÀO NHÓM, TÍNH NĂNG CHAT NHƯ ZALO ---
+    // --- DIỄN ĐÀN & CHAT: CHỈ HỌC SINH NÀO ĐƯỢC ADMIN ĐƯA VÀO NHÓM MỚI THẤY VÀ CHAT ---
     function switchForumChannel(channel) {
       currentForumChannel = channel;
       document.querySelectorAll('#forumLayoutGrid button').forEach(b => b.classList.remove('active'));
@@ -1979,7 +1991,7 @@
       const data = snapshot.val();
       if (!data) return;
       Object.entries(data).forEach(([gId, gObj]) => {
-        // Chỉ hiển thị nhóm nếu học sinh là thành viên hoặc là admin
+        // Chỉ hiển thị nhóm nếu học sinh được admin đưa vào members (hoặc là admin)
         if (currentUser && (currentUser.role === 'admin' || (gObj.members && gObj.members.includes(currentUser.username)))) {
           list.innerHTML += `<button class="nav-item-btn" onclick="switchForumChannel('${gObj.groupName}')" style="width:100%; justify-content:flex-start;"><i class="fa-solid fa-users"></i> ${gObj.groupName}</button>`;
         }
@@ -2050,9 +2062,7 @@
       alert('Đã gửi khảo sát thành công!');
     }
 
-    // --- YÊU CẦU: MỖI VIDEO BÀI GIẢNG: TRÊN LỚP PHỦ TẠO CHO TÔI CÁC NÚT PHẢI DÙNG ĐƯỢC NHƯ SAU ---
-    // Thanh thời gian video và chỉnh như youtube, nút dừng/phát, phóng to toàn màn hình, chế độ rạp chiếu phim, chế độ xem khung cửa sổ;
-    // Nút cài đặt bao gồm: tốc độ 0.2 -> 4x, độ phân giải (dùng được) cao, chỉnh âm lượng, bật/tắt phụ đề.
+    // --- VIDEO PLAYER & THANH ĐIỀU KHIỂN (ĐẦY ĐỦ TÍNH NĂNG NHƯ YÊU CẦU: TỐC ĐỘ 0.2->4X, ĐỘ PHÂN GIẢI CAO, ÂM LƯỢNG, PHỤ ĐỀ, RẠP CHIẾU PHIM, KHUNG CỬA SỔ, TOÀN MÀN HÌNH) ---
     function customPlayPause() {
       if (!ytPlayerInstance) return;
       const state = ytPlayerInstance.getPlayerState();
@@ -2098,7 +2108,7 @@
       if (ytPlayerInstance && ytPlayerInstance.setPlaybackQuality) ytPlayerInstance.setPlaybackQuality(qual);
       document.getElementById('qualitySubMenu').style.display = 'none';
       document.getElementById('currentQualityLabel').innerText = `Cao (${qual}) >`;
-      alert(`Đã chỉnh độ phân giải video thành công!`);
+      alert(`Đã chọn độ phân giải cao thành công!`);
     }
 
     let subtitlesActive = false;
@@ -2106,33 +2116,24 @@
       subtitlesActive = !subtitlesActive;
       document.getElementById('subtitlesStatusLabel').innerText = subtitlesActive ? 'Bật' : 'Tắt';
       document.getElementById('subtitlesStatusLabel').style.color = subtitlesActive ? 'var(--accent-green)' : 'var(--danger)';
-      alert(subtitlesActive ? 'Đã BẬT phụ đề tự động cho bài giảng!' : 'Đã TẮT phụ đề.');
+      alert(subtitlesActive ? 'Đã BẬT phụ đề bài giảng!' : 'Đã TẮT phụ đề.');
     }
 
-    // Chế độ xem khung cửa sổ (Window Mode)
     function customToggleWindowMode() {
       const wrapper = document.getElementById('mediaWrapper');
       wrapper.style.position = wrapper.style.position === 'fixed' ? 'relative' : 'fixed';
       if (wrapper.style.position === 'fixed') {
         wrapper.style.bottom = '20px'; wrapper.style.right = '20px'; wrapper.style.width = '420px'; wrapper.style.height = '235px'; wrapper.style.zIndex = '99999';
-        alert('Đã chuyển sang chế độ xem khung cửa sổ thu nhỏ.');
+        alert('Đã chuyển sang chế độ xem khung cửa sổ (Picture-in-Picture).');
       } else {
         wrapper.style.bottom = 'auto'; wrapper.style.right = 'auto'; wrapper.style.width = '100%'; wrapper.style.height = 'auto'; wrapper.style.zIndex = 'auto';
       }
     }
 
-    // Chế độ rạp chiếu phim (Cinema Mode)
     function customToggleCinemaMode() {
       const container = document.getElementById('mediaPlayerContainer');
-      container.classList.toggle('cinema-mode-active');
-      if (container.classList.contains('cinema-mode-active')) {
-        container.style.maxWidth = '100vw';
-        container.style.borderRadius = '0';
-        alert('Đã bật chế độ rạp chiếu phim (Cinema Mode).');
-      } else {
-        container.style.maxWidth = 'none';
-        container.style.borderRadius = '24px';
-      }
+      container.classList.toggle('cinema-mode');
+      alert(container.classList.contains('cinema-mode') ? 'Đã bật Chế độ Rạp Chiếu Phim.' : 'Đã tắt Chế độ Rạp Chiếu Phim.');
     }
 
     function customToggleFullscreen() {
@@ -2271,7 +2272,6 @@
       document.body.appendChild(modal);
     }
 
-    // --- YÊU CẦU: PHÒNG LIVE CÓ THỂ THÊM, SỬA, XÓA ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -2384,7 +2384,6 @@
       document.getElementById('activeLiveViewer').style.display = 'none';
     }
 
-    // --- YÊU CẦU: BÀI THI THỬ CÓ THỂ GẮN KÈM TÀI LIỆU LÀ LINK ---
     function renderExamList() {
       const container = document.getElementById('examListContainer');
       if (!container) return;
@@ -2562,7 +2561,6 @@
       });
     }
 
-    // --- YÊU CẦU: ADMIN CÓ THỂ MỞ KHÓA CHO THÀNH VIÊN KHI BỊ BÁO BẤT THƯỜNG ---
     function renderAdminDashboardStats() {
       const onlineCount = userAccounts.filter(u => u.isOnline).length;
       document.getElementById('onlineUserCount').innerText = `${onlineCount} Online`;
@@ -2595,7 +2593,7 @@
       const user = userAccounts.find(u => u.username === username);
       if (user) {
         user.isLocked = false;
-        user.devices = []; // Reset thiết bị để cho phép đăng nhập lại
+        user.devices = [];
         saveUsersToStorage();
       }
       db.ref(`suspiciousLogins/${logId}`).remove();
@@ -2674,7 +2672,6 @@
       saveUsersToStorage(); renderAdminUsers(); alert('Tạo tài khoản thành công!');
     }
 
-    // --- YÊU CẦU: THÔNG BÁO LÀ KHI CẬP NHẬT CỦA ADMIN VÀO CÁC TÍNH NĂNG KHI CÓ CHỈNH SỬA, THÊM KHÓA HỌC, ... VÀ CHỈ THÔNG BÁO MỖI TIN 1 LẦN ---
     function adminUpdateNotification() {
       const notif = prompt('Nhập thông báo cập nhật tính năng / khóa học mới:');
       if (notif !== null && notif.trim() !== "") {
