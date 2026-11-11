@@ -184,7 +184,6 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
       transition: all 0.3s ease;
     }
-    /* Chế độ Rạp Chiếu Phim */
     .media-player-container.cinema-mode {
       position: fixed; inset: 0; z-index: 99999; max-width: 100vw !important; height: 100vh; border-radius: 0; padding: 20px; overflow-y: auto; background: #020617;
     }
@@ -220,7 +219,7 @@
       100% { top: 15%; left: 10%; opacity: 0.3; }
     }
 
-    /* THANH ĐIỀU KHIỂN VIDEO GIỐNG YÊU CẦU / ẢNH MẪU */
+    /* THANH ĐIỀU KHIỂN VIDEO CAO CẤP */
     .custom-video-controls {
       position: absolute; bottom: 0; left: 0; width: 100%;
       background: linear-gradient(to top, rgba(2,6,23,0.98), rgba(2,6,23,0));
@@ -531,7 +530,7 @@
             <input type="text" id="lessonSearchInput" placeholder="🔍 Tìm kiếm bài giảng theo tên trong khóa học này..." style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
           </div>
 
-          <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH THEO YÊU CẦU -->
+          <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH CHI TIẾT -->
           <div class="media-player-container" id="mediaPlayerContainer" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
@@ -639,11 +638,11 @@
       <section id="liveTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG LIVE STUDIO & TƯƠNG TÁC</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý phòng live, thêm, sửa, xóa linh hoạt.</p>
+            <span class="page-title">PHÒNG LIVE STUDIO & TƯƠNG TÁC XỊN HƠN</span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý phòng live, thêm, sửa, xóa phòng live linh hoạt & chuyên nghiệp.</p>
           </div>
           <div id="adminLiveControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
           </div>
         </div>
 
@@ -651,9 +650,9 @@
           <div style="color: var(--text-muted);">Đang tải thông tin các phòng live...</div>
         </div>
 
-        <!-- PHÒNG LIVE VỚI CÁC NÚT ĐIỀU KHIỂN ĐƯỢC THIẾT KẾ LẠI GIỐNG ẢNH MẪU 132976 -->
+        <!-- PHÒNG LIVE STREAM NÂNG CẤP XỊN HƠN -->
         <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align- items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
             <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream Studio</h3>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
               <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> Sao Chép Link</button>
@@ -681,7 +680,6 @@
                 </div>
               </div>
 
-              <!-- THANH NÚT ẤN PHÒNG LIVE ĐƯỢC CHỈNH SỬA LẠI GIỐNG ẢNH MẪU 132976 -->
               <div id="adminBroadcastingBar" style="display: none; margin-top: 14px; flex-direction: column; gap: 10px;">
                 <button class="btn-submit" style="width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(99,102,241,0.4);" onclick="adminStartScreenShare()">
                   <i class="fa-solid fa-desktop"></i> Bắt Đầu Share Màn Hình
@@ -796,24 +794,29 @@
         </div>
       </section>
 
-      <!-- DIỄN ĐÀN & CHAT: BỎ AI, NHẮN ADMIN, NHÓM CHAT CHỈ HỌC SINH ĐƯỢC ADMIN ĐƯA VÀO MỚI THẤY VÀ CHÁT -->
+      <!-- DIỄN ĐÀN & CHAT: NÂNG CẤP NHẮN RIÊNG VỚI TỪNG THÀNH VIÊN VÀ NHÓM PHÂN QUYỀN -->
       <section id="forumTab" style="display: none;">
         <div class="page-header">
           <div>
             <span class="page-title">DIỄN ĐÀN & NHÓM CHAT CỘNG ĐỒNG</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nhắn tin trực tiếp với admin & nhóm chat Zalo-style (Chỉ thành viên được chỉ định mới thấy).</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nhắn tin trực tiếp với Admin & Nhóm Chat Phân Quyền (Chỉ thành viên được chọn mới nhìn thấy).</p>
           </div>
           <div id="adminForumControls" style="display: none;">
             <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateChatGroup()">+ Tạo Nhóm Chat Mới</button>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px; height: 600px;" id="forumLayoutGrid">
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 620px;" id="forumLayoutGrid">
           <div style="background: var(--bg-panel); border-radius: 20px; border: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
-            <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Kênh Liên Hệ</div>
-            <button class="nav-item-btn active" id="btnChannelAdmin" onclick="switchForumChannel('admin')" style="width:100%; justify-content:flex-start;"><i class="fa-solid fa-headset"></i> Nhắn Tin Trực Tiếp Với Admin</button>
+            <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Kênh Trực Tiếp với Admin</div>
+            <button class="nav-item-btn active" id="btnChannelAdmin" onclick="switchForumChannel('admin')" style="width:100%; justify-content:flex-start;"><i class="fa-solid fa-headset"></i> Chat Với Admin</button>
             
-            <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; margin-bottom: 4px;">Nhóm Chat Lớp / Học Tập</div>
+            <div id="adminPrivateChatsSection" style="display: none;">
+              <div style="font-size: 0.78rem; font-weight: 800; color: var(--warning); text-transform: uppercase; margin-top: 12px; margin-bottom: 4px;">Chat Riêng Từng Học Sinh (Admin)</div>
+              <div id="adminPrivateUsersList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+            </div>
+
+            <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; margin-bottom: 4px;">Nhóm Chat Phân Quyền</div>
             <div id="adminChatGroupsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
 
@@ -832,18 +835,19 @@
             </div>
 
             <div class="chat-input-area">
-              <input type="text" id="forumChatInput" placeholder="Nhập tin nhắn chat kiểu Zalo..." onkeypress="if(event.key==='Enter') sendForumMessage()">
+              <input type="text" id="forumChatInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key==='Enter') sendForumMessage()">
               <button class="ctrl-btn" style="background: var(--primary); border:none; padding:10px 20px; border-radius:12px; color:#fff; cursor:pointer;" onclick="sendForumMessage()">Gửi</button>
             </div>
           </div>
         </div>
       </section>
 
+      <!-- BÁO CÁO & KHẢO SÁT: XEM CÂU TRẢ LỜI CỦA HỌC SINH -->
       <section id="reportTab" style="display: none;">
         <div class="page-header">
           <div>
             <span class="page-title">BÁO CÁO LỖI & KHẢO SÁT ĐÁNH GIÁ</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Biểu mẫu khảo sát học tập do Admin quản lý.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Biểu mẫu khảo sát học tập và quản lý phản hồi học sinh.</p>
           </div>
           <div id="adminReportControls" style="display: none;">
             <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateFormModal()">+ Tạo Biểu Mẫu Khảo Sát Mới</button>
@@ -862,6 +866,21 @@
             <h3 style="color: var(--warning); margin-bottom: 14px;">📋 Danh Sách Khảo Sát & Biểu Mẫu</h3>
             <div id="surveyFormsList" style="display: flex; flex-direction: column; gap: 14px;"></div>
           </div>
+        </div>
+
+        <!-- HIỂN THỊ CÂU TRẢ LỜI BIỂU MẪU DÀNH CHO ADMIN -->
+        <div class="stat-card" id="adminSurveyAnswersBox" style="display: none; margin-top: 28px;">
+          <h3 style="color: var(--accent-green); margin-bottom: 14px;">📥 Tổng Hợp Câu Trả Lời Biểu Mẫu Từ Học Sinh</h3>
+          <div class="form-group">
+            <label>Chọn biểu mẫu để xem phản hồi:</label>
+            <select id="adminSelectSurveyFilter" style="width:100%; padding:12px; border-radius:12px; background:var(--bg-dark); color:#fff; border:1px solid var(--border);" onchange="loadSurveyResponsesForAdmin(this.value)">
+              <option value="">-- Chọn biểu mẫu --</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Học Viên</th><th>Tài Khoản</th><th>Nội Dung Trả Lời</th><th>Thời Gian</th><th>Thao Tác</th></tr></thead>
+            <tbody id="adminSurveyResponsesTable"><tr><td colspan="5" style="color:var(--text-muted);">Vui lòng chọn biểu mẫu để hiển thị câu trả lời.</td></tr></tbody>
+          </table>
         </div>
 
         <div class="stat-card" id="adminBugReportsBox" style="display: none; margin-top: 28px;">
@@ -1170,6 +1189,7 @@
       if (data) surveyFormsData = data;
       else surveyFormsData = [];
       renderSurveyFormsUI();
+      renderAdminSurveySelect();
     });
 
     let lastNotifText = "";
@@ -1293,6 +1313,8 @@
       document.getElementById('adminForumControls').style.display = 'none';
       document.getElementById('adminReportControls').style.display = 'none';
       document.getElementById('adminBugReportsBox').style.display = 'none';
+      document.getElementById('adminSurveyAnswersBox').style.display = 'none';
+      document.getElementById('adminPrivateChatsSection').style.display = 'none';
 
       document.getElementById('watermarkText').innerText = `VACT EDU | ${currentUser.name} | IP: ${detectedIP}`;
       renderCoursesUI();
@@ -1349,6 +1371,9 @@
         document.getElementById('adminForumControls').style.display = 'block';
         document.getElementById('adminReportControls').style.display = 'block';
         document.getElementById('adminBugReportsBox').style.display = 'block';
+        document.getElementById('adminSurveyAnswersBox').style.display = 'block';
+        document.getElementById('adminPrivateChatsSection').style.display = 'block';
+        renderAdminPrivateUsersList();
       } else {
         document.getElementById('adminNavBtn').style.display = 'none';
         document.getElementById('adminCoursesBar').style.display = 'none';
@@ -1359,6 +1384,8 @@
         document.getElementById('adminForumControls').style.display = 'none';
         document.getElementById('adminReportControls').style.display = 'none';
         document.getElementById('adminBugReportsBox').style.display = 'none';
+        document.getElementById('adminSurveyAnswersBox').style.display = 'none';
+        document.getElementById('adminPrivateChatsSection').style.display = 'none';
       }
 
       document.getElementById('watermarkText').innerText = `VACT EDU | ${currentUser.name} | IP: ${detectedIP}`;
@@ -1857,7 +1884,7 @@
       });
     }
 
-    // --- DIỄN ĐÀN & CHAT: CHỈ HỌC SINH NÀO ĐƯỢC ADMIN ĐƯA VÀO NHÓM MỚI THẤY VÀ CHAT ---
+    // --- DIỄN ĐÀN & CHAT NÂNG CẤP: ADMIN CHỌN & NHẮN RIÊNG VỚI TỪNG THÀNH VIÊN, TẠO NHÓM CHÁT PHÂN QUYỀN ---
     function switchForumChannel(channel) {
       currentForumChannel = channel;
       document.querySelectorAll('#forumLayoutGrid button').forEach(b => b.classList.remove('active'));
@@ -1868,13 +1895,30 @@
         document.getElementById('btnChannelAdmin').classList.add('active');
         document.getElementById('forumChannelTitle').innerText = '💬 Nhắn Tin Riêng Với Admin';
         loadForumMessages(`admin_${currentUser.username}`);
+      } else if (channel.startsWith('private_')) {
+        const targetUsername = channel.replace('private_', '');
+        const targetUser = userAccounts.find(u => u.username === targetUsername);
+        const nameDisplay = targetUser ? targetUser.name : targetUsername;
+        document.getElementById('forumChannelTitle').innerText = `💬 Chat Trực Tiếp Với: ${nameDisplay}`;
+        loadForumMessages(`admin_${targetUsername}`);
       } else {
-        document.getElementById('forumChannelTitle').innerText = `👥 Nhóm Chat Zalo: ${channel}`;
+        document.getElementById('forumChannelTitle').innerText = `👥 Nhóm Chat Phân Quyền: ${channel}`;
         if (currentUser && currentUser.role === 'admin' && adminBtns) {
           adminBtns.style.display = 'flex';
         }
         loadForumMessages(`group_${channel}`);
       }
+    }
+
+    function renderAdminPrivateUsersList() {
+      const container = document.getElementById('adminPrivateUsersList');
+      if (!container) return;
+      container.innerHTML = '';
+      userAccounts.forEach(acc => {
+        if (acc.username !== 'admin') {
+          container.innerHTML += `<button class="nav-item-btn" onclick="switchForumChannel('private_${acc.username}')" style="width:100%; justify-content:flex-start;"><i class="fa-solid fa-user-lock"></i> ${acc.name}</button>`;
+        }
+      });
     }
 
     function sendForumMessage() {
@@ -1883,7 +1927,15 @@
       if (!text) return;
       input.value = '';
 
-      let chatKey = currentForumChannel === 'admin' ? `admin_${currentUser.username}` : `group_${currentForumChannel}`;
+      let chatKey = '';
+      if (currentForumChannel === 'admin') {
+        chatKey = `admin_${currentUser.username}`;
+      } else if (currentForumChannel.startsWith('private_')) {
+        const targetUsername = currentForumChannel.replace('private_', '');
+        chatKey = `admin_${targetUsername}`;
+      } else {
+        chatKey = `group_${currentForumChannel}`;
+      }
 
       db.ref(`forumChats/${chatKey}`).push({
         sender: currentUser.name, username: currentUser.username, text, time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
@@ -1913,14 +1965,14 @@
     }
 
     function adminCreateChatGroup() {
-      const groupName = prompt('Nhập tên nhóm chat mới (Zalo style):');
+      const groupName = prompt('Nhập tên nhóm chat phân quyền mới:');
       if (!groupName) return;
       db.ref(`chatGroups`).push({ groupName, members: [currentUser.username] });
-      alert('Tạo nhóm chat thành công!');
+      alert('Tạo nhóm chat mới thành công!');
     }
 
     function adminEditCurrentChatGroup() {
-      if (currentForumChannel === 'admin') return;
+      if (currentForumChannel === 'admin' || currentForumChannel.startsWith('private_')) return;
       const newName = prompt('Sửa tên nhóm chat:', currentForumChannel);
       if (!newName) return;
       db.ref('chatGroups').once('value', (snapshot) => {
@@ -1938,7 +1990,7 @@
 
     let selectedGroupIdForMembers = null;
     function adminSelectGroupMembers() {
-      if (currentForumChannel === 'admin') return;
+      if (currentForumChannel === 'admin' || currentForumChannel.startsWith('private_')) return;
       db.ref('chatGroups').once('value', (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
@@ -1964,11 +2016,11 @@
       checkboxes.forEach(cb => { if (cb.checked) members.push(cb.value); });
       db.ref(`chatGroups/${selectedGroupIdForMembers}`).update({ members });
       document.getElementById('adminGroupMembersModal').style.display = 'none';
-      alert('Đã cập nhật danh sách thành viên vào nhóm!');
+      alert('Đã cập nhật danh sách thành viên được xem và chat trong nhóm!');
     }
 
     function adminDeleteCurrentChatGroup() {
-      if (currentForumChannel === 'admin') return;
+      if (currentForumChannel === 'admin' || currentForumChannel.startsWith('private_')) return;
       if (confirm(`Xóa vĩnh viễn nhóm chat "${currentForumChannel}"?`)) {
         db.ref('chatGroups').once('value', (snapshot) => {
           const data = snapshot.val();
@@ -1991,7 +2043,6 @@
       const data = snapshot.val();
       if (!data) return;
       Object.entries(data).forEach(([gId, gObj]) => {
-        // Chỉ hiển thị nhóm nếu học sinh được admin đưa vào members (hoặc là admin)
         if (currentUser && (currentUser.role === 'admin' || (gObj.members && gObj.members.includes(currentUser.username)))) {
           list.innerHTML += `<button class="nav-item-btn" onclick="switchForumChannel('${gObj.groupName}')" style="width:100%; justify-content:flex-start;"><i class="fa-solid fa-users"></i> ${gObj.groupName}</button>`;
         }
@@ -2053,6 +2104,40 @@
       });
     }
 
+    function renderAdminSurveySelect() {
+      const selectEl = document.getElementById('adminSelectSurveyFilter');
+      if (!selectEl) return;
+      selectEl.innerHTML = '<option value="">-- Chọn biểu mẫu --</option>';
+      if (surveyFormsData) {
+        Object.entries(surveyFormsData).forEach(([fId, fObj]) => {
+          selectEl.innerHTML += `<option value="${fId}">${fObj.title}</option>`;
+        });
+      }
+    }
+
+    function loadSurveyResponsesForAdmin(formId) {
+      const tbody = document.getElementById('adminSurveyResponsesTable');
+      if (!tbody) return;
+      if (!formId) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted);">Vui lòng chọn biểu mẫu để hiển thị câu trả lời.</td></tr>'; return; }
+      tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted);">Đang tải dữ liệu...</td></tr>';
+      db.ref(`surveyResponses/${formId}`).once('value', (snapshot) => {
+        tbody.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) { tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text-muted);">Chưa có học sinh nào gửi câu trả lời cho biểu mẫu này.</td></tr>'; return; }
+        Object.entries(data).forEach(([rId, rObj]) => {
+          tbody.innerHTML += `
+            <tr>
+              <td><b>${rObj.name}</b></td>
+              <td><code>${rObj.username}</code></td>
+              <td style="color:var(--accent-cyan); font-weight:600;">${rObj.answer}</td>
+              <td>${rObj.time}</td>
+              <td><button class="admin-btn-sm admin-btn-danger" onclick="db.ref('surveyResponses/${formId}/${rId}').remove(); loadSurveyResponsesForAdmin('${formId}');">Xóa</button></td>
+            </tr>
+          `;
+        });
+      });
+    }
+
     function submitSurveyAnswer(formId) {
       const input = document.getElementById(`surveyAnswer_${formId}`);
       const answer = input.value.trim();
@@ -2062,7 +2147,7 @@
       alert('Đã gửi khảo sát thành công!');
     }
 
-    // --- VIDEO PLAYER & THANH ĐIỀU KHIỂN (ĐẦY ĐỦ TÍNH NĂNG NHƯ YÊU CẦU: TỐC ĐỘ 0.2->4X, ĐỘ PHÂN GIẢI CAO, ÂM LƯỢNG, PHỤ ĐỀ, RẠP CHIẾU PHIM, KHUNG CỬA SỔ, TOÀN MÀN HÌNH) ---
+    // --- VIDEO PLAYER & THANH ĐIỀU KHIỂN VIDEO TỐC ĐỘ 0.2X ĐẾN 4X, ĐỘ PHÂN GIẢI, PHỤ ĐỀ, KHUNG CỬA SỔ, RẠP CHIẾU PHIM, TOÀN MÀN HÌNH ---
     function customPlayPause() {
       if (!ytPlayerInstance) return;
       const state = ytPlayerInstance.getPlayerState();
@@ -2272,6 +2357,7 @@
       document.body.appendChild(modal);
     }
 
+    // --- PHÒNG LIVE NÂNG CẤP ĐỔI MỚI TỐT HƠN XỊN HƠN ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
@@ -2282,17 +2368,17 @@
         if (currentUser && currentUser.role === 'admin') {
           adminLiveActions = `
             <div style="display:flex; gap:8px; margin-top:12px;">
-              <button class="admin-btn-sm admin-btn-warning" style="flex:1;" onclick="adminEditLiveRoom('${roomId}', '${room.title}')">Sửa</button>
-              <button class="admin-btn-sm admin-btn-danger" style="flex:1;" onclick="adminDeleteLiveRoom('${roomId}')">Xóa</button>
+              <button class="admin-btn-sm admin-btn-warning" style="flex:1;" onclick="adminEditLiveRoom('${roomId}', '${room.title}')">Sửa Phòng Live</button>
+              <button class="admin-btn-sm admin-btn-danger" style="flex:1;" onclick="adminDeleteLiveRoom('${roomId}')">Xóa Phòng</button>
             </div>
           `;
         }
         container.innerHTML += `
           <div class="live-card">
-            <span class="live-badge">🔴 LIVE STUDIO</span>
-            <h4 style="margin: 12px 0; color: #fff;">${room.title}</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên: ${room.host}</p>
-            <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host}')">Tham Gia Live ➔</button>
+            <span class="live-badge">🔴 LIVE STUDIO PHÒNG CAO CẤP</span>
+            <h4 style="margin: 12px 0; color: #fff; font-size:1.15rem;">${room.title}</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Giảng viên chủ trì: ${room.host}</p>
+            <button class="btn-submit" onclick="joinLiveRoom('${roomId}', '${room.title}', '${room.host}')">Tham Gia Live Studio ➔</button>
             ${adminLiveActions}
           </div>
         `;
@@ -2300,21 +2386,21 @@
     }
 
     function adminCreateLiveRoom() {
-      const title = prompt('Nhập tiêu đề phòng Live:'); if (!title) return;
+      const title = prompt('Nhập tiêu đề phòng Live Studio mới:'); if (!title) return;
       const roomId = 'ROOM_' + Date.now();
       db.ref(`liveRooms/${roomId}`).set({ title, host: currentUser.name, createdAt: Date.now() });
       joinLiveRoom(roomId, title, currentUser.name);
     }
 
     function adminEditLiveRoom(roomId, currentTitle) {
-      const newTitle = prompt('Sửa tiêu đề phòng Live:', currentTitle);
+      const newTitle = prompt('Sửa tiêu đề phòng Live Studio:', currentTitle);
       if (!newTitle) return;
       db.ref(`liveRooms/${roomId}`).update({ title: newTitle });
-      alert('Đã cập nhật phòng live!');
+      alert('Đã cập nhật tiêu đề phòng live!');
     }
 
     function adminDeleteLiveRoom(roomId) {
-      if (confirm('Xóa vĩnh viễn phòng live này?')) {
+      if (confirm('Xóa vĩnh viễn phòng live studio này?')) {
         db.ref(`liveRooms/${roomId}`).remove();
         alert('Đã xóa phòng live!');
       }
