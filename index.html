@@ -554,7 +554,7 @@
                   <video id="html5VideoPlayer" controls playsinline style="display:none; position:absolute; inset:0; width:100%; height:100%; background:#000; z-index:5;"></video>
                   <iframe id="fallbackIframePlayer" style="display:none; position:absolute; inset:0; width:100%; height:100%; border:none; z-index:5;" allow="autoplay; fullscreen"></iframe>
                   
-                  <div class="video-guard-overlay" onclick="alert('Bảo mật: Vùng phát video được bảo vệ!')"></div>
+                  <div class="video-guard-overlay" onclick="customPlayPause()"></div>
                   <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">VACT EDU WATERMARK</span></div>
                 </div>
 
@@ -2268,9 +2268,9 @@
 
     function extractYouTubeId(url) {
       if (!url) return null;
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
       const match = url.match(regExp);
-      return (match && match[2].length === 11) ? match[2] : null;
+      return match ? match[1] : null;
     }
 
     function playMediaContent(title, mediaUrl, docs) {
@@ -2282,6 +2282,7 @@
       const ytDiv = document.getElementById('ytPlayerDiv');
       const html5Video = document.getElementById('html5VideoPlayer');
       const fallbackIframe = document.getElementById('fallbackIframePlayer');
+      const guardOverlay = document.querySelector('.video-guard-overlay');
 
       // Reset tất cả player trước khi load mới
       ytDiv.style.display = 'none';
@@ -2294,31 +2295,46 @@
 
       const ytId = extractYouTubeId(mediaUrl);
       if (ytId) {
-        ytDiv.style.display = 'block';
-        try {
-          ytPlayerInstance = new YT.Player('ytPlayerDiv', {
-            videoId: ytId,
-            playerVars: { 'autoplay': 1, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'vq': 'hd1080' },
-            events: { 
-              'onStateChange': onPlayerStateChange,
-              'onError': () => {
-                // Dự phòng tự động chuyển sang iframe tiêu chuẩn nếu YouTube Iframe API bị chặn trên một số máy
-                ytDiv.style.display = 'none';
-                fallbackIframe.style.display = 'block';
-                fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`;
+        if (typeof YT !== 'undefined' && YT.Player) {
+          ytDiv.style.display = 'block';
+          if (guardOverlay) guardOverlay.style.display = 'block';
+          try {
+            ytPlayerInstance = new YT.Player('ytPlayerDiv', {
+              videoId: ytId,
+              playerVars: { 'autoplay': 1, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1, 'vq': 'hd1080' },
+              events: { 
+                'onReady': (event) => {
+                  event.target.playVideo();
+                },
+                'onStateChange': onPlayerStateChange,
+                'onError': () => {
+                  ytDiv.style.display = 'none';
+                  if (guardOverlay) guardOverlay.style.display = 'none';
+                  fallbackIframe.style.display = 'block';
+                  fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+                }
               }
-            }
-          });
-        } catch(e) {
+            });
+          } catch(e) {
+            ytDiv.style.display = 'none';
+            if (guardOverlay) guardOverlay.style.display = 'none';
+            fallbackIframe.style.display = 'block';
+            fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+          }
+        } else {
+          // Fallback trực tiếp nếu YouTube API chưa tải kịp hoặc bị chặn bởi trình duyệt
           ytDiv.style.display = 'none';
+          if (guardOverlay) guardOverlay.style.display = 'none';
           fallbackIframe.style.display = 'block';
-          fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`;
+          fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
         }
       } else if (mediaUrl.match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.startsWith('blob:') || mediaUrl.startsWith('data:')) {
+        if (guardOverlay) guardOverlay.style.display = 'none';
         html5Video.style.display = 'block';
         html5Video.src = mediaUrl;
         html5Video.play().catch(() => {});
       } else {
+        if (guardOverlay) guardOverlay.style.display = 'none';
         fallbackIframe.style.display = 'block';
         fallbackIframe.src = mediaUrl.replace('/view', '/preview');
       }
