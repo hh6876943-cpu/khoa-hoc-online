@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V-ACT Edu </title>
+  <title>V-ACT Edu</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,7 +202,7 @@
     }
 
     .video-guard-overlay {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 45; background: transparent; pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 45; background: transparent; cursor: pointer;
     }
 
     .watermark-overlay {
@@ -219,7 +219,6 @@
       100% { top: 15%; left: 10%; opacity: 0.3; }
     }
 
-    /* THANH ĐIỀU KHIỂN VIDEO ĐẶT PHÍA DƯỚI VIDEO (HOÀN TOÀN SỬ DỤNG ĐƯỢC, KHÔNG CHE LỚP PHỦ) */
     .custom-video-controls {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -356,15 +355,15 @@
       <div class="login-subtitle">NỀN TẢNG HỌC TẬP ONLINE</div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label>Tài khoản </label>
+          <label>Tài khoản</label>
           <input type="text" id="username" placeholder="Nhập tài khoản của bạn" required>
         </div>
         <div class="form-group">
           <label>Mật khẩu</label>
           <input type="password" id="password" placeholder="Nhập mật khẩu" required>
         </div>
-        <button type="submit" class="btn-submit" style="margin-bottom: 14px;">ĐĂNG NHẬP </button>
-        <button type="button" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()"> Đăng kí (chưa có tài khoản)</button>
+        <button type="submit" class="btn-submit" style="margin-bottom: 14px;">ĐĂNG NHẬP</button>
+        <button type="button" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()">Đăng kí (chưa có tài khoản)</button>
       </form>
     </div>
   </div>
@@ -396,8 +395,8 @@
       <section id="homeTab">
         <div class="page-header">
           <div>
-            <span class="page-title">TRANG CHỦ </span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">NỀN TẢNG VACT Edu - CHINH PHỤC CÁC KÌ THI NĂM 2027 </p>
+            <span class="page-title">TRANG CHỦ</span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">NỀN TẢNG VACT Edu - CHINH PHỤC CÁC KÌ THI NĂM 2027</p>
           </div>
           <div style="display: flex; align-items: center; gap: 14px;">
             <div id="userAvatarBox" style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="switchMainTab('profile')">
@@ -472,7 +471,7 @@
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 24px; margin-bottom: 28px;">
           <div class="stat-card">
-            <h3 style="color: var(--accent-cyan); margin-bottom: 14px;"><i class="fa-solid fa-chart-line"></i> BIỂU ĐỒ PHÂN TÍCH LỊCH HỌC </h3>
+            <h3 style="color: var(--accent-cyan); margin-bottom: 14px;"><i class="fa-solid fa-chart-line"></i> BIỂU ĐỒ PHÂN TÍCH LỊCH HỌC</h3>
             <div style="width: 100%; height: 280px; position: relative;">
               <canvas id="dailyStudyLineChart"></canvas>
             </div>
@@ -504,7 +503,7 @@
       <section id="coursesTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title" id="courseSectionTitle">HỆ THỐNG KHÓA HỌC </span>
+            <span class="page-title" id="courseSectionTitle">HỆ THỐNG KHÓA HỌC</span>
           </div>
           <div style="font-size: 0.9rem; color: var(--text-muted);" id="userWelcomeText"></div>
         </div>
@@ -538,12 +537,12 @@
             <input type="text" id="lessonSearchInput" placeholder="🔍 TÌM KIẾM BÀI GIẢNG TRONG KHÓA" style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
           </div>
 
-          <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH CHI TIẾT -->
+          <!-- TRÌNH PHÁT VIDEO & THANH ĐIỀU KHIỂN HỖ TRỢ ĐA THIẾT BỊ -->
           <div class="media-player-container" id="mediaPlayerContainer" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
               <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="ctrl-btn" style="background: var(--primary); padding: 8px 16px; border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="toggleDocSideBySide(true)">📄 Khung tài liệu (tính năng cũ) </button>
+                <button class="ctrl-btn" style="background: var(--primary); padding: 8px 16px; border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="toggleDocSideBySide(true)">📄 Khung tài liệu</button>
                 <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đã học (0%)</span>
               </div>
             </div>
@@ -552,8 +551,10 @@
               <div class="media-column">
                 <div class="media-wrapper" id="mediaWrapper">
                   <div id="ytPlayerDiv"></div>
+                  <video id="html5VideoPlayer" controls playsinline style="display:none; position:absolute; inset:0; width:100%; height:100%; background:#000; z-index:5;"></video>
+                  <iframe id="fallbackIframePlayer" style="display:none; position:absolute; inset:0; width:100%; height:100%; border:none; z-index:5;" allow="autoplay; fullscreen"></iframe>
                   
-                  <div class="video-guard-overlay"></div>
+                  <div class="video-guard-overlay" onclick="alert('Bảo mật: Vùng phát video được bảo vệ!')"></div>
                   <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">VACT EDU WATERMARK</span></div>
                 </div>
 
@@ -576,17 +577,17 @@
                   <div style="position: relative;">
                     <button class="video-ctrl-btn" onclick="toggleVideoSettingsPopup()" title="Cài đặt"><i class="fa-solid fa-gear"></i></button>
                     <div class="settings-popup-menu" id="videoSettingsPopup">
-                      <div class="settings-popup-item" onclick="openSpeedSubMenu()"> Playback Speed <span id="currentSpeedLabel"> 1.0x  ></span></div>
-                      <div class="settings-popup-item" onclick="openQualitySubMenu()">Quality <span id="currentQualityLabel"> 1080p ></span></div>
+                      <div class="settings-popup-item" onclick="openSpeedSubMenu()">Playback Speed <span id="currentSpeedLabel">1.0x ></span></div>
+                      <div class="settings-popup-item" onclick="openQualitySubMenu()">Quality <span id="currentQualityLabel">1080p ></span></div>
                       <div class="settings-popup-item" onclick="toggleSubtitlesFeature()">Phụ đề <span id="subtitlesStatusLabel" style="color:var(--accent-green)">Tắt</span></div>
                     </div>
                     <div class="settings-popup-menu" id="speedSubMenu" style="display:none;">
                       <div class="settings-popup-item" onclick="setVideoSpeed(0.2)">0.2x</div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(0.5)">0.5x</div>
-                      <div class="settings-popup-item" onclick="setVideoSpeed(1.0)"> Chuẩn </div>
+                      <div class="settings-popup-item" onclick="setVideoSpeed(1.0)">Chuẩn</div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(1.5)">1.5x</div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(2.0)">2.0x</div>
-                      <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x </div>
+                      <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x</div>
                     </div>
                     <div class="settings-popup-menu" id="qualitySubMenu" style="display:none;">
                       <div class="settings-popup-item" onclick="setVideoQuality('hd1080')">1080p HD</div>
@@ -646,7 +647,7 @@
       <section id="liveTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG LIVE CHÍNH THỨC </span>
+            <span class="page-title">PHÒNG LIVE CHÍNH THỨC</span>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">PHÒNG LIVE TRỰC TUYẾN - DANH SÁCH CÁC PHÒNG LIVE ĐANG HIỆN HÀNH.</p>
           </div>
           <div id="adminLiveControls" style="display: none;">
@@ -658,10 +659,9 @@
           <div style="color: var(--text-muted);">Đang tải thông tin phòng live...</div>
         </div>
 
-        <!-- PHÒNG LIVE STREAM NÂNG CẤP XỊN HƠN -->
         <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
-          <div style="display: flex; justify-content: space-between; align- items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live </h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live</h3>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
               <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> LINK LIÊN KẾT</button>
               <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
@@ -742,7 +742,7 @@
       <section id="examTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG THI THỬ </span>
+            <span class="page-title">PHÒNG THI THỬ</span>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Bài thi thử gắn kèm tài liệu, chấm điểm chuẩn xác.</p>
           </div>
           <div id="adminExamControls" style="display: none;">
@@ -802,12 +802,11 @@
         </div>
       </section>
 
-      <!-- DIỄN ĐÀN & CHAT: NÂNG CẤP NHẮN RIÊNG VỚI TỪNG THÀNH VIÊN VÀ NHÓM PHÂN QUYỀN -->
       <section id="forumTab" style="display: none;">
         <div class="page-header">
           <div>
             <span class="page-title">DIỄN ĐÀN & NHÓM CHAT CỘNG ĐỒNG</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;"> Học sinh có thể đăng bài trực tiếp trên diễn đàn, chat trực tiếp với admin </p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Học sinh có thể đăng bài trực tiếp trên diễn đàn, chat trực tiếp với admin</p>
           </div>
           <div id="adminForumControls" style="display: none;">
             <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateChatGroup()">+ Tạo Nhóm Chat</button>
@@ -850,7 +849,6 @@
         </div>
       </section>
 
-      <!-- BÁO CÁO & KHẢO SÁT: XEM CÂU TRẢ LỜI CỦA HỌC SINH -->
       <section id="reportTab" style="display: none;">
         <div class="page-header">
           <div>
@@ -858,7 +856,7 @@
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Biểu mẫu khảo sát học tập và quản lý phản hồi học sinh.</p>
           </div>
           <div id="adminReportControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateFormModal()">+ Tạo Biểu Mẫu Khảo Sát </button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateFormModal()">+ Tạo Biểu Mẫu Khảo Sát</button>
           </div>
         </div>
 
@@ -867,7 +865,7 @@
             <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">📝 Gửi Báo Cáo Lỗi Về Website</h3>
             <div class="form-group"><label>Tiêu đề lỗi</label><input type="text" id="bugReportTitle" placeholder="VD: Lỗi xem video bài 2..."></div>
             <div class="form-group"><label>Mô tả chi tiết</label><textarea id="bugReportDesc" rows="4" placeholder="Mô tả sự cố..."></textarea></div>
-            <button class="btn-submit" onclick="submitBugReport()">🚀 Gửi Báo Cáo </button>
+            <button class="btn-submit" onclick="submitBugReport()">🚀 Gửi Báo Cáo</button>
           </div>
 
           <div class="stat-card">
@@ -876,7 +874,6 @@
           </div>
         </div>
 
-        <!-- HIỂN THỊ CÂU TRẢ LỜI BIỂU MẪU DÀNH CHO ADMIN -->
         <div class="stat-card" id="adminSurveyAnswersBox" style="display: none; margin-top: 28px;">
           <h3 style="color: var(--accent-green); margin-bottom: 14px;">📥 Tổng Hợp Câu Trả Lời Biểu Mẫu Từ Học Sinh</h3>
           <div class="form-group">
@@ -1892,7 +1889,6 @@
       });
     }
 
-    // --- DIỄN ĐÀN & CHAT NÂNG CẤP: ADMIN CHỌN & NHẮN RIÊNG VỚI TỪNG THÀNH VIÊN, TẠO NHÓM CHÁT PHÂN QUYỀN ---
     function switchForumChannel(channel) {
       currentForumChannel = channel;
       document.querySelectorAll('#forumLayoutGrid button').forEach(b => b.classList.remove('active'));
@@ -2155,32 +2151,65 @@
       alert('Đã gửi khảo sát thành công!');
     }
 
-    // --- VIDEO PLAYER & THANH ĐIỀU KHIỂN VIDEO TỐC ĐỘ 0.2X ĐẾN 4X, ĐỘ PHÂN GIẢI, PHỤ ĐỀ, KHUNG CỬA SỔ, RẠP CHIẾU PHIM, TOÀN MÀN HÌNH ---
+    // --- CƠ CHẾ PHÁT VIDEO ĐƯỢC TỐI ƯU HÓA ĐỂ ĐẢM BẢO MỌI THIẾT BỊ / MÁY TÍNH ĐỀU XEM ĐƯỢC ---
     function customPlayPause() {
-      if (!ytPlayerInstance) return;
-      const state = ytPlayerInstance.getPlayerState();
-      const icon = document.getElementById('playPauseIcon');
-      if (state === YT.PlayerState.PLAYING) { ytPlayerInstance.pauseVideo(); if(icon) icon.className = 'fa-solid fa-play'; }
-      else { ytPlayerInstance.playVideo(); if(icon) icon.className = 'fa-solid fa-pause'; }
-    }
-    function customSeek(sec) { if (ytPlayerInstance) ytPlayerInstance.seekTo(ytPlayerInstance.getCurrentTime() + sec, true); }
-    function customSeekToPercent(e) {
-      if (!ytPlayerInstance) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const duration = ytPlayerInstance.getDuration();
-      if (duration > 0) ytPlayerInstance.seekTo((clickX / rect.width) * duration, true);
-    }
-    function customToggleMute() {
-      if (!ytPlayerInstance) return;
-      if (ytPlayerInstance.isMuted()) { ytPlayerInstance.unMute(); document.getElementById('muteBtnIcon').innerHTML = '<i class="fa-solid fa-volume-high"></i>'; }
-      else { ytPlayerInstance.mute(); document.getElementById('muteBtnIcon').innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; }
-    }
-    function customChangeVolume(val) {
-      if (ytPlayerInstance && ytPlayerInstance.setVolume) {
-        ytPlayerInstance.setVolume(parseInt(val));
+      if (ytPlayerInstance && ytPlayerInstance.getPlayerState) {
+        const state = ytPlayerInstance.getPlayerState();
+        const icon = document.getElementById('playPauseIcon');
+        if (state === YT.PlayerState.PLAYING) { ytPlayerInstance.pauseVideo(); if(icon) icon.className = 'fa-solid fa-play'; }
+        else { ytPlayerInstance.playVideo(); if(icon) icon.className = 'fa-solid fa-pause'; }
+      } else {
+        const html5Video = document.getElementById('html5VideoPlayer');
+        if (html5Video) {
+          const icon = document.getElementById('playPauseIcon');
+          if (html5Video.paused) { html5Video.play(); if(icon) icon.className = 'fa-solid fa-pause'; }
+          else { html5Video.pause(); if(icon) icon.className = 'fa-solid fa-play'; }
+        }
       }
     }
+
+    function customSeek(sec) {
+      if (ytPlayerInstance && ytPlayerInstance.getCurrentTime) {
+        ytPlayerInstance.seekTo(ytPlayerInstance.getCurrentTime() + sec, true);
+      } else {
+        const html5Video = document.getElementById('html5VideoPlayer');
+        if (html5Video) html5Video.currentTime += sec;
+      }
+    }
+
+    function customSeekToPercent(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = clickX / rect.width;
+      if (ytPlayerInstance && ytPlayerInstance.getDuration) {
+        const duration = ytPlayerInstance.getDuration();
+        if (duration > 0) ytPlayerInstance.seekTo(ratio * duration, true);
+      } else {
+        const html5Video = document.getElementById('html5VideoPlayer');
+        if (html5Video && html5Video.duration) html5Video.currentTime = ratio * html5Video.duration;
+      }
+    }
+
+    function customToggleMute() {
+      if (ytPlayerInstance && ytPlayerInstance.isMuted) {
+        if (ytPlayerInstance.isMuted()) { ytPlayerInstance.unMute(); document.getElementById('muteBtnIcon').innerHTML = '<i class="fa-solid fa-volume-high"></i>'; }
+        else { ytPlayerInstance.mute(); document.getElementById('muteBtnIcon').innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; }
+      } else {
+        const html5Video = document.getElementById('html5VideoPlayer');
+        if (html5Video) {
+          html5Video.muted = !html5Video.muted;
+          document.getElementById('muteBtnIcon').innerHTML = html5Video.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+        }
+      }
+    }
+
+    function customChangeVolume(val) {
+      const vol = parseInt(val) / 100;
+      if (ytPlayerInstance && ytPlayerInstance.setVolume) ytPlayerInstance.setVolume(parseInt(val));
+      const html5Video = document.getElementById('html5VideoPlayer');
+      if (html5Video) html5Video.volume = vol;
+    }
+
     function toggleVideoSettingsPopup() {
       const pop = document.getElementById('videoSettingsPopup');
       pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
@@ -2192,6 +2221,8 @@
     
     function setVideoSpeed(speed) {
       if (ytPlayerInstance && ytPlayerInstance.setPlaybackRate) ytPlayerInstance.setPlaybackRate(speed);
+      const html5Video = document.getElementById('html5VideoPlayer');
+      if (html5Video) html5Video.playbackRate = speed;
       document.getElementById('speedSubMenu').style.display = 'none';
       document.getElementById('currentSpeedLabel').innerText = `${speed}x >`;
       alert(`Đã chỉnh tốc độ phát video: ${speed}x`);
@@ -2248,19 +2279,49 @@
       currentLessonInfo = { title, mediaUrl };
       loadLessonPersonalNotes();
 
-      const wrapper = document.getElementById('mediaWrapper');
-      
-      let embedUrl = mediaUrl;
+      const ytDiv = document.getElementById('ytPlayerDiv');
+      const html5Video = document.getElementById('html5VideoPlayer');
+      const fallbackIframe = document.getElementById('fallbackIframePlayer');
+
+      // Reset tất cả player trước khi load mới
+      ytDiv.style.display = 'none';
+      html5Video.style.display = 'none';
+      fallbackIframe.style.display = 'none';
+      ytDiv.innerHTML = '';
+      html5Video.src = '';
+      fallbackIframe.src = '';
+      ytPlayerInstance = null;
+
       const ytId = extractYouTubeId(mediaUrl);
       if (ytId) {
-        embedUrl = `https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`;
+        ytDiv.style.display = 'block';
+        try {
+          ytPlayerInstance = new YT.Player('ytPlayerDiv', {
+            videoId: ytId,
+            playerVars: { 'autoplay': 1, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'vq': 'hd1080' },
+            events: { 
+              'onStateChange': onPlayerStateChange,
+              'onError': () => {
+                // Dự phòng tự động chuyển sang iframe tiêu chuẩn nếu YouTube Iframe API bị chặn trên một số máy
+                ytDiv.style.display = 'none';
+                fallbackIframe.style.display = 'block';
+                fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`;
+              }
+            }
+          });
+        } catch(e) {
+          ytDiv.style.display = 'none';
+          fallbackIframe.style.display = 'block';
+          fallbackIframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0`;
+        }
+      } else if (mediaUrl.match(/\.(mp4|webm|ogg|mov)$/i) || mediaUrl.startsWith('blob:') || mediaUrl.startsWith('data:')) {
+        html5Video.style.display = 'block';
+        html5Video.src = mediaUrl;
+        html5Video.play().catch(() => {});
+      } else {
+        fallbackIframe.style.display = 'block';
+        fallbackIframe.src = mediaUrl.replace('/view', '/preview');
       }
-
-      wrapper.innerHTML = `
-        <iframe src="${embedUrl}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <div class="video-guard-overlay"></div>
-        <div class="watermark-overlay" id="watermarkOverlay"><span id="watermarkText">VACT EDU | ${currentUser.name} | IP: ${currentUser.lastIP || '127.0.0.1'}</span></div>
-      `;
 
       const docsList = document.getElementById('lessonDocsList');
       const docsContainer = document.getElementById('lessonDocsContainer');
@@ -2280,6 +2341,29 @@
       window.scrollTo({ top: document.getElementById('mediaPlayerContainer').offsetTop - 20, behavior: 'smooth' });
     }
 
+    function onPlayerStateChange(event) { if (event.data == YT.PlayerState.PLAYING) startProgressLoop(); }
+
+    let progressInterval;
+    function startProgressLoop() {
+      clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (ytPlayerInstance && ytPlayerInstance.getCurrentTime && ytPlayerInstance.getDuration) {
+          const currentTime = ytPlayerInstance.getCurrentTime();
+          const duration = ytPlayerInstance.getDuration();
+          if (duration > 0) {
+            const pct = (currentTime / duration) * 100;
+            const fill = document.getElementById('customProgressFill');
+            if (fill) fill.style.width = pct + '%';
+            
+            const curM = Math.floor(currentTime / 60); const curS = Math.floor(currentTime % 60);
+            const durM = Math.floor(duration / 60); const durS = Math.floor(duration % 60);
+            const timeDisp = document.getElementById('videoTimeDisplay');
+            if (timeDisp) timeDisp.innerText = `${curM}:${curS < 10 ? '0':''}${curS} / ${durM}:${durS < 10 ? '0':''}${durS}`;
+          }
+        }
+      }, 1000);
+    }
+
     function checkResumePlaybackPrompt() {
       if (!currentUser) return;
       db.ref(`lastWatched/${currentUser.username}`).once('value', (snapshot) => {
@@ -2297,6 +2381,7 @@
       if (shouldResume && window.pendingResumeData) {
         const { bigCourseId, currentTime } = window.pendingResumeData;
         if (bigCourseId) openBigCourseDetail(bigCourseId);
+        setTimeout(() => { if (ytPlayerInstance && ytPlayerInstance.seekTo) ytPlayerInstance.seekTo(currentTime, true); }, 1500);
       }
     }
 
@@ -2337,7 +2422,6 @@
       document.body.appendChild(modal);
     }
 
-    // --- PHÒNG LIVE NÂNG CẤP ĐỔI MỚI TỐT HƠN XỊN HƠN (THÊM, SỬA, XÓA CHO ADMIN) ---
     function renderLiveRooms(roomsData) {
       const container = document.getElementById('liveRoomsContainer');
       if (!container) return;
