@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VACT EDU - HỆ THỐNG ĐÀO TẠO & KHẢO THÍ THÔNG MINH</title>
+  <title>V-ACT Edu </title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -353,18 +353,18 @@
   <div id="loginScreen">
     <div class="login-card" id="loginCardBox">
       <h2>VACT EDU</h2>
-      <div class="login-subtitle">Nền Tảng Đào Tạo & Khảo Thí Thông Minh</div>
+      <div class="login-subtitle">NỀN TẢNG HỌC TẬP ONLINE</div>
       <form onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label>Tài khoản học viên / Admin</label>
+          <label>Tài khoản </label>
           <input type="text" id="username" placeholder="Nhập tài khoản của bạn" required>
         </div>
         <div class="form-group">
           <label>Mật khẩu</label>
           <input type="password" id="password" placeholder="Nhập mật khẩu" required>
         </div>
-        <button type="submit" class="btn-submit" style="margin-bottom: 14px;">🚀 Đăng Nhập Hệ Thống</button>
-        <button type="button" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()">✨ Đăng Ký Tài Khoản Mới</button>
+        <button type="submit" class="btn-submit" style="margin-bottom: 14px;">ĐĂNG NHẬP </button>
+        <button type="button" class="btn-submit" style="background: var(--bg-hover); border: 1px solid var(--border);" onclick="toggleAuthMode()"> Đăng kí (chưa có tài khoản)</button>
       </form>
     </div>
   </div>
@@ -372,7 +372,7 @@
   <div id="appScreen">
     <header class="top-navbar">
       <div class="navbar-brand">
-        <i class="fa-solid fa-graduation-cap" style="color:var(--primary-bright);"></i> VACT EDU
+        <i class="fa-solid fa-graduation-cap" style="color:var(--primary-bright);"></i> V-ACT Edu
       </div>
       <div class="navbar-menu">
         <button class="nav-item-btn active" onclick="switchMainTab('home')"><i class="fa-solid fa-house"></i> Trang Chủ</button>
@@ -396,8 +396,8 @@
       <section id="homeTab">
         <div class="page-header">
           <div>
-            <span class="page-title">Trang Chủ & Tổng Quan Học Tập</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nền tảng VACT EDU - Chinh phục kỳ thi với biểu đồ thực tế và trợ lý học tập thông minh.</p>
+            <span class="page-title">TRANG CHỦ </span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">NỀN TẢNG VACT Edu - CHINH PHỤC CÁC KÌ THI NĂM 2027 </p>
           </div>
           <div style="display: flex; align-items: center; gap: 14px;">
             <div id="userAvatarBox" style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden; border: 2px solid var(--accent-cyan); cursor: pointer;" onclick="switchMainTab('profile')">
@@ -413,8 +413,8 @@
 
         <div class="stat-card" style="margin-bottom: 28px; border-color: var(--accent-cyan); background: linear-gradient(135deg, rgba(56,189,248,0.1) 0%, rgba(99,102,241,0.1) 100%);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-bullhorn"></i> Thông Báo Mới Nhất VACT EDU</h3>
-            <button class="ctrl-btn" style="padding: 6px 14px; font-size: 0.78rem; background:var(--bg-panel); border:1px solid var(--border); color:#fff; border-radius:8px; cursor:pointer;" onclick="openNotificationHistory()">📜 Xem Lịch Sử Thông Báo</button>
+            <h3 style="color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-bullhorn"></i> THÔNG BÁO</h3>
+            <button class="ctrl-btn" style="padding: 6px 14px; font-size: 0.78rem; background:var(--bg-panel); border:1px solid var(--border); color:#fff; border-radius:8px; cursor:pointer;" onclick="openNotificationHistory()">📜 LỊCH SỬ THÔNG BÁO</button>
           </div>
           <div id="homeNotificationText" style="font-size: 0.98rem; color: var(--text-main); line-height: 1.5;">Đang tải thông báo từ Admin...</div>
         </div>
@@ -425,7 +425,7 @@
             <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 20px; padding: 24px; color: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(239,68,68,0.3);">
               <div>
                 <h4 style="font-size: 1.6rem; font-weight: 800; letter-spacing: 1px;">TSA</h4>
-                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">Đánh giá tư duy ĐH Bách Khoa</p>
+                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">Đánh giá tư duy Bách Khoa</p>
               </div>
               <div style="display: flex; gap: 8px; text-align: center;">
                 <div style="background: #fff; color: #1e293b; padding: 10px 12px; border-radius: 12px; font-weight: 800;"><span id="tsaDays" style="font-size: 1.25rem; display:block;">00</span><span style="font-size: 0.65rem; text-transform:uppercase; color:#64748b;">Ngày</span></div>
@@ -466,34 +466,34 @@
         <div class="stat-card" style="margin-bottom: 28px; background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(15,23,42,0.9) 100%); border-color: rgba(99,102,241,0.4);">
           <h3 style="color: var(--primary-bright); margin-bottom: 12px;"><i class="fa-solid fa-heart"></i> Đôi Lời Tâm Sự Cùng Sĩ Tử VACT EDU</h3>
           <p style="font-size: 1rem; line-height: 1.6; color: var(--text-main); font-style: italic;">
-            "Hành trình ôn thi đại học chưa bao giờ là dễ dàng, sẽ có những đêm thức khuya giải từng bài toán khó, những lúc mệt mỏi vì áp lực điểm số. Nhưng hãy nhớ rằng, mỗi phút giây bạn nỗ lực hôm nay chính là viên gạch vững chắc xây nên cánh cửa đại học mơ ước tại Bách Khoa và các trường hàng đầu. Đừng đơn độc chiến đấu, VACT EDU luôn ở đây đồng hành, cung cấp đầy đủ tài liệu, phòng live và hệ thống học tập tốt nhất để cùng bạn chạm tay tới vinh quang!"
+            "Hành trình ôn thi đại học chưa bao giờ là dễ dàng, sẽ có những đêm thức khuya giải từng bài toán khó, những lúc mệt mỏi vì áp lực điểm số. Nhưng hãy nhớ rằng, mỗi phút giây bạn nỗ lực hôm nay chính là viên gạch vững chắc xây nên cánh cửa đại học mơ ước tại các trường hàng đầu. Các bạn không đơn độc chiến đấu, VACT EDU luôn ở đây đồng hành, cung cấp đầy đủ tài liệu, phòng live và hệ thống học tập tốt nhất để cùng bạn chạm tay tới vinh quang!"
           </p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 24px; margin-bottom: 28px;">
           <div class="stat-card">
-            <h3 style="color: var(--accent-cyan); margin-bottom: 14px;"><i class="fa-solid fa-chart-line"></i> Biểu Đồ Lịch Học Thực Tế Theo Thời Gian (Realtime)</h3>
+            <h3 style="color: var(--accent-cyan); margin-bottom: 14px;"><i class="fa-solid fa-chart-line"></i> BIỂU ĐỒ PHÂN TÍCH LỊCH HỌC </h3>
             <div style="width: 100%; height: 280px; position: relative;">
               <canvas id="dailyStudyLineChart"></canvas>
             </div>
           </div>
 
           <div class="stat-card">
-            <h3 style="color: var(--accent-green); margin-bottom: 14px;"><i class="fa-solid fa-chart-column"></i> Biểu Đồ Năng Lực Các Môn Thi Thử</h3>
+            <h3 style="color: var(--accent-green); margin-bottom: 14px;"><i class="fa-solid fa-chart-column"></i> BIỂU ĐỒ NĂNG LỰC HỌC TẬP</h3>
             <div style="width: 100%; height: 280px; position: relative;">
               <canvas id="subjectColumnChart"></canvas>
             </div>
           </div>
 
           <div class="stat-card">
-            <h3 style="color: var(--warning); margin-bottom: 14px;"><i class="fa-solid fa-chart-bar"></i> Biểu Đồ Tiến Độ Khóa Học Lớn</h3>
+            <h3 style="color: var(--warning); margin-bottom: 14px;"><i class="fa-solid fa-chart-bar"></i> BIỂU ĐỒ TIẾN ĐỘ KHÓA HỌC</h3>
             <div style="width: 100%; height: 280px; position: relative;">
               <canvas id="courseHorizontalBarChart"></canvas>
             </div>
           </div>
 
           <div class="stat-card">
-            <h3 style="color: var(--primary-bright); margin-bottom: 14px;"><i class="fa-solid fa-chart-pie"></i> Biểu Đồ Tỷ Lệ Thời Gian Hoạt Động Học Tập</h3>
+            <h3 style="color: var(--primary-bright); margin-bottom: 14px;"><i class="fa-solid fa-chart-pie"></i> TỶ LỆ THỜI GIAN HỌC TẬP</h3>
             <div style="width: 100%; height: 280px; position: relative;">
               <canvas id="activityPieChart"></canvas>
             </div>
@@ -504,7 +504,7 @@
       <section id="coursesTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title" id="courseSectionTitle">HỆ THỐNG KHÓA HỌC VACT EDU</span>
+            <span class="page-title" id="courseSectionTitle">HỆ THỐNG KHÓA HỌC </span>
           </div>
           <div style="font-size: 0.9rem; color: var(--text-muted);" id="userWelcomeText"></div>
         </div>
@@ -535,7 +535,7 @@
           </div>
 
           <div style="margin-bottom: 20px;">
-            <input type="text" id="lessonSearchInput" placeholder="🔍 Tìm kiếm bài giảng theo tên trong khóa học này..." style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
+            <input type="text" id="lessonSearchInput" placeholder="🔍 TÌM KIẾM BÀI GIẢNG TRONG KHÓA" style="width: 100%; padding: 14px 18px; border-radius: 14px; background: var(--bg-panel); color: #fff; border: 1px solid var(--border);" oninput="filterLessonsInCourse(this.value)">
           </div>
 
           <!-- MEDIA PLAYER & THANH ĐIỀU KHIỂN HOÀN CHỈNH CHI TIẾT -->
@@ -543,8 +543,8 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
               <h3 id="currentLessonTitle" style="color: #fff;">Tên bài học</h3>
               <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="ctrl-btn" style="background: var(--primary); padding: 8px 16px; border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="toggleDocSideBySide(true)">📄 Mở Đồng Thời Tài Liệu</button>
-                <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đang học (0%)</span>
+                <button class="ctrl-btn" style="background: var(--primary); padding: 8px 16px; border:none; border-radius:10px; color:#fff; cursor:pointer; font-weight:700;" onclick="toggleDocSideBySide(true)">📄 Khung tài liệu (tính năng cũ) </button>
+                <span style="font-size: 0.88rem; color: var(--accent-green); font-weight: 700;" id="lessonWatchPercentStatus">● Đã học (0%)</span>
               </div>
             </div>
             
@@ -564,46 +564,46 @@
                   
                   <div class="video-time-text" id="videoTimeDisplay">0:00 / 0:00</div>
 
-                  <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video (chỉnh như YouTube)">
+                  <div class="video-progress-container" onclick="customSeekToPercent(event)" title="Thanh thời gian video">
                     <div class="video-progress-bar">
                       <div class="video-progress-fill" id="customProgressFill"></div>
                     </div>
                   </div>
 
                   <button class="video-ctrl-btn" onclick="customToggleMute()" title="Âm lượng / Tắt tiếng" id="muteBtnIcon"><i class="fa-solid fa-volume-high"></i></button>
-                  <input type="range" id="volumeSliderInput" min="0" max="100" value="100" style="width: 70px; accent-color: var(--primary);" oninput="customChangeVolume(this.value)" title="Chỉnh âm lượng">
+                  <input type="range" id="volumeSliderInput" min="0" max="100" value="100" style="width: 70px; accent-color: var(--primary);" oninput="customChangeVolume(this.value)" title="Âm lượng">
                   
                   <div style="position: relative;">
                     <button class="video-ctrl-btn" onclick="toggleVideoSettingsPopup()" title="Cài đặt"><i class="fa-solid fa-gear"></i></button>
                     <div class="settings-popup-menu" id="videoSettingsPopup">
-                      <div class="settings-popup-item" onclick="openSpeedSubMenu()">Tốc độ phát <span id="currentSpeedLabel">Chuẩn (1.0x) ></span></div>
-                      <div class="settings-popup-item" onclick="openQualitySubMenu()">Độ phân giải <span id="currentQualityLabel">Cao (1080p) ></span></div>
+                      <div class="settings-popup-item" onclick="openSpeedSubMenu()"> Playback Speed <span id="currentSpeedLabel"> 1.0x  ></span></div>
+                      <div class="settings-popup-item" onclick="openQualitySubMenu()">Quality <span id="currentQualityLabel"> 1080p ></span></div>
                       <div class="settings-popup-item" onclick="toggleSubtitlesFeature()">Phụ đề <span id="subtitlesStatusLabel" style="color:var(--accent-green)">Tắt</span></div>
                     </div>
                     <div class="settings-popup-menu" id="speedSubMenu" style="display:none;">
                       <div class="settings-popup-item" onclick="setVideoSpeed(0.2)">0.2x</div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(0.5)">0.5x</div>
-                      <div class="settings-popup-item" onclick="setVideoSpeed(1.0)">Chuẩn (1.0x)</div>
+                      <div class="settings-popup-item" onclick="setVideoSpeed(1.0)"> Chuẩn </div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(1.5)">1.5x</div>
                       <div class="settings-popup-item" onclick="setVideoSpeed(2.0)">2.0x</div>
-                      <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x (Tối đa)</div>
+                      <div class="settings-popup-item" onclick="setVideoSpeed(4.0)">4.0x </div>
                     </div>
                     <div class="settings-popup-menu" id="qualitySubMenu" style="display:none;">
-                      <div class="settings-popup-item" onclick="setVideoQuality('hd1080')">Độ phân giải cao - 1080p HD</div>
-                      <div class="settings-popup-item" onclick="setVideoQuality('hd720')">Độ phân giải cao - 720p HD</div>
-                      <div class="settings-popup-item" onclick="setVideoQuality('medium')">Tiêu chuẩn - 480p</div>
+                      <div class="settings-popup-item" onclick="setVideoQuality('hd1080')">1080p HD</div>
+                      <div class="settings-popup-item" onclick="setVideoQuality('hd720')">720p HD</div>
+                      <div class="settings-popup-item" onclick="setVideoQuality('medium')">480p</div>
                     </div>
                   </div>
 
                   <button class="video-ctrl-btn" onclick="customToggleWindowMode()" title="Chế độ xem khung cửa sổ"><i class="fa-solid fa-window-restore"></i></button>
                   <button class="video-ctrl-btn" onclick="customToggleCinemaMode()" title="Chế độ rạp chiếu phim"><i class="fa-solid fa-film"></i></button>
-                  <button class="video-ctrl-btn" onclick="customToggleFullscreen()" title="Phóng to toàn màn hình"><i class="fa-solid fa-expand"></i></button>
+                  <button class="video-ctrl-btn" onclick="customToggleFullscreen()" title="Phóng to"><i class="fa-solid fa-expand"></i></button>
                 </div>
               </div>
 
               <div class="docs-column" id="docsColumn" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                  <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Tài liệu đính kèm mở song song:</span>
+                  <span style="font-size: 0.92rem; font-weight: 700; color: var(--accent-cyan);">📄 Tài liệu đính kèm:</span>
                   <button class="ctrl-btn" style="background: var(--danger); border:none; padding:4px 10px; border-radius:8px; color:#fff; cursor:pointer;" onclick="toggleDocSideBySide(false)">✕ Đóng</button>
                 </div>
                 <div style="flex-grow: 1; height: 100%; min-height: 480px; position: relative;">
@@ -613,14 +613,14 @@
             </div>
 
             <div style="margin-top: 24px; background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border);">
-              <h4 style="color: var(--accent-cyan); margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> Ghi Chú Cá Nhân Tại Bài Giảng</h4>
+              <h4 style="color: var(--accent-cyan); margin-bottom: 10px;"><i class="fa-solid fa-pen-to-square"></i> MỤC GHI CHÚ CÁ NHÂN</h4>
               <textarea id="lessonPersonalNoteInput" placeholder="Nhập ghi chú học tập..." style="width: 100%; height: 80px; padding: 12px; border-radius: 10px; background: var(--bg-dark); color: #fff; border: 1px solid var(--border); margin-bottom: 10px;"></textarea>
-              <button class="btn-submit" style="width: auto; padding: 10px 22px;" onclick="saveLessonPersonalNote()">💾 Lưu Ghi Chú</button>
+              <button class="btn-submit" style="width: auto; padding: 10px 22px;" onclick="saveLessonPersonalNote()">💾 LƯU</button>
               <div id="lessonSavedNotesList" style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div id="lessonDocsContainer" style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; display: none;">
-              <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh mục tài liệu đính kèm bài học (Hỗ trợ nhiều tài liệu):</h4>
+              <h4 style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 12px;">📁 Danh mục tài liệu đính kèm bài học:</h4>
               <div id="lessonDocsList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
             </div>
           </div>
@@ -632,11 +632,11 @@
       <section id="libraryTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">THƯ VIỆN TÀI LIỆU VACT EDU</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý và mở trực tiếp nhiều tài liệu Google Drive / PDF / Doc / Sheet.</p>
+            <span class="page-title">THƯ VIỆN TÀI LIỆU</span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">CẬP NHẬT TÀI LIỆU ĐƯỢC ĐÍNH KÈM THEO KHÓA HỌC</p>
           </div>
           <div id="adminLibraryControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenAddLibraryModal()">+ Thêm Nhiều Tài Liệu Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenAddLibraryModal()">+ Thêm Tài Liệu Mới</button>
           </div>
         </div>
 
@@ -646,25 +646,25 @@
       <section id="liveTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG LIVE STUDIO & TƯƠNG TÁC XỊN HƠN</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Quản lý phòng live, thêm, sửa, xóa phòng live linh hoạt & chuyên nghiệp.</p>
+            <span class="page-title">PHÒNG LIVE CHÍNH THỨC </span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">PHÒNG LIVE TRỰC TUYẾN - DANH SÁCH CÁC PHÒNG LIVE ĐANG HIỆN HÀNH.</p>
           </div>
           <div id="adminLiveControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live Stream Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateLiveRoom()">+ Tạo Phòng Live</button>
           </div>
         </div>
 
         <div id="liveRoomsContainer" class="live-grid">
-          <div style="color: var(--text-muted);">Đang tải thông tin các phòng live...</div>
+          <div style="color: var(--text-muted);">Đang tải thông tin phòng live...</div>
         </div>
 
         <!-- PHÒNG LIVE STREAM NÂNG CẤP XỊN HƠN -->
         <div id="activeLiveViewer" style="display: none; margin-top: 28px;">
           <div style="display: flex; justify-content: space-between; align- items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live Stream Studio</h3>
+            <h3 id="liveRoomTitleDisplay" style="color: var(--accent-cyan);">Phòng Live </h3>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-              <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> Sao Chép Link</button>
-              <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()"><i class="fa-solid fa-right-from-bracket"></i> Thoát Phòng Live</button>
+              <button class="ctrl-btn" style="background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="copyLiveRoomLink()"><i class="fa-solid fa-link"></i> LINK LIÊN KẾT</button>
+              <button class="ctrl-btn" style="background: var(--danger); border:none; padding:8px 16px; border-radius:12px; color:#fff; cursor:pointer; font-weight:700;" onclick="leaveLiveRoom()"><i class="fa-solid fa-right-from-bracket"></i> THOÁT</button>
             </div>
           </div>
           
@@ -742,11 +742,11 @@
       <section id="examTab" style="display: none;">
         <div class="page-header">
           <div>
-            <span class="page-title">PHÒNG THI THỬ VACT EDU</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Bài thi thử gắn kèm tài liệu link, chấm điểm IRT chuẩn xác.</p>
+            <span class="page-title">PHÒNG THI THỬ </span>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Bài thi thử gắn kèm tài liệu, chấm điểm chuẩn xác.</p>
           </div>
           <div id="adminExamControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateExamModal()">+ Tạo Bài Thi Thử</button>
             <button class="ctrl-btn" style="background: var(--warning); color:#000; font-weight:700; border:none; padding:12px; border-radius:12px; cursor:pointer;" onclick="adminViewAllStudentExams()">📋 Xem Điểm & Bài Làm Học Sinh</button>
           </div>
         </div>
@@ -807,10 +807,10 @@
         <div class="page-header">
           <div>
             <span class="page-title">DIỄN ĐÀN & NHÓM CHAT CỘNG ĐỒNG</span>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Nhắn tin trực tiếp với Admin & Nhóm Chat Phân Quyền (Chỉ thành viên được chọn mới nhìn thấy).</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;"> Học sinh có thể đăng bài trực tiếp trên diễn đàn, chat trực tiếp với admin </p>
           </div>
           <div id="adminForumControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateChatGroup()">+ Tạo Nhóm Chat Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminCreateChatGroup()">+ Tạo Nhóm Chat</button>
           </div>
         </div>
 
@@ -858,7 +858,7 @@
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">Biểu mẫu khảo sát học tập và quản lý phản hồi học sinh.</p>
           </div>
           <div id="adminReportControls" style="display: none;">
-            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateFormModal()">+ Tạo Biểu Mẫu Khảo Sát Mới</button>
+            <button class="btn-submit" style="width: auto; padding: 12px 22px;" onclick="adminOpenCreateFormModal()">+ Tạo Biểu Mẫu Khảo Sát </button>
           </div>
         </div>
 
@@ -867,7 +867,7 @@
             <h3 style="color: var(--accent-cyan); margin-bottom: 14px;">📝 Gửi Báo Cáo Lỗi Về Website</h3>
             <div class="form-group"><label>Tiêu đề lỗi</label><input type="text" id="bugReportTitle" placeholder="VD: Lỗi xem video bài 2..."></div>
             <div class="form-group"><label>Mô tả chi tiết</label><textarea id="bugReportDesc" rows="4" placeholder="Mô tả sự cố..."></textarea></div>
-            <button class="btn-submit" onclick="submitBugReport()">🚀 Gửi Báo Cáo Cho Admin</button>
+            <button class="btn-submit" onclick="submitBugReport()">🚀 Gửi Báo Cáo </button>
           </div>
 
           <div class="stat-card">
