@@ -2684,17 +2684,41 @@
       }, 12000);
     }
 
+    // Hủy instance cũ trước khi dùng lại ID iframe cho một video khác.
+    function destroyYoutubeVideoPlayer(playerId) {
+      pendingYoutubePlayers.delete(playerId);
+      const oldState = videoPlayerRegistry[playerId];
+      if (oldState?.player && typeof oldState.player.destroy === 'function') {
+        try { oldState.player.destroy(); } catch (err) {
+          console.warn('Không thể hủy YouTube player cũ:', err);
+        }
+      }
+      delete videoPlayerRegistry[playerId];
+    }
+
     function initYoutubeVideoPlayer(playerId) {
       const iframe = document.getElementById(playerId);
-      if (!iframe) return;
+      if (!iframe) {
+        destroyYoutubeVideoPlayer(playerId);
+        return;
+      }
       const hint = document.getElementById(`${playerId}-provider-hint`);
-      if (!/youtube(?:-nocookie)?\.com\/embed\//i.test(iframe.src)) {
+      const currentSrc = iframe.src;
+      const existingState = videoPlayerRegistry[playerId];
+
+      // Cùng iframe ID nhưng URL đã đổi: tạo player mới cho đúng video.
+      if (existingState && existingState.src !== currentSrc) {
+        destroyYoutubeVideoPlayer(playerId);
+      } else if (existingState?.player || existingState?.initializing) {
+        return;
+      }
+
+      if (!/youtube(?:-nocookie)?\.com\/embed\//i.test(currentSrc)) {
         if (hint) hint.textContent = 'Nguồn video không phải YouTube: sử dụng trình phát tích hợp của nhà cung cấp.';
         const controls = document.getElementById(`${playerId}-controls`);
         if (controls) controls.querySelectorAll('button,input').forEach(el => { el.disabled = true; });
         return;
       }
-      if (videoPlayerRegistry[playerId]?.player || videoPlayerRegistry[playerId]?.initializing) return;
       pendingYoutubePlayers.add(playerId);
       if (hint) hint.textContent = 'Đang tải bộ điều khiển YouTube…';
       loadYoutubeIframeApi();
@@ -2702,6 +2726,7 @@
 
       pendingYoutubePlayers.delete(playerId);
       const state = videoPlayerRegistry[playerId] = {
+        src: currentSrc,
         player: null, initializing: true, duration: 0, current: 0,
         isPlaying: false, muted: false, rate: 1, volume: 100, theater: false
       };
@@ -2710,7 +2735,7 @@
           events: {
             onReady: event => {
               const currentState = videoPlayerRegistry[playerId];
-              if (!currentState) return;
+              if (currentState !== state) return; // Callback của video cũ không được tác động video mới.
               currentState.initializing = false;
               currentState.duration = event.target.getDuration() || 0;
               try { event.target.setVolume(100); } catch (e) {}
@@ -2720,13 +2745,14 @@
             },
             onStateChange: event => {
               const currentState = videoPlayerRegistry[playerId];
-              if (!currentState) return;
+              if (currentState !== state) return;
               currentState.isPlaying = event.data === window.YT.PlayerState.PLAYING;
               videoSyncControlUI(playerId);
             },
             onError: event => {
               const currentState = videoPlayerRegistry[playerId];
-              if (currentState) currentState.initializing = false;
+              if (currentState !== state) return;
+              currentState.initializing = false;
               console.warn('YouTube Player error:', playerId, event?.data);
               setYoutubeNativeFallback(playerId, 'YouTube không cho phép nhúng video này hoặc video không khả dụng. Thử mở video trên YouTube hoặc liên hệ người đăng video.');
             }
@@ -2847,6 +2873,8 @@
     }
 
     function selectLessonVideo(videoId) {
+      // Video mới dùng lại iframe ID lesson-video-iframe; hủy player cũ trước khi render.
+      destroyYoutubeVideoPlayer('lesson-video-iframe');
       currentVideoState.videoId = videoId;
       currentVideoState.elapsedSec = 0;
       handleRoute();
