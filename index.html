@@ -2977,11 +2977,10 @@
               ${DB.courses.map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
             </select>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input id="new-small-title" required placeholder="Tên khóa học nhỏ (VD: Khóa Nền Tảng 8+)..." class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-              <input id="new-small-note" placeholder="Lịch học (VD: T2, T5 - 19h30)" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
+              <textarea id="new-small-title" required rows="5" placeholder="Nhập nhiều khóa học nhỏ, mỗi dòng một khóa:&#10;Tên khóa học | Mô tả (không bắt buộc) | Lịch học (không bắt buộc)&#10;Ví dụ: Khóa Nền Tảng 8+ | Củng cố kiến thức | T2, T5 - 19h30" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 sm:col-span-2"></textarea>
             </div>
-            <input id="new-small-desc" placeholder="Mô tả ngắn gọn về khóa học nhỏ..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-            <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-bold">+ Thêm Khóa Học Nhỏ</button>
+            <p class="text-[10px] text-slate-500">Mỗi dòng tạo một khóa học nhỏ. Các phần sau dấu | có thể bỏ trống.</p>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-bold">+ Thêm hàng loạt khóa học nhỏ</button>
           </form>
 
           <!-- CẤP 3: CHUYÊN ĐỀ -->
@@ -2990,12 +2989,9 @@
             <select id="sel-small-for-topic" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
               ${smallOptions || '<option value="">-- Vui lòng tạo Khóa học nhỏ trước --</option>'}
             </select>
-            <input id="new-topic-title" required placeholder="Tên chuyên đề (VD: Chuyên đề 1: Ứng dụng Đạo hàm)..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input id="new-topic-desc" placeholder="Mô tả chuyên đề..." class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-              <input id="new-topic-tkb" placeholder="Link thời khóa biểu / lộ trình chuyên đề..." class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-            </div>
-            <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">+ Thêm Chuyên Đề</button>
+            <textarea id="new-topic-title" required rows="5" placeholder="Nhập nhiều chuyên đề, mỗi dòng một chuyên đề:&#10;Tên chuyên đề | Mô tả (không bắt buộc) | Link thời khóa biểu (không bắt buộc)&#10;Ví dụ: Chuyên đề 1: Hàm số | Đạo hàm và khảo sát | https://..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></textarea>
+            <p class="text-[10px] text-slate-500">Mỗi dòng tạo một chuyên đề thuộc khóa học nhỏ đã chọn.</p>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold">+ Thêm hàng loạt chuyên đề</button>
           </form>
 
           <!-- CẤP 4: BÀI HỌC -->
@@ -3004,11 +3000,8 @@
             <select id="sel-topic-for-les" required class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
               ${topicOptions || '<option value="">-- Vui lòng tạo Chuyên đề trước --</option>'}
             </select>
-            <input id="new-les-title" required placeholder="Tên bài học..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input id="new-les-vid-title" required placeholder="Tiêu đề video bài giảng" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-              <input id="new-les-vid-url" required placeholder="Link Video (YouTube, Drive, FB...)" class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" />
-            </div>
+            <textarea id="new-les-title" required rows="6" placeholder="Nhập nhiều bài học, mỗi dòng một bài theo mẫu:&#10;Tên bài học | Tiêu đề video | Link video | Thời lượng (không bắt buộc)&#10;Ví dụ: Bài 1: Hàm số | Bài giảng Hàm số | https://www.youtube.com/watch?v=... | 45 phút&#10;Có thể bỏ phần video nếu chưa có: Bài 2: Bài tập vận dụng" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></textarea>
+            <p class="text-[10px] text-slate-500">Mỗi dòng tạo một bài học. Nếu có video, nhập đủ tiêu đề video và URL ở cột 2–3.</p>
             <div class="space-y-1.5">
               <label class="font-bold text-slate-600 dark:text-slate-300">Nhiều tài liệu đính kèm (mỗi dòng: Tên tài liệu | URL)</label>
               <textarea id="new-les-docs" rows="3" placeholder="Tài liệu PDF | https://drive.google.com/...\nBảng công thức | https://docs.google.com/..." class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></textarea>
@@ -3078,76 +3071,101 @@
     function adminAddSmallCourse(e) {
       e.preventDefault();
       const big = DB.courses.find(c => c.id === document.getElementById('sel-big-for-small').value);
-      if (!big) return;
+      if (!big) return showToast('Vui lòng chọn khóa học lớn.', 'error');
+      const rows = document.getElementById('new-small-title').value.split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+      if (!rows.length) return showToast('Vui lòng nhập ít nhất một khóa học nhỏ.', 'error');
       if (!big.smallCourses) big.smallCourses = [];
-      big.smallCourses.push({
-        id: 'small_' + Date.now(),
-        title: document.getElementById('new-small-title').value.trim(),
-        description: document.getElementById('new-small-desc').value.trim() || 'Khóa học nhỏ phân tầng lộ trình.',
-        scheduleNote: document.getElementById('new-small-note').value.trim() || 'Linh hoạt',
-        topics: []
+      const stamp = Date.now();
+      rows.forEach((line, index) => {
+        const [title, description, scheduleNote] = line.split('|').map(x => (x || '').trim());
+        if (!title) return;
+        big.smallCourses.push({
+          id: 'small_' + stamp + '_' + index,
+          title,
+          description: description || 'Khóa học nhỏ phân tầng lộ trình.',
+          scheduleNote: scheduleNote || 'Linh hoạt',
+          topics: []
+        });
       });
       saveDB();
-      closeModal();
-      showToast('Đã thêm Khóa học nhỏ (Cấp 2)!', 'success');
-      handleRoute();
+      showToast(`Đã thêm ${rows.length} khóa học nhỏ vào "${big.title}"!`, 'success');
+      openCourseManagerModal();
     }
 
     function adminAddTopic(e) {
       e.preventDefault();
       const val = document.getElementById('sel-small-for-topic').value;
-      if (!val) return;
+      if (!val) return showToast('Vui lòng chọn khóa học nhỏ.', 'error');
       const [bigId, smallId] = val.split('::');
       const big = DB.courses.find(c => c.id === bigId);
       const sm = big && (big.smallCourses || []).find(s => s.id === smallId);
-      if (!sm) return;
+      if (!sm) return showToast('Không tìm thấy khóa học nhỏ đã chọn.', 'error');
+      const rows = document.getElementById('new-topic-title').value.split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+      if (!rows.length) return showToast('Vui lòng nhập ít nhất một chuyên đề.', 'error');
       if (!sm.topics) sm.topics = [];
-      sm.topics.push({
-        id: 'topic_' + Date.now(),
-        title: document.getElementById('new-topic-title').value.trim(),
-        description: document.getElementById('new-topic-desc').value.trim() || 'Chuyên đề kiến thức trọng tâm.',
-        scheduleLink: document.getElementById('new-topic-tkb').value.trim(),
-        lessons: []
+      const stamp = Date.now();
+      rows.forEach((line, index) => {
+        const [title, description, scheduleLink] = line.split('|').map(x => (x || '').trim());
+        if (!title) return;
+        sm.topics.push({
+          id: 'topic_' + stamp + '_' + index,
+          title,
+          description: description || 'Chuyên đề kiến thức trọng tâm.',
+          scheduleLink: scheduleLink || '',
+          lessons: []
+        });
       });
       saveDB();
-      closeModal();
-      showToast('Đã thêm Chuyên đề (Cấp 3)!', 'success');
-      handleRoute();
+      showToast(`Đã thêm ${rows.length} chuyên đề vào "${sm.title}"!`, 'success');
+      openCourseManagerModal();
     }
 
     function adminAddLesson(e) {
       e.preventDefault();
       const val = document.getElementById('sel-topic-for-les').value;
-      if (!val) return;
+      if (!val) return showToast('Vui lòng chọn chuyên đề.', 'error');
       const [bigId, smallId, topicId] = val.split('::');
       const big = DB.courses.find(c => c.id === bigId);
       const sm = big && (big.smallCourses || []).find(s => s.id === smallId);
       const tp = sm && (sm.topics || []).find(t => t.id === topicId);
-      if (!tp) return;
+      if (!tp) return showToast('Không tìm thấy chuyên đề đã chọn.', 'error');
+
+      const rows = document.getElementById('new-les-title').value.split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+      if (!rows.length) return showToast('Vui lòng nhập ít nhất một bài học.', 'error');
+      const docLines = (document.getElementById('new-les-docs')?.value || '').split(/\\r?\\n/).map(x => x.trim()).filter(Boolean);
+      const stamp = Date.now();
       if (!tp.lessons) tp.lessons = [];
-      const docLines = (document.getElementById('new-les-docs')?.value || '').split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-      const documents = docLines.map((line, index) => {
-        const parts = line.split('|');
-        const title = (parts.shift() || '').trim();
-        const url = parts.join('|').trim();
-        return title && url ? { id: 'd_' + Date.now() + '_' + index, title, url, type: 'Tài liệu' } : null;
-      }).filter(Boolean);
-      tp.lessons.push({
-        id: 'les_' + Date.now(),
-        title: document.getElementById('new-les-title').value.trim(),
-        duration: '50 phút',
-        videos: [{
-          id: 'v_' + Date.now(),
-          title: document.getElementById('new-les-vid-title').value.trim(),
-          url: document.getElementById('new-les-vid-url').value.trim(),
-          platform: 'Video Nhúng'
-        }],
-        documents
+
+      rows.forEach((line, index) => {
+        const parts = line.split('|').map(x => x.trim());
+        const title = parts[0];
+        if (!title) return;
+        const videoTitle = parts[1] || '';
+        const videoUrl = parts[2] || '';
+        const duration = parts[3] || '50 phút';
+        const videos = videoTitle && videoUrl ? [{
+          id: 'v_' + stamp + '_' + index,
+          title: videoTitle,
+          url: videoUrl,
+          platform: /youtu\\.?be/i.test(videoUrl) ? 'YouTube' : 'Video Nhúng'
+        }] : [];
+        const documents = docLines.map((docLine, docIndex) => {
+          const docParts = docLine.split('|');
+          const docTitle = (docParts.shift() || '').trim();
+          const url = docParts.join('|').trim();
+          return docTitle && url ? { id: 'd_' + stamp + '_' + index + '_' + docIndex, title: docTitle, url, type: 'Tài liệu' } : null;
+        }).filter(Boolean);
+        tp.lessons.push({
+          id: 'les_' + stamp + '_' + index,
+          title,
+          duration,
+          videos,
+          documents: documents.map((doc, docIndex) => ({ ...doc, id: doc.id + '_' + docIndex }))
+        });
       });
       saveDB();
-      closeModal();
-      showToast('Đã thêm Bài học (Cấp 4)!', 'success');
-      handleRoute();
+      showToast(`Đã thêm ${rows.length} bài học vào "${tp.title}"!`, 'success');
+      openCourseManagerModal();
     }
 
     function adminDeleteBigCourse(bigId) {
