@@ -75,6 +75,44 @@
       background: rgba(15, 23, 42, 0.08);
       cursor: default;
     }
+
+    /* Thanh điều khiển nổi bên trong khung video, kể cả khi bật toàn màn hình */
+    .video-overlay-controls {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      background: linear-gradient(to top, rgba(2, 6, 23, .98), rgba(2, 6, 23, .78) 72%, transparent);
+      padding: 30px 14px 12px;
+      border: 0;
+    }
+    #protected-video-wrapper:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      aspect-ratio: auto;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #000;
+    }
+    #protected-video-wrapper:fullscreen iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    #protected-video-wrapper:fullscreen .video-overlay-controls {
+      padding: 42px 3vw 18px;
+    }
+    #protected-video-wrapper:fullscreen .video-shield {
+      bottom: 110px;
+    }
+    @media (max-width: 640px) {
+      .video-overlay-controls { padding: 25px 8px 8px; }
+      .video-overlay-controls input[type="range"] { min-width: 38px; }
+    }
     .anti-cheat-blur {
       filter: blur(18px);
       pointer-events: none;
@@ -2442,14 +2480,13 @@
                 <div id="protected-video-wrapper" class="relative aspect-video bg-black select-none">
                   ${activeVideo ? `
                     <iframe id="lesson-video-iframe" data-video-player="lesson-video-iframe" src="${formatEmbedUrl(activeVideo.url)}" class="w-full h-full border-0" tabindex="-1" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-                    <div class="video-shield ${isGoogleDriveUrl(activeVideo.url) ? 'video-shield-drive' : ''}" aria-hidden="true" title="Video được bảo vệ; sử dụng thanh điều khiển bên dưới để xem bài giảng."></div>
+                    <div class="video-shield ${isGoogleDriveUrl(activeVideo.url) ? 'video-shield-drive' : ''}" aria-hidden="true" title="Video được bảo vệ; sử dụng thanh điều khiển nổi trong video để xem bài giảng."></div>
+                    <!-- Thanh điều khiển được đặt ngay trong khung video để vẫn hiển thị khi toàn màn hình -->
+                    ${renderVideoControlBar('lesson-video-iframe', true)}
                   ` : `
                     <div class="w-full h-full flex items-center justify-center text-slate-400 text-sm">Bài học này chưa được gắn video bài giảng.</div>
                   `}
                 </div>
-
-                <!-- Thanh điều khiển kiểu YouTube, điều khiển trực tiếp trình phát -->
-                ${renderVideoControlBar('lesson-video-iframe', true)}
               </div>
 
               ${lesson && lesson.videos.length > 1 ? `
@@ -2581,7 +2618,7 @@
 
     function renderVideoControlBar(playerId, showNoteButton = false) {
       const key = String(playerId).replace(/[^a-zA-Z0-9_-]/g, '-');
-      return `<div id="${key}-controls" class="bg-slate-950 px-4 py-3 text-white space-y-2.5">
+      return `<div id="${key}-controls" class="video-overlay-controls text-white space-y-2.5">
         <div class="flex items-center gap-2.5">
           <span id="${key}-current" class="text-[11px] font-mono text-indigo-300 w-12 text-center">00:00</span>
           <input id="${key}-seek" type="range" min="0" max="1000" value="0" oninput="videoSeekFromRange('${key}',this.value)" class="flex-1 accent-indigo-500 h-1.5 bg-slate-700 rounded-lg cursor-pointer" aria-label="Thanh tiến trình video" />
