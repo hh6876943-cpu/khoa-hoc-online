@@ -436,6 +436,7 @@
         }
       },
       popups: [],
+      classSchedules: [], // Lịch học chung do Admin quản lý
       users: [
         {
           id: 'u_admin',
@@ -868,6 +869,7 @@
       merged.settings = { ...base.settings, ...(raw.settings || {}) };
       merged.settings.featureMaintenance = { ...base.settings.featureMaintenance, ...((raw.settings || {}).featureMaintenance || {}) };
       merged.popups = Array.isArray(raw.popups) ? raw.popups : [];
+      merged.classSchedules = Array.isArray(raw.classSchedules) ? raw.classSchedules : [];
       merged.users = Array.isArray(raw.users) ? raw.users.map(u => ({
         ...u,
         allowedCourses: Array.isArray(u.allowedCourses) ? u.allowedCourses : [],
@@ -1595,6 +1597,31 @@
     /* =========================================================================
        7. TRANG CHỦ (#/home)
     ========================================================================= */
+    // ==================== THỜI KHÓA BIỂU CHUNG ====================
+    let classCalendarMode = 'month';
+    let classCalendarDate = new Date();
+    const classWeekDays = ['Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7','Chủ nhật'];
+    const classDateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    function calendarStartOfWeek(date){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());d.setDate(d.getDate()-(d.getDay()+6)%7);return d;}
+    function renderClassScheduleCalendar(){
+      const y=classCalendarDate.getFullYear(), m=classCalendarDate.getMonth();
+      const first=classCalendarMode==='month'?calendarStartOfWeek(new Date(y,m,1)):calendarStartOfWeek(classCalendarDate);
+      const count=classCalendarMode==='month'?42:7;
+      const cells=Array.from({length:count},(_,i)=>{const d=new Date(first);d.setDate(first.getDate()+i);const key=classDateKey(d);const events=(DB.classSchedules||[]).filter(e=>e.date===key).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));const outside=d.getMonth()!==m;return `<div class="min-w-0 min-h-[132px] rounded-xl border ${outside&&classCalendarMode==='month'?'border-slate-200/70 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 opacity-60':'border-amber-300 dark:border-amber-800 bg-orange-50/70 dark:bg-amber-950/20'} p-2"><div class="text-center text-sm font-extrabold ${outside?'text-slate-400':'text-slate-800 dark:text-white'} mb-2">${d.getDate()}${classCalendarMode==='week'?`<div class="text-[10px] text-slate-400 font-medium">${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}</div>`:''}</div><div class="space-y-1.5">${events.map(ev=>`<button onclick="openClassSchedule('${ev.id}')" class="w-full text-left rounded-lg border-l-4 border-amber-500 bg-white dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 shadow-sm px-2 py-1.5 transition"><div class="text-[10px] font-extrabold text-indigo-700 dark:text-indigo-300">${escapeHtml(ev.startTime||'')}–${escapeHtml(ev.endTime||'')}</div><div class="text-[11px] font-bold text-slate-800 dark:text-white truncate">${escapeHtml(ev.subject||'Buổi học')}</div><div class="text-[10px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(ev.lesson||'')}</div></button>`).join('')}</div></div>`;}).join('');
+      const title=classCalendarMode==='month'?`Tháng ${m+1}/${y}`:`${classDateKey(first)} – ${classDateKey(new Date(first.getFullYear(),first.getMonth(),first.getDate()+6))}`;
+      return `<section class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"><div class="flex flex-wrap items-center justify-between gap-3"><div><h2 class="text-lg font-extrabold text-slate-900 dark:text-white"><i class="fa-solid fa-calendar-week text-amber-500 mr-2"></i>Thời khóa biểu</h2><p class="text-xs text-slate-500 mt-1">Nhấn vào ca học để vào lớp hoặc mở tài liệu.</p></div><div class="flex items-center gap-2"><div class="flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800"><button onclick="setClassCalendarMode('week')" class="px-3 py-2 rounded-lg text-xs font-bold ${classCalendarMode==='week'?'bg-white dark:bg-slate-700 text-amber-600 shadow':''}">Tuần</button><button onclick="setClassCalendarMode('month')" class="px-3 py-2 rounded-lg text-xs font-bold ${classCalendarMode==='month'?'bg-white dark:bg-slate-700 text-amber-600 shadow':''}">Tháng</button></div><div class="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-2 py-1.5"><button onclick="shiftClassCalendar(-1)" class="px-2 text-indigo-700 dark:text-indigo-300" aria-label="Kỳ trước"><i class="fa-solid fa-chevron-left"></i></button><span class="text-xs sm:text-sm font-bold min-w-[105px] text-center">${title}</span><button onclick="shiftClassCalendar(1)" class="px-2 text-indigo-700 dark:text-indigo-300" aria-label="Kỳ sau"><i class="fa-solid fa-chevron-right"></i></button></div></div></div><div class="overflow-x-auto"><div class="min-w-[760px]"><div class="grid grid-cols-7 gap-2 mb-2">${classWeekDays.map(d=>`<div class="text-center text-xs font-extrabold text-slate-700 dark:text-slate-300 py-2">${d}</div>`).join('')}</div><div class="grid grid-cols-7 gap-2">${cells}</div></div></div><div class="flex flex-wrap items-center gap-3 text-[10px] text-slate-500"><span><i class="fa-solid fa-square text-amber-400 mr-1"></i>Ca học đã lên lịch</span><span><i class="fa-solid fa-arrow-pointer mr-1"></i>Nhấn ca học để tham gia</span></div></section>`;
+    }
+    function refreshClassCalendar(){const el=document.getElementById('class-schedule-calendar');if(el)el.innerHTML=renderClassScheduleCalendar();else handleRoute();}
+    function setClassCalendarMode(mode){classCalendarMode=mode;handleRoute();}
+    function shiftClassCalendar(delta){if(classCalendarMode==='month')classCalendarDate=new Date(classCalendarDate.getFullYear(),classCalendarDate.getMonth()+delta,1);else{classCalendarDate=new Date(classCalendarDate);classCalendarDate.setDate(classCalendarDate.getDate()+delta*7);}handleRoute();}
+    function openClassScheduleEditor(id=''){
+      if(currentUser?.role!=='admin')return;const ev=(DB.classSchedules||[]).find(x=>x.id===id)||{};
+      openModal(id?'Chỉnh sửa ca học':'Thêm ca học mới',`<form onsubmit="saveClassSchedule(event,'${id}')" class="space-y-3 text-sm"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><label class="text-xs font-bold">Ngày học<input id="cs-date" type="date" required value="${ev.date||classDateKey(new Date())}" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><label class="text-xs font-bold">Môn học<input id="cs-subject" required value="${escapeHtml(ev.subject||'')}" placeholder="VD: Toán học" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><label class="text-xs font-bold">Giờ bắt đầu<input id="cs-start" type="time" required value="${ev.startTime||'19:30'}" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><label class="text-xs font-bold">Giờ kết thúc<input id="cs-end" type="time" required value="${ev.endTime||'21:00'}" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label></div><label class="block text-xs font-bold">Tên bài học / chuyên đề<input id="cs-lesson" required value="${escapeHtml(ev.lesson||'')}" placeholder="Tên bài học" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><label class="block text-xs font-bold">Giáo viên<input id="cs-teacher" value="${escapeHtml(ev.teacher||'')}" placeholder="Tên giáo viên" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><label class="block text-xs font-bold">Link đích (ẩn với học sinh)<input id="cs-target" type="text" value="${escapeHtml(ev.target||'')}" placeholder="https://... hoặc #/courses/..." class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label><p class="text-[11px] text-slate-500">Link ngoài sẽ được mở trong khung nhúng nếu trang đích cho phép iframe. Link nội bộ dùng hash route, không tải lại toàn bộ website.</p><button class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Lưu ca học</button></form>`,'max-w-xl');
+    }
+    function saveClassSchedule(e,id){e.preventDefault();if(currentUser?.role!=='admin')return;const start=document.getElementById('cs-start').value,end=document.getElementById('cs-end').value;if(end<=start){showToast('Giờ kết thúc phải sau giờ bắt đầu.','error');return;}DB.classSchedules=DB.classSchedules||[];const item={id:id||'cs_'+Date.now(),date:document.getElementById('cs-date').value,startTime:start,endTime:end,subject:document.getElementById('cs-subject').value.trim(),lesson:document.getElementById('cs-lesson').value.trim(),teacher:document.getElementById('cs-teacher').value.trim(),target:document.getElementById('cs-target').value.trim()};const idx=DB.classSchedules.findIndex(x=>x.id===id);if(idx>=0)DB.classSchedules[idx]=item;else DB.classSchedules.push(item);saveDB();closeModal();showToast('Đã lưu thời khóa biểu và đồng bộ dữ liệu.','success');handleRoute();}
+    function deleteClassSchedule(id){if(currentUser?.role!=='admin'||!confirm('Xóa ca học này khỏi thời khóa biểu?'))return;DB.classSchedules=(DB.classSchedules||[]).filter(x=>x.id!==id);saveDB();handleRoute();}
+    function openClassSchedule(id){const ev=(DB.classSchedules||[]).find(x=>x.id===id);if(!ev)return;const target=(ev.target||'').trim();if(!target){showToast('Ca học chưa được Admin cấu hình điểm đến.','info');return;}if(target.startsWith('#/')){navigateTo(target);return;}let url;try{url=new URL(target,location.href);if(!['http:','https:'].includes(url.protocol))throw new Error('protocol');}catch(_){showToast('Đường dẫn buổi học không hợp lệ.','error');return;}openModal(`${escapeHtml(ev.subject)} · ${escapeHtml(ev.lesson)}`,`<div class="space-y-3"><div class="text-xs text-slate-500">${escapeHtml(ev.date)} · ${escapeHtml(ev.startTime)}–${escapeHtml(ev.endTime)} · ${escapeHtml(ev.teacher||'')}</div><div class="w-full aspect-video min-h-[55vh] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"><iframe src="${escapeHtml(url.href)}" class="w-full h-full border-0" allow="autoplay; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div><p class="text-[11px] text-slate-500">Nếu website đích chặn nhúng, trình duyệt sẽ không hiển thị nội dung trong khung này.</p></div>`,'max-w-5xl');}
+
     function renderHomePage(container) {
       const user = DB.users.find(u => u.id === currentUser.id) || currentUser;
       const allowedCount = user.role === 'admin' ? DB.courses.length : user.allowedCourses.length;
@@ -1701,6 +1728,9 @@
               <div id="cd-tsa" class="grid grid-cols-4 gap-2 text-center my-1"></div>
             </div>
           </div>
+
+          <!-- THỜI KHÓA BIỂU CHUNG DO ADMIN QUẢN LÝ -->
+          <div id="class-schedule-calendar">${renderClassScheduleCalendar()}</div>
 
           <!-- BẢNG THÔNG BÁO & LỊCH HỌC CÁ NHÂN -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -5843,6 +5873,14 @@
             </div>
           </div>
 
+          <section class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-indigo-200 dark:border-indigo-900 shadow-sm space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div><h2 class="text-base font-extrabold"><i class="fa-solid fa-calendar-days text-indigo-600 mr-2"></i>Quản lý thời khóa biểu</h2><p class="text-xs text-slate-500 mt-1">Tạo nhiều ca học trong cùng ngày. Link đích chỉ quản trị viên nhìn thấy; học sinh chỉ thấy thông tin buổi học.</p></div>
+              <button onclick="openClassScheduleEditor()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i>Thêm ca học</button>
+            </div>
+            <div class="space-y-2">${(DB.classSchedules||[]).slice().sort((a,b)=>(a.date+a.startTime).localeCompare(b.date+b.startTime)).map(ev=>`<div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700"><div class="min-w-0"><div class="font-bold text-sm">${escapeHtml(ev.subject||'')}</div><div class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(ev.lesson||'')} · ${escapeHtml(ev.date||'')} · ${escapeHtml(ev.startTime||'')}–${escapeHtml(ev.endTime||'')}</div><div class="text-[11px] text-slate-500">${escapeHtml(ev.teacher||'')} · Link đích đã ${ev.target?'cấu hình':'chưa cấu hình'}</div></div><div class="flex gap-2"><button onclick="openClassScheduleEditor('${ev.id}')" class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-800 text-xs font-bold">Sửa</button><button onclick="deleteClassSchedule('${ev.id}')" class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-bold">Xóa</button></div></div>`).join('')||'<p class="text-xs text-slate-400 text-center py-5">Chưa có ca học. Hãy thêm ca học đầu tiên.</p>'}</div>
+          </section>
+
           <section class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
             <div class="flex items-center justify-between gap-3"><h2 class="text-base font-extrabold"><i class="fa-solid fa-window-restore text-indigo-600 mr-2"></i>Quản lý Popup / Link nhúng trong website</h2><button onclick="openPopupEditor()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">+ Thêm popup</button></div>
             <p class="text-xs text-slate-500">Link được mở trong cửa sổ nhúng trên website; trang quản trị không bị điều hướng. Một số website chặn iframe bằng chính sách bảo mật nên có thể không nhúng được.</p>
@@ -6269,7 +6307,9 @@
       adminResetUserPassword,
       submitAdminResetPass,
       adminToggleLockUser,
-      adminDeleteUser
+      adminDeleteUser,
+      openClassScheduleEditor, saveClassSchedule, deleteClassSchedule, openClassSchedule,
+      setClassCalendarMode, shiftClassCalendar
     });
 
     document.addEventListener('contextmenu', e => {
