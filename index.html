@@ -1603,6 +1603,17 @@
     const classWeekDays = ['Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7','Chủ nhật'];
     const classDateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     function calendarStartOfWeek(date){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());d.setDate(d.getDate()-(d.getDay()+6)%7);return d;}
+    // Quyền xem thời khóa biểu: Admin luôn xem được; học sinh chỉ xem lịch công khai
+    // hoặc lịch có userId nằm trong allowedStudentIds.
+    function canViewClassSchedule(ev, user=currentUser){
+      if(!ev) return false;
+      if(user?.role==='admin') return true;
+      if(!user) return false;
+      const mode=ev.visibility||'all'; // dữ liệu cũ mặc định là công khai
+      if(mode==='all') return true;
+      return Array.isArray(ev.allowedStudentIds) && ev.allowedStudentIds.includes(user.id);
+    }
+
     function renderClassScheduleCalendar(adminMode=false){
       const y=classCalendarDate.getFullYear(), m=classCalendarDate.getMonth();
       const first=classCalendarMode==='month'?calendarStartOfWeek(new Date(y,m,1)):calendarStartOfWeek(classCalendarDate);
@@ -1610,7 +1621,7 @@
       const cells=Array.from({length:count},(_,i)=>{
         const d=new Date(first);d.setDate(first.getDate()+i);
         const key=classDateKey(d);
-        const events=(DB.classSchedules||[]).filter(e=>e.date===key).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
+        const events=(DB.classSchedules||[]).filter(e=>e.date===key&&(adminMode||canViewClassSchedule(e))).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
         const outside=d.getMonth()!==m;
         const dayLabel=`${d.getDate()}${classCalendarMode==='week'?`<div class="text-[10px] text-slate-400 font-medium">${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}</div>`:''}`;
         const dayHeader=adminMode
@@ -1627,6 +1638,10 @@
     function shiftClassCalendar(delta){if(classCalendarMode==='month')classCalendarDate=new Date(classCalendarDate.getFullYear(),classCalendarDate.getMonth()+delta,1);else{classCalendarDate=new Date(classCalendarDate);classCalendarDate.setDate(classCalendarDate.getDate()+delta*7);}handleRoute();}
     function openClassScheduleEditor(id='', selectedDate=''){
       if(currentUser?.role!=='admin')return;const ev=(DB.classSchedules||[]).find(x=>x.id===id)||{};
+      const scheduleStudents=(DB.users||[]).filter(u=>u.role==='student');
+      const visibility=ev.visibility||'all';
+      const allowedIds=Array.isArray(ev.allowedStudentIds)?ev.allowedStudentIds:[];
+      const studentPermissionHtml=scheduleStudents.length?scheduleStudents.map(u=>`<label class="flex items-center gap-2 p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"><input type="checkbox" class="cs-allowed-student accent-indigo-600" value="${escapeHtml(u.id)}" ${allowedIds.includes(u.id)?'checked':''}/><span class="text-xs">${escapeHtml(u.name||u.email||u.id)}</span></label>`).join(''):'<p class="text-xs text-slate-500">Chưa có tài khoản học sinh.</p>';
       openModal(id?'Chỉnh sửa buổi học':'Thêm buổi học mới',`<form onsubmit="saveClassSchedule(event,'${id}')" class="space-y-3 text-sm">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label class="text-xs font-bold">Ngày học<input id="cs-date" type="date" required value="${ev.date||selectedDate||classDateKey(new Date())}" class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label>
@@ -1639,6 +1654,15 @@
         <label class="block text-xs font-bold">Link phòng học (chuyển trực tiếp trong tab hiện tại)<input id="cs-target" type="url" value="${escapeHtml(ev.target||'')}" placeholder="https://..." class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label>
         <label class="block text-xs font-bold">Link video bài giảng<input id="cs-video" type="url" value="${escapeHtml(ev.videoUrl||'')}" placeholder="Dán link YouTube / Drive / video..." class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label>
         <label class="block text-xs font-bold">Đường dẫn bài học trong Khóa học (tùy chọn)<input id="cs-lesson-link" value="${escapeHtml(ev.lessonLink||'')}" placeholder="#/courses/..." class="mt-1 w-full p-2.5 rounded-xl border bg-white dark:bg-slate-800 dark:border-slate-700"/></label>
+        <section class="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/60 dark:bg-indigo-950/30 p-4 space-y-3">
+          <div><div class="text-sm font-extrabold text-indigo-900 dark:text-indigo-200"><i class="fa-solid fa-user-lock mr-1.5"></i>Phân quyền xem thời khóa biểu</div><p class="text-[11px] text-slate-600 dark:text-slate-400 mt-1">Chọn người được phép nhìn thấy ca học này.</p></div>
+          <label class="flex items-center gap-2 text-xs font-semibold"><input type="radio" name="cs-visibility" value="all" ${visibility==='all'?'checked':''} onchange="document.getElementById('cs-student-permissions').classList.toggle('hidden',this.value!=='selected')"/> Cho tất cả học sinh xem</label>
+          <label class="flex items-center gap-2 text-xs font-semibold"><input type="radio" name="cs-visibility" value="selected" ${visibility==='selected'?'checked':''} onchange="document.getElementById('cs-student-permissions').classList.toggle('hidden',this.value!=='selected')"/> Chỉ một số học sinh được chọn xem</label>
+          <div id="cs-student-permissions" class="${visibility==='selected'?'':'hidden'} space-y-2">
+            <div class="flex flex-wrap gap-2"><button type="button" class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 underline" onclick="document.querySelectorAll('.cs-allowed-student').forEach(x=>x.checked=true)">Chọn tất cả</button><button type="button" class="text-[11px] font-bold text-slate-500 underline" onclick="document.querySelectorAll('.cs-allowed-student').forEach(x=>x.checked=false)">Bỏ chọn</button></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto">${studentPermissionHtml}</div>
+          </div>
+        </section>
         <p class="text-[11px] text-slate-500">Trạng thái được tính tự động theo giờ: trước giờ 10 phút là “Sắp diễn ra”; sau giờ kết thúc là “Đã dạy xong”. Chỉ cần dán link video khi Admin đã đăng bài giảng.</p>
         <div class="flex flex-col sm:flex-row gap-2"><button class="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold">Lưu buổi học</button>${id?`<button type="button" onclick="deleteClassSchedule('${id}')" class="sm:w-32 py-3 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold"><i class="fa-solid fa-trash mr-1"></i>Xóa ca học</button>`:''}</div></form>`,'max-w-xl');
     }
@@ -1649,7 +1673,10 @@
       const item={id:id||'cs_'+Date.now(),date:document.getElementById('cs-date').value,startTime:start,endTime:end,
         subject:document.getElementById('cs-subject').value.trim(),lesson:document.getElementById('cs-lesson').value.trim(),
         teacher:document.getElementById('cs-teacher').value.trim(),target:document.getElementById('cs-target').value.trim(),
-        videoUrl:document.getElementById('cs-video').value.trim(),lessonLink:document.getElementById('cs-lesson-link').value.trim()};
+        videoUrl:document.getElementById('cs-video').value.trim(),lessonLink:document.getElementById('cs-lesson-link').value.trim(),
+        visibility:document.querySelector('input[name="cs-visibility"]:checked')?.value||'all',
+        allowedStudentIds:Array.from(document.querySelectorAll('.cs-allowed-student:checked')).map(x=>x.value)};
+      if(item.visibility==='selected'&&!item.allowedStudentIds.length){showToast('Hãy chọn ít nhất một học sinh được xem lịch.','warning');return;}
       DB.classSchedules=DB.classSchedules||[];const idx=DB.classSchedules.findIndex(x=>x.id===id);
       if(idx>=0)DB.classSchedules[idx]=item;else DB.classSchedules.push(item);
       saveDB();closeModal();showToast('Đã lưu buổi học và đồng bộ dữ liệu.','success');handleRoute();
@@ -1665,6 +1692,7 @@
     }
     function openClassSchedule(id){
       const ev=(DB.classSchedules||[]).find(x=>x.id===id);if(!ev)return;
+      if(!canViewClassSchedule(ev)){showToast('Bạn không được cấp quyền xem buổi học này.','error');return;}
       const state=getClassScheduleState(ev),fmt=ev.date?new Date(`${ev.date}T00:00:00`).toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}):'';
       const statusClass=state.key==='ended'?'bg-slate-200 text-slate-600':state.key==='soon'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700';
       const action=state.key==='soon'&&ev.target?`<button onclick="enterClassRoom('${ev.id}')" class="w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold">Vào phòng học</button>`:
@@ -1689,6 +1717,7 @@
     function enterClassRoom(id){
       const ev=(DB.classSchedules||[]).find(x=>String(x.id)===String(id));
       if(!ev){showToast('Không tìm thấy buổi học này. Hãy tải lại thời khóa biểu.','error');return;}
+      if(!canViewClassSchedule(ev)){showToast('Bạn không được cấp quyền vào buổi học này.','error');return;}
       const rawLink=String(ev.target||'').trim();
       if(!rawLink){showToast('Buổi học chưa được gắn link phòng học. Admin hãy cập nhật link rồi lưu lại.','error');return;}
       const state=getClassScheduleState(ev);
@@ -1707,6 +1736,7 @@
     function openClassLessonVideo(id){
       const ev=(DB.classSchedules||[]).find(x=>String(x.id)===String(id));
       if(!ev){showToast('Không tìm thấy buổi học này. Hãy tải lại thời khóa biểu.','error');return;}
+      if(!canViewClassSchedule(ev)){showToast('Bạn không được cấp quyền xem video buổi học này.','error');return;}
       const rawLink=String(ev.videoUrl||'').trim();
       if(!rawLink){showToast('Buổi học chưa được gắn link video bài giảng.','error');return;}
       let url;
